@@ -24,10 +24,15 @@ public class UIKeyboardControl : MonoBehaviour
     {
         gameObject.SetActive(!gameObject.activeSelf);
     }
-
-    public void Launch()
+    
+    public void Play()
     {
         SceneManager.LoadScene("Start");
+    }
+
+    public void Back()
+    {
+        SceneManager.LoadScene("Launch");
     }
     void Update()
     {

@@ -7,76 +7,81 @@ public class FlagSetting : Singleton<FlagSetting>
     /**
      * Enable AI control inside game folder?
      */
-    public static bool automationFlag = false;
+    public bool automationFlag = false;
 
     /**
      * Enable All Flag include AI
      */
-    public static bool allCombinationFlag = false;
+    public bool allCombinationFlag = false;
 
     /**
      * Open BG
      */
-    public static bool enableBackground = true;
+    public bool enableBackground = true;
 
     /**
      * Python AI
      */
-    public static bool py4j = false;
+    public bool py4j = false;
 
     /**
      * Count perform action
      */
-    public static bool debugActionFlag = false;
+    public bool debugActionFlag = false;
 
     /**
      * Enable Framedata
      */
-    public static bool debugFrameDataFlag = false;
+    public bool debugFrameDataFlag = false;
 
     /**
      * Trainning Mode．
      */
-    public static bool trainingModeFlag = false;
+    public bool trainingModeFlag = false;
 
     /**
      * P1,P2 Setplayer HP．
      */
-    public static bool limitHpFlag = false;
+    public bool limitHpFlag = false;
 
     /**
      * Mute Mode．
      */
-    public static bool muteFlag = false;
+    public bool muteFlag = false;
 
     /**
      * Write Json Infomation : log
      */
-    public static bool jsonFlag = false;
+    public bool jsonFlag = false;
 
     /**
      * Write outputAndLog．
      */
-    public static bool outputErrorAndLogFlag = false;
+    public bool outputErrorAndLogFlag = false;
 
     /**
      * FastMod
      */
-    public static bool fastModeFlag = false;
+    public bool fastModeFlag = false;
 
     /**
      * Open Game window Not important?．
      */
-    public static bool enableWindow = true;
+    public bool enableWindow = true;
 
     /**
      * Slow motion mode
      */
-    public static bool slowmotion = false;
+    public bool slowmotion = false;
     
     /**
      *  Enable gRPC
      */
-    public static bool grpc = false;
-    public static bool grpcAuto = false;
+    public bool grpc = false;
+    public bool grpcAuto = false;
+    
+    public void ResetData()
+    {
+        
+    }
 }
