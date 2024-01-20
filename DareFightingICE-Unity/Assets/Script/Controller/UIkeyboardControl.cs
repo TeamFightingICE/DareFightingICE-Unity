@@ -27,7 +27,7 @@ public class UIKeyboardControl : MonoBehaviour
     
     public void Play()
     {
-        SceneManager.LoadScene("Start");
+        SceneManager.LoadScene("Gameplay");
     }
 
     public void Back()

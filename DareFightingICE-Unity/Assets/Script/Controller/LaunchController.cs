@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,18 +18,22 @@ public class LaunchController : MonoBehaviour
     [SerializeField] private Toggle muteFlag;
 
 
+    private void Awake()
+    {
+        Application.targetFrameRate = 60;
+    }
+
     void Start()
     {
         GameSetting.Instance.ResetData();
+        FlagSetting.Instance.ResetData();
     }
 
     public void Launch()
     {
-        SceneManager.LoadScene("Gameplay");
+        
+        GameSetting.Instance.Setdata(int.Parse(p1Hp.text),int.Parse(p2Hp.text),int.Parse(roundLimit.text),int.Parse(frameLimit.text));
+        SceneManager.LoadScene("Start");
     }
     
-    void SetFrameRate()
-    {
-        
-    }
 }

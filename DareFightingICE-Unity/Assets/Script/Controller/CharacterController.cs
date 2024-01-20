@@ -1,19 +1,15 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class CharacterController : MonoBehaviour
 {
     // Character Info
-    [SerializeField]
     public bool PlayerNumber{ get; set; }
-
-    public bool IsFront;
+    public bool IsFront { get; set; }
     public int Hp { get; set; }
     public int Energy { get; set; }
+    public CharacterController otherPlayer{get; set; }
     
     // Action Flags
     public bool canWalk = true;
@@ -21,11 +17,15 @@ public class CharacterController : MonoBehaviour
     public bool canAttack = true;
     public bool canDash = true;
     public bool isGuard = false;
+    public bool canJump = true;
 
     // Combo System
     private List<string> inputBuffer = new List<string>();
     private Dictionary<string, List<string>> combos = new Dictionary<string, List<string>>();
-    private int MAX_BUFFER_SIZE = 6;
+    private int MAX_BUFFER_SIZE = 7;
+    private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
+    private float actionExecutionDelay = 0.2f;
+    private float lastInputTime;
     
     // Character Control
     public float speed = 5.0f;
@@ -36,45 +36,82 @@ public class CharacterController : MonoBehaviour
     private Rigidbody2D rb;
     public bool isGrounded;
     public bool isCrouching = false;
-    [SerializeField]private State _state = State.Stand;
+    public State state = State.Stand;
     [SerializeField] private Animator _animator;
     private float _timer = 0f;
-    private float lastDirectionalInputTime = 0f;
+    private float lastDirectionalInputTime = 0.5f;
     private float directionalInputDelay = 0.1f;
     
-    private float lastForwardDashTime = 0f;
-    private float lastBackwardDashTime = 0f;
+    private float lastCrouchInputTime = 0.5f;
+    private float CrouchInputDelay = 0.1f;
+    
+    private float lastThrowInputTime = 0.5f;
+    private float throwInputDelay = 0.1f;
+    
+    private float lastForwardDashTime = -1f;
+    private float lastBackwardDashTime = -1f;
     private float doubleTapInterval = 0.3f;
     [SerializeField]private float dashforce = 0;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        IsFront = true;
-        combos.Add("Combo1", new List<string> {"A","B","C" });
-        combos.Add("STAND_FA", new List<string> {"F","A"});
-        combos.Add("STAND_FB", new List<string> {"F","B"});
-        combos.Add("STAND_A", new List<string> {"A"});
-        combos.Add("STAND_B", new List<string> {"B"});
+        combos.Add("F_D_DFA", new List<string> {"F","D","D","F","A"});
+        combos.Add("FA", new List<string> {"F","A"});
+        combos.Add("FB", new List<string> {"F","B"});
+        combos.Add("DA", new List<string> {"D","A"});
+        combos.Add("DB", new List<string> {"D","B"});
+        combos.Add("UA", new List<string> {"U","A"});
+        combos.Add("UB", new List<string> {"U","B"});
+        combos.Add("THROW_A", new List<string> {"THROW","A"});
+        combos.Add("THROW_B", new List<string> {"THROW","B"});
+        combos.Add("A", new List<string> {"A"});
+        combos.Add("B", new List<string> {"B"});
         // Add more combos as needed
     }
 
     void Update()
     {
         CheckState();
-        HandleInput();
+        if (PlayerNumber)
+        {
+            HandleInputP1();
+        }
+        else
+        {
+            HandleInputP2();
+        }
         CheckCombo();
         ResetBuffer();
+        //TryExecuteSingleAction();
+
     }
 
-    private void HandleInput()
+    private void HandleInputP1()
     {
         float currentTime = Time.time;
+        lastInputTime = Time.time;
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            if (currentTime - lastCrouchInputTime > CrouchInputDelay && !isCrouching)
+            {
+                lastCrouchInputTime = currentTime;
+                AddInput("D");
+            }
+            if (isGrounded)
+            {
+                PerformCrounch();
+            }
+        }else
+        {
+            isCrouching = false;
+            _animator.SetBool("CROUCH",false);
+        }
         // Movement input
         if (IsFront)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                if (currentTime - lastForwardDashTime < doubleTapInterval)
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
                 {
                     canWalk = false;
                     PerformFrontDash(new Vector2(1,0));
@@ -84,20 +121,24 @@ public class CharacterController : MonoBehaviour
                     lastForwardDashTime = currentTime;
                 }
             }
-            else if (Input.GetKey(KeyCode.RightArrow) && canWalk)
+            else if (Input.GetKey(KeyCode.RightArrow))
             {
-                canWalk = false;
                 if (currentTime - lastDirectionalInputTime > directionalInputDelay)
                 {
                     lastDirectionalInputTime = currentTime;
                     AddInput("F");
                 }
-                PerformWalk(Input.GetAxis("Horizontal"));
+
+                if (canWalk)
+                {
+                    canWalk = false;
+                    PerformWalk(1);
+                }
+                
                 
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                //_animator.SetBool("FORWARD_WALK", false);
                 if (currentTime - lastBackwardDashTime < doubleTapInterval)
                 {
                     if (currentTime - lastBackwardDashTime < doubleTapInterval && canDash)
@@ -120,6 +161,11 @@ public class CharacterController : MonoBehaviour
                 }
                 else
                 {
+                    if (currentTime - lastThrowInputTime > throwInputDelay)
+                    {
+                        lastThrowInputTime = currentTime;
+                        AddInput("THROW");
+                    }
                     PerformBlock();
                 }
             }
@@ -133,7 +179,7 @@ public class CharacterController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                if (currentTime - lastForwardDashTime < doubleTapInterval)
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
                 {
                     canWalk = false;
                     PerformFrontDash(new Vector2(-1,0));
@@ -145,13 +191,17 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.LeftArrow) && canWalk)
             {
-                canWalk = false;
                 if (currentTime - lastDirectionalInputTime > directionalInputDelay)
                 {
                     lastDirectionalInputTime = currentTime;
                     AddInput("F");
                 }
-                PerformWalk(Input.GetAxis("Horizontal"));
+                if (canWalk)
+                {
+                    canWalk = false;
+                    PerformWalk(-1);
+                }
+                
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -177,6 +227,11 @@ public class CharacterController : MonoBehaviour
                 }
                 else
                 {
+                    if (currentTime - lastThrowInputTime > throwInputDelay)
+                    {
+                        lastThrowInputTime = currentTime;
+                        AddInput("THROW");
+                    }
                     PerformBlock();
                 }
             }
@@ -201,12 +256,194 @@ public class CharacterController : MonoBehaviour
             }
         }
         
-        
-        
+        // TESTING
+        // if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
+        // if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
+        // if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
         // Combat input
         if (Input.GetKeyDown(KeyCode.Z) && canAttack) { AddInput("A"); }
         if (Input.GetKeyDown(KeyCode.X) && canAttack) { AddInput("B"); }
         if (Input.GetKeyDown(KeyCode.C) && canAttack) { AddInput("C"); }
+    }
+    
+    private void HandleInputP2()
+    {
+        float currentTime = Time.time;
+        lastInputTime = Time.time;
+        if (Input.GetKey(KeyCode.K))
+        {
+            if (currentTime - lastCrouchInputTime > CrouchInputDelay && !isCrouching)
+            {
+                lastCrouchInputTime = currentTime;
+                AddInput("D");
+            }
+            if (isGrounded)
+            {
+                PerformCrounch();
+            }
+        }else
+        {
+            isCrouching = false;
+            _animator.SetBool("CROUCH",false);
+        }
+        // Movement input
+        if (IsFront)
+        {
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
+                {
+                    canWalk = false;
+                    PerformFrontDash(new Vector2(1,0));
+                }
+                else
+                {
+                    lastForwardDashTime = currentTime;
+                }
+            }
+            else if (Input.GetKey(KeyCode.L))
+            {
+                if (currentTime - lastDirectionalInputTime > directionalInputDelay)
+                {
+                    lastDirectionalInputTime = currentTime;
+                    AddInput("F");
+                }
+
+                if (canWalk)
+                {
+                    canWalk = false;
+                    PerformWalk(1);
+                }
+                
+                
+            }
+            else if (Input.GetKeyDown(KeyCode.J))
+            {
+                if (currentTime - lastBackwardDashTime < doubleTapInterval)
+                {
+                    if (currentTime - lastBackwardDashTime < doubleTapInterval && canDash)
+                    {
+                        var direction = new Vector2(-1, 0); // Dash left
+                        canDash = false;
+                        PerformBackStep(direction);
+                    }
+                }
+                else
+                {
+                    lastBackwardDashTime = currentTime;
+                }
+            }
+            else if (Input.GetKey(KeyCode.J) && canBlock)
+            { 
+                if (Input.GetKey(KeyCode.I) && isGrounded)
+                {
+                    PerformBackwardJump(-1);
+                }
+                else
+                {
+                    if (currentTime - lastThrowInputTime > throwInputDelay)
+                    {
+                        lastThrowInputTime = currentTime;
+                        AddInput("THROW");
+                    }
+                    PerformBlock();
+                }
+            }
+            else
+            {
+                _animator.SetBool("FORWARD_WALK", false);
+                _animator.SetBool("GUARD", false);
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
+                {
+                    canWalk = false;
+                    PerformFrontDash(new Vector2(-1,0));
+                }
+                else
+                {
+                    lastForwardDashTime = currentTime;
+                }
+            }
+            else if (Input.GetKey(KeyCode.J) && canWalk)
+            {
+                if (currentTime - lastDirectionalInputTime > directionalInputDelay)
+                {
+                    lastDirectionalInputTime = currentTime;
+                    AddInput("F");
+                }
+                if (canWalk)
+                {
+                    canWalk = false;
+                    PerformWalk(-1);
+                }
+                
+            }
+            else if (Input.GetKeyDown(KeyCode.L))
+            {
+                if (currentTime - lastBackwardDashTime < doubleTapInterval)
+                {
+                    if (currentTime - lastBackwardDashTime < doubleTapInterval && canDash)
+                    {
+                        var direction = new Vector2(1, 0); // Dash left
+                        canDash = false;
+                        PerformBackStep(direction);
+                    }
+                }
+                else
+                {
+                    lastBackwardDashTime = currentTime;
+                }
+                
+            }else if (Input.GetKey(KeyCode.L) && canBlock)
+            { 
+                if (Input.GetKey(KeyCode.I) && isGrounded)
+                {
+                    PerformBackwardJump(1);
+                }
+                else
+                {
+                    if (currentTime - lastThrowInputTime > throwInputDelay)
+                    {
+                        lastThrowInputTime = currentTime;
+                        AddInput("THROW");
+                    }
+                    PerformBlock();
+                }
+            }
+            else
+            {
+                _animator.SetBool("FORWARD_WALK", false);
+                _animator.SetBool("GUARD", false);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (Mathf.Abs(rb.velocity.x) > 0 && isGrounded)
+            {
+                AddInput("U");
+                PerformForwardJump(rb.velocity.x > 0 ? 1 : -1);
+            }
+            else if (isGrounded)
+            {
+                AddInput("U");
+                PerformJump();
+            }
+        }
+        
+        // TESTING
+        // if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
+        // if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
+        // if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
+        // Combat input
+        if (Input.GetKeyDown(KeyCode.T) && canAttack) { AddInput("A"); }
+        if (Input.GetKeyDown(KeyCode.Y) && canAttack) { AddInput("B"); }
+        if (Input.GetKeyDown(KeyCode.U) && canAttack) { AddInput("C"); }
     }
     
 
@@ -214,24 +451,40 @@ public class CharacterController : MonoBehaviour
     {
         if (inputBuffer.Count >= MAX_BUFFER_SIZE)
         {
-            inputBuffer.RemoveAt(0); // Remove the oldest input
+            inputBuffer.RemoveAt(0);
         }
         inputBuffer.Add(action);
         Debug.Log("Input Added: " + action + ",\n Buffer: " + string.Join(", ", inputBuffer));
 
     }
 
+    private bool IsAttackInput(string input)
+    {
+        return input == "A" || input == "B";
+    }
+    private void TryExecuteSingleAction()
+    {
+        if (Time.time - lastInputTime > actionExecutionDelay)
+        {
+            if (IsAttackInput(inputBuffer.Last()))
+            {
+                ExecuteCombo(inputBuffer.Last());
+                inputBuffer.Remove(inputBuffer.Last());
+            }
+        }
+    }
     
     private void CheckState()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-        if (_state != State.Down)
+        if (state != State.Down)
         {
             if (isGrounded)
             {
                 if (isCrouching)
                 {
                     SetState(State.Crouch);
+                    _animator.SetBool("INAIR",false);
                 }
                 else
                 {
@@ -250,19 +503,20 @@ public class CharacterController : MonoBehaviour
     }
     private void CheckCombo()
     {
+        // if (inputBuffer.Count < 2)
+        // {
+        //     return; // Not enough inputs for a combo
+        // }
+
         var sortedCombos = combos.OrderByDescending(c => c.Value.Count);
 
         foreach (var combo in sortedCombos)
         {
-            if (inputBuffer.Count >= combo.Value.Count)
+            if (inputBuffer.Count >= combo.Value.Count && IsComboMatch(combo.Value))
             {
-                if (IsComboMatch(combo.Value))
-                {
-                    Debug.Log("Executing Combo: " + combo.Key);
-                    ExecuteCombo(combo.Key);
-                    inputBuffer.Clear();
-                    break;
-                }
+                Debug.Log("Executing Combo: " + combo.Key);
+                ExecuteCombo(combo.Key);
+                return; // Exit the loop after executing a combo
             }
         }
     }
@@ -270,7 +524,7 @@ public class CharacterController : MonoBehaviour
     private void ResetBuffer()
     {
         _timer += Time.deltaTime;
-        if (_timer > 0.5)
+        if (_timer > 2)
         {
             _timer = 0;
             inputBuffer.Clear();
@@ -285,23 +539,59 @@ public class CharacterController : MonoBehaviour
         }
         return true;
     }
-
+    
+    private void ExecuteGivenCombo(string comboName,State _state)
+    {
+        string action = "";
+        print(comboName);
+        switch (_state)
+        {
+            case State.Stand:
+                action = "STAND_" + comboName;
+                PerformActtack(action);
+                break;
+            case State.Air:
+                action = "AIR_" + comboName;
+                PerformActtack(action);
+                break;
+            case State.Crouch:
+                action = "CROUCH_" + comboName;
+                PerformActtack(action);
+                break;
+        }
+    }
     private void ExecuteCombo(string comboName)
     {
+        string action = "";
         print(comboName);
-        PerformActtack(comboName);
+        switch (state)
+        {
+            case State.Stand:
+                action = "STAND_" + comboName;
+                PerformActtack(action);
+                break;
+            case State.Air:
+                action = "AIR_" + comboName;
+                PerformActtack(action);
+                break;
+            case State.Crouch:
+                action = "CROUCH_" + comboName;
+                PerformActtack(action);
+                break;
+        }
     }
 
     private void SetState(State state)
     {
-        _state = state;
+        this.state = state;
     }
     
     private void PerformActtack(string actionname)
     {
-        if (canAttack)
+        if (canAttack && !isGuard)
         {
             _animator.SetTrigger(actionname);
+            canDash = false;
             canAttack = false;
             inputBuffer.Clear();
         }
@@ -311,10 +601,9 @@ public class CharacterController : MonoBehaviour
     {
         Vector2 movement = new Vector2(direction * speed, rb.velocity.y);
         rb.velocity = movement;
-        if (direction > 0)
-            transform.localScale = new Vector3(4, 4, 4);
 
         // Trigger walking animation
+        _animator.SetBool("GUARD", false);
         _animator.SetBool("FORWARD_WALK", true);
     }
 
@@ -336,10 +625,19 @@ public class CharacterController : MonoBehaviour
     {
         rb.velocity = new Vector2(0,0);
     }
-
+    // This is very hardcode for bug fixing
+    // Please don't try to use it too much
+    public void ResetTrigger()
+    {
+        foreach (var trigger in allTriggers)
+        {
+            _animator.ResetTrigger(trigger);
+        }
+    }
     private void PerformBlock()
     {
         // Blocking logic and animation trigger
+        _animator.SetBool("FORWARD_WALK", false);
         _animator.SetBool("GUARD",true);
         // Set canBlock to false if the block animation should only be triggered once per key press
     }
@@ -347,22 +645,54 @@ public class CharacterController : MonoBehaviour
     private void PerformJump()
     {
         // Jumping logic and animation trigger
-        _animator.SetTrigger("JUMP");
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        if (canJump)
+        {
+           _animator.SetTrigger("JUMP");
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce); 
+        }
     }
     
+    private void PerformCrounch()
+    {
+        isCrouching = true;
+        _animator.SetBool("CROUCH",true);
+    }
     private void PerformForwardJump(float direction)
     {
         // Apply both upward and forward force
-        Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
-        rb.velocity = forwardJumpVelocity;
-        _animator.SetTrigger("FORWARD_JUMP");
+        if (canJump)
+        {
+            Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
+            rb.velocity = forwardJumpVelocity;
+            _animator.SetTrigger("FORWARD_JUMP");
+        }
+        
     }
     
     private void PerformBackwardJump(float direction)
     {
         // Apply both upward and forward force
+        if (canJump)
+        {
+            Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
+            rb.velocity = forwardJumpVelocity;
+        }
+        
+    }
+
+    public void GetThrow()
+    {
+        float direction;
+        if (IsFront)
+        {
+            direction = -1;
+        }
+        else
+        {
+            direction = 1;
+        }
         Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
         rb.velocity = forwardJumpVelocity;
     }
+    
 }

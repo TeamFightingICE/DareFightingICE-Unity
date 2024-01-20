@@ -9,7 +9,7 @@ public class HitBoxController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (isActive && !hasHit && other.CompareTag("Enemy"))
+        if (isActive && !hasHit && other.CompareTag("Player"))
         {
             hasHit = true;
             // Handle collision, e.g., apply damage
