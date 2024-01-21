@@ -11,6 +11,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private GameObject spawnP2;
     [SerializeField] private GameObject LeftBorder;
     [SerializeField] private GameObject RightBorder;
+    [SerializeField] private float flipThreshold = 2.0f;
     private bool isStart = false;
     public List<GameObject> character;
     private float framelimit;
@@ -40,6 +41,10 @@ public class FightingController : MonoBehaviour
         zen2.transform.localScale = scale;
         zen1.GetComponent<CharacterController>().otherPlayer = zen2.GetComponent<CharacterController>();
         zen2.GetComponent<CharacterController>().otherPlayer = zen1.GetComponent<CharacterController>();
+        zen1.tag = "Player1";
+        zen2.tag = "Player2";
+        zen1.GetComponent<CharacterController>().SetTarget("Player2");
+        zen2.GetComponent<CharacterController>().SetTarget("Player1");
         character.Add(zen1);
         character.Add(zen2);
         _display.player1 = zen1.GetComponent<CharacterController>();
@@ -49,7 +54,7 @@ public class FightingController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (framelimit <= 0)
+        if (framelimit <= 0 || CheckField())
         {
             End();
         }
@@ -74,7 +79,21 @@ public class FightingController : MonoBehaviour
         isStart = false;
         SetupScene();
     }
-    
+
+    bool CheckField()
+    {
+        GameObject player1 = character[0];
+        GameObject player2 = character[1];
+        if (player1.GetComponent<CharacterController>().Hp <= 0 || player2.GetComponent<CharacterController>().Hp <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
     private void HandlePositionOverlap()
     {
         if (character.Count < 2) return; // Ensure there are two characters
@@ -82,38 +101,63 @@ public class FightingController : MonoBehaviour
         GameObject player1 = character[0];
         GameObject player2 = character[1];
 
-        // Calculate distances to borders
-        float player1DistanceToLeft = Mathf.Abs(player1.transform.position.x - LeftBorder.transform.position.x);
-        float player1DistanceToRight = Mathf.Abs(player1.transform.position.x - RightBorder.transform.position.x);
-        float player2DistanceToLeft = Mathf.Abs(player2.transform.position.x - LeftBorder.transform.position.x);
-        float player2DistanceToRight = Mathf.Abs(player2.transform.position.x - RightBorder.transform.position.x);
+        // Get positions of the players
+        float player1Position = player1.transform.position.x;
+        float player2Position = player2.transform.position.x;
 
-        // Determine if players need to flip based on their relative positions to the borders
-        if (player1DistanceToLeft < player2DistanceToLeft && !player1.GetComponent<CharacterController>().IsFront)
-        {
-            FlipCharacter(player1);
-        }
-        else if (player1DistanceToRight < player2DistanceToRight && player1.GetComponent<CharacterController>().IsFront)
-        {
-            FlipCharacter(player1);
-        }
+        // Calculate the distance between the players
+        float distanceBetweenPlayers = Mathf.Abs(player1Position - player2Position);
 
-        if (player2DistanceToLeft < player1DistanceToLeft && !player2.GetComponent<CharacterController>().IsFront)
+        // Only flip characters if they are beyond the threshold distance
+        if (distanceBetweenPlayers > flipThreshold)
         {
-            FlipCharacter(player2);
-        }
-        else if (player2DistanceToRight < player1DistanceToRight && player2.GetComponent<CharacterController>().IsFront)
-        {
-            FlipCharacter(player2);
+            // Determine if players need to flip based on their relative positions
+            if (player1Position < player2Position && !player1.GetComponent<CharacterController>().IsFront)
+            {
+                FlipCharacter(player1);
+            }
+            else if (player1Position > player2Position && player1.GetComponent<CharacterController>().IsFront)
+            {
+                FlipCharacter(player1);
+            }
+
+            if (player2Position < player1Position && !player2.GetComponent<CharacterController>().IsFront)
+            {
+                FlipCharacter(player2);
+            }
+            else if (player2Position > player1Position && player2.GetComponent<CharacterController>().IsFront)
+            {
+                FlipCharacter(player2);
+            }
         }
     }
 
+    // private void FlipCharacter(GameObject character)
+    // {
+    //     CharacterController charController = character.GetComponent<CharacterController>();
+    //     charController.IsFront = !charController.IsFront;
+    //     Vector3 scale = character.transform.localScale;
+    //     scale.x *= -1;
+    //     character.transform.localScale = scale;
+    // }
+    
     private void FlipCharacter(GameObject character)
     {
-        CharacterController charController = character.GetComponent<CharacterController>();
-        charController.IsFront = !charController.IsFront;
-        Vector3 scale = character.transform.localScale;
-        scale.x *= -1;
-        character.transform.localScale = scale;
+        SpriteRenderer spriteRenderer = character.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+
+            // Optionally, adjust facing direction property if you have one
+            CharacterController charController = character.GetComponent<CharacterController>();
+            if (charController != null)
+            {
+                charController.IsFront = !charController.IsFront;
+            }
+        }
+        else
+        {
+            Debug.LogError("SpriteRenderer not found on " + character.name);
+        }
     }
 }

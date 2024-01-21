@@ -1,30 +1,52 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class HitBoxController : MonoBehaviour
 {
     public bool isActive = false;
-    private bool hasHit = false;
-
-    void OnTriggerEnter(Collider other)
+    public string target = "";
+    public bool isHit = false;
+    public bool isThrow = false;
+    public int damage;
+    private void OnEnable()
     {
-        if (isActive && !hasHit && other.CompareTag("Player"))
+        Activate();
+    }
+
+    private void OnDisable()
+    {
+        Deactivate();
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.LogWarning("Hit");
+        if (isActive && other.gameObject.CompareTag(target))
         {
-            hasHit = true;
             // Handle collision, e.g., apply damage
-            Debug.Log("Hit detected on enemy with " + gameObject.name);
+            if (isHit)
+            {
+                other.GetComponent<CharacterController>().TakeHit(damage);
+            }else if (isThrow)
+            {
+                other.GetComponent<CharacterController>().TakeThorw(damage);
+            }
         }
     }
 
     public void Activate()
     {
         isActive = true;
-        hasHit = false;
     }
 
     public void Deactivate()
     {
+        isHit = false;
+        isThrow = false;
+        damage = 0;
         isActive = false;
     }
 }

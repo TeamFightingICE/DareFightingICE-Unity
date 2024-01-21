@@ -54,7 +54,13 @@ public class CharacterController : MonoBehaviour
     private float lastBackwardDashTime = -1f;
     private float keyPressTime;
     private float tapThreshold = 0.2f;
+    
     [SerializeField]private float dashforce = 0;
+    // HitBoxController
+    [SerializeField] private HitBoxController leftHand;
+    [SerializeField] private HitBoxController rightHand;
+    [SerializeField] private HitBoxController leftFoot;
+    [SerializeField] private HitBoxController rightFoot;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -701,5 +707,24 @@ public class CharacterController : MonoBehaviour
         Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
         rb.velocity = forwardJumpVelocity;
     }
-    
+
+    public void SetTarget(string target)
+    {
+        leftHand.target = target;
+        rightHand.target = target;
+        leftFoot.target = target;
+        rightFoot.target = target;
+    }
+
+    public void TakeHit(int damage)
+    {
+        Hp -= damage;
+        _animator.SetTrigger("GETHIT");
+    }
+
+    public void TakeThorw(int damage)
+    {
+        Hp -= damage;
+        _animator.SetTrigger("GET_THROW");
+    }
 }

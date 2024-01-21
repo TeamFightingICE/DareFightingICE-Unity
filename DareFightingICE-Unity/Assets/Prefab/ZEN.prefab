@@ -400,6 +400,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
+  target: 
+  isHit: 0
+  isThrow: 0
+  damage: 0
 --- !u!1 &1649894811423558217
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,6 +676,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
+  target: 
+  isHit: 0
+  isThrow: 0
+  damage: 0
 --- !u!1 &1852177334383753548
 GameObject:
   m_ObjectHideFlags: 0
@@ -2425,6 +2433,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
+  target: 
+  isHit: 0
+  isThrow: 0
+  damage: 0
 --- !u!1 &5185717809364880662
 GameObject:
   m_ObjectHideFlags: 0
@@ -4535,6 +4547,10 @@ MonoBehaviour:
   state: 0
   _animator: {fileID: 3752630490052007620}
   dashforce: 10
+  leftHand: {fileID: 5974496076977753948}
+  rightHand: {fileID: 2821801996554069094}
+  leftFoot: {fileID: 4159632758813826161}
+  rightFoot: {fileID: 1687300829348452}
 --- !u!50 &6981872168070382828
 Rigidbody2D:
   serializedVersion: 4
@@ -5046,6 +5062,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
+  target: 
+  isHit: 0
+  isThrow: 0
+  damage: 0
 --- !u!1 &7235656671368651350
 GameObject:
   m_ObjectHideFlags: 0
