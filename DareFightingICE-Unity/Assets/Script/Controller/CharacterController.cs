@@ -49,8 +49,11 @@ public class CharacterController : MonoBehaviour
     private float throwInputDelay = 0.1f;
     
     private float lastForwardDashTime = -1f;
-    private float lastBackwardDashTime = -1f;
     private float doubleTapInterval = 0.3f;
+    
+    private float lastBackwardDashTime = -1f;
+    private float keyPressTime;
+    private float tapThreshold = 0.2f;
     [SerializeField]private float dashforce = 0;
     void Start()
     {
@@ -139,19 +142,7 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                if (currentTime - lastBackwardDashTime < doubleTapInterval)
-                {
-                    if (currentTime - lastBackwardDashTime < doubleTapInterval && canDash)
-                    {
-                        var direction = new Vector2(-1, 0); // Dash left
-                        canDash = false;
-                        PerformBackStep(direction);
-                    }
-                }
-                else
-                {
-                    lastBackwardDashTime = currentTime;
-                }
+                keyPressTime = currentTime;
             }
             else if (Input.GetKey(KeyCode.LeftArrow) && canBlock)
             { 
@@ -166,6 +157,19 @@ public class CharacterController : MonoBehaviour
                         lastThrowInputTime = currentTime;
                         AddInput("THROW");
                     }
+                    PerformBlock();
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.LeftArrow))
+            {
+                if (currentTime - keyPressTime <= tapThreshold && canDash)
+                {
+                    var direction = new Vector2(-1, 0);
+                    PerformBackStep(direction);
+                    canDash = false;
+                }
+                else if (currentTime - keyPressTime > tapThreshold && canBlock)
+                {
                     PerformBlock();
                 }
             }
@@ -205,21 +209,9 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                if (currentTime - lastBackwardDashTime < doubleTapInterval)
-                {
-                    if (currentTime - lastBackwardDashTime < doubleTapInterval && canDash)
-                    {
-                        var direction = new Vector2(1, 0); // Dash left
-                        canDash = false;
-                        PerformBackStep(direction);
-                    }
-                }
-                else
-                {
-                    lastBackwardDashTime = currentTime;
-                }
-                
-            }else if (Input.GetKey(KeyCode.RightArrow) && canBlock)
+                keyPressTime = currentTime;
+            }
+            else if (Input.GetKey(KeyCode.RightArrow) && canBlock)
             { 
                 if (Input.GetKey(KeyCode.UpArrow) && isGrounded)
                 {
@@ -232,6 +224,19 @@ public class CharacterController : MonoBehaviour
                         lastThrowInputTime = currentTime;
                         AddInput("THROW");
                     }
+                    PerformBlock();
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.RightArrow))
+            {
+                if (currentTime - keyPressTime <= tapThreshold && canDash)
+                {
+                    var direction = new Vector2(1, 0);
+                    PerformBackStep(direction);
+                    canDash = false;
+                }
+                else if (currentTime - keyPressTime > tapThreshold && canBlock)
+                {
                     PerformBlock();
                 }
             }
@@ -319,19 +324,7 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.J))
             {
-                if (currentTime - lastBackwardDashTime < doubleTapInterval)
-                {
-                    if (currentTime - lastBackwardDashTime < doubleTapInterval && canDash)
-                    {
-                        var direction = new Vector2(-1, 0); // Dash left
-                        canDash = false;
-                        PerformBackStep(direction);
-                    }
-                }
-                else
-                {
-                    lastBackwardDashTime = currentTime;
-                }
+                keyPressTime = currentTime;
             }
             else if (Input.GetKey(KeyCode.J) && canBlock)
             { 
@@ -346,6 +339,19 @@ public class CharacterController : MonoBehaviour
                         lastThrowInputTime = currentTime;
                         AddInput("THROW");
                     }
+                    PerformBlock();
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.J))
+            {
+                if (currentTime - keyPressTime <= tapThreshold && canDash)
+                {
+                    var direction = new Vector2(-1, 0);
+                    PerformBackStep(direction);
+                    canDash = false;
+                }
+                else if (currentTime - keyPressTime > tapThreshold && canBlock)
+                {
                     PerformBlock();
                 }
             }
@@ -385,21 +391,9 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.L))
             {
-                if (currentTime - lastBackwardDashTime < doubleTapInterval)
-                {
-                    if (currentTime - lastBackwardDashTime < doubleTapInterval && canDash)
-                    {
-                        var direction = new Vector2(1, 0); // Dash left
-                        canDash = false;
-                        PerformBackStep(direction);
-                    }
-                }
-                else
-                {
-                    lastBackwardDashTime = currentTime;
-                }
-                
-            }else if (Input.GetKey(KeyCode.L) && canBlock)
+                keyPressTime = currentTime;
+            }
+            else if (Input.GetKey(KeyCode.L) && canBlock)
             { 
                 if (Input.GetKey(KeyCode.I) && isGrounded)
                 {
@@ -412,6 +406,19 @@ public class CharacterController : MonoBehaviour
                         lastThrowInputTime = currentTime;
                         AddInput("THROW");
                     }
+                    PerformBlock();
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.L))
+            {
+                if (currentTime - keyPressTime <= tapThreshold && canDash)
+                {
+                    var direction = new Vector2(1, 0);
+                    PerformBackStep(direction);
+                    canDash = false;
+                }
+                else if (currentTime - keyPressTime > tapThreshold && canBlock)
+                {
                     PerformBlock();
                 }
             }
