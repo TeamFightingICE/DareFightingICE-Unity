@@ -11,6 +11,10 @@ public class HitBoxController : MonoBehaviour
     public bool isHit = false;
     public bool isThrow = false;
     public int damage;
+    public GameObject hitEffect1;
+    public GameObject hitEffect2;
+    public GameObject hitEffect3;
+    public GameObject hitEffect4;
     private void OnEnable()
     {
         Activate();
@@ -26,6 +30,10 @@ public class HitBoxController : MonoBehaviour
         Debug.LogWarning("Hit");
         if (isActive && other.gameObject.CompareTag(target))
         {
+
+            //Call hit effect when character gets hit.
+            Instantiate(hitEffect1, this.transform,false);
+
             // Handle collision, e.g., apply damage
             if (isHit)
             {
