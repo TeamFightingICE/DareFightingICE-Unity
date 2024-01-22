@@ -957,6 +957,7 @@ MonoBehaviour:
   spawnP2: {fileID: 421149094}
   LeftBorder: {fileID: 1147963971}
   RightBorder: {fileID: 340325588}
+  flipThreshold: 1
   character: []
   _display: {fileID: 1195152250}
 --- !u!1 &1636582127
