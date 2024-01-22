@@ -2356,10 +2356,10 @@ MonoBehaviour:
   p2Hp: {fileID: 1720948662}
   roundLimit: {fileID: 970467624}
   frameLimit: {fileID: 908303327}
-  slowFlag: {fileID: 0}
-  debugFlag: {fileID: 0}
-  frameFlag: {fileID: 0}
-  muteFlag: {fileID: 0}
+  slowFlag: {fileID: 345497991}
+  debugFlag: {fileID: 957769030}
+  frameFlag: {fileID: 314261522}
+  muteFlag: {fileID: 380911230}
 --- !u!1 &809799223
 GameObject:
   m_ObjectHideFlags: 0

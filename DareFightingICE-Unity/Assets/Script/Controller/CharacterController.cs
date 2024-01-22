@@ -26,6 +26,7 @@ public class CharacterController : MonoBehaviour
     private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
     private float actionExecutionDelay = 0.2f;
     private float lastInputTime;
+    private float bufferResetDelay = 0.01f;
     
     // Character Control
     public float speed = 5.0f;
@@ -40,7 +41,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Animator _animator;
     private float _timer = 0f;
     private float lastDirectionalInputTime = 0.5f;
-    private float directionalInputDelay = 0.1f;
+    private float directionalInputDelay = 0f;
     
     private float lastCrouchInputTime = 0.5f;
     private float CrouchInputDelay = 0.1f;
@@ -91,14 +92,12 @@ public class CharacterController : MonoBehaviour
         }
         CheckCombo();
         ResetBuffer();
-        //TryExecuteSingleAction();
 
     }
 
     private void HandleInputP1()
     {
         float currentTime = Time.time;
-        lastInputTime = Time.time;
         if (Input.GetKey(KeyCode.DownArrow))
         {
             if (currentTime - lastCrouchInputTime > CrouchInputDelay && !isCrouching)
@@ -280,7 +279,6 @@ public class CharacterController : MonoBehaviour
     private void HandleInputP2()
     {
         float currentTime = Time.time;
-        lastInputTime = Time.time;
         if (Input.GetKey(KeyCode.K))
         {
             if (currentTime - lastCrouchInputTime > CrouchInputDelay && !isCrouching)
@@ -462,29 +460,14 @@ public class CharacterController : MonoBehaviour
 
     private void AddInput(string action)
     {
+        lastInputTime = Time.time;
         if (inputBuffer.Count >= MAX_BUFFER_SIZE)
         {
             inputBuffer.RemoveAt(0);
         }
         inputBuffer.Add(action);
-        Debug.Log("Input Added: " + action + ",\n Buffer: " + string.Join(", ", inputBuffer));
+        //Debug.Log("Input Added: " + action + ",\n Buffer: " + string.Join(", ", inputBuffer));
 
-    }
-
-    private bool IsAttackInput(string input)
-    {
-        return input == "A" || input == "B";
-    }
-    private void TryExecuteSingleAction()
-    {
-        if (Time.time - lastInputTime > actionExecutionDelay)
-        {
-            if (IsAttackInput(inputBuffer.Last()))
-            {
-                ExecuteCombo(inputBuffer.Last());
-                inputBuffer.Remove(inputBuffer.Last());
-            }
-        }
     }
     
     private void CheckState()
@@ -527,7 +510,7 @@ public class CharacterController : MonoBehaviour
         {
             if (inputBuffer.Count >= combo.Value.Count && IsComboMatch(combo.Value))
             {
-                Debug.Log("Executing Combo: " + combo.Key);
+                //Debug.Log("Executing Combo: " + combo.Key);
                 ExecuteCombo(combo.Key);
                 return; // Exit the loop after executing a combo
             }
@@ -536,10 +519,8 @@ public class CharacterController : MonoBehaviour
 
     private void ResetBuffer()
     {
-        _timer += Time.deltaTime;
-        if (_timer > 2)
+        if (Time.time - lastInputTime > bufferResetDelay)
         {
-            _timer = 0;
             inputBuffer.Clear();
         }
     }
