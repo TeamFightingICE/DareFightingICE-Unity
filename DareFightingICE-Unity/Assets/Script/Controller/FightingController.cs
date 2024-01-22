@@ -132,32 +132,32 @@ public class FightingController : MonoBehaviour
         }
     }
 
-    // private void FlipCharacter(GameObject character)
-    // {
-    //     CharacterController charController = character.GetComponent<CharacterController>();
-    //     charController.IsFront = !charController.IsFront;
-    //     Vector3 scale = character.transform.localScale;
-    //     scale.x *= -1;
-    //     character.transform.localScale = scale;
-    // }
-    
     private void FlipCharacter(GameObject character)
     {
-        SpriteRenderer spriteRenderer = character.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.flipX = !spriteRenderer.flipX;
-
-            // Optionally, adjust facing direction property if you have one
-            CharacterController charController = character.GetComponent<CharacterController>();
-            if (charController != null)
-            {
-                charController.IsFront = !charController.IsFront;
-            }
-        }
-        else
-        {
-            Debug.LogError("SpriteRenderer not found on " + character.name);
-        }
+        CharacterController charController = character.GetComponent<CharacterController>();
+        charController.IsFront = !charController.IsFront;
+        Vector3 scale = character.transform.localScale;
+        scale.x *= -1;
+        character.transform.localScale = scale;
     }
+    
+    // private void FlipCharacter(GameObject character)
+    // {
+    //     SpriteRenderer spriteRenderer = character.GetComponent<SpriteRenderer>();
+    //     if (spriteRenderer != null)
+    //     {
+    //         spriteRenderer.flipX = !spriteRenderer.flipX;
+    //
+    //         // Optionally, adjust facing direction property if you have one
+    //         CharacterController charController = character.GetComponent<CharacterController>();
+    //         if (charController != null)
+    //         {
+    //             charController.IsFront = !charController.IsFront;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         Debug.LogError("SpriteRenderer not found on " + character.name);
+    //     }
+    // }
 }
