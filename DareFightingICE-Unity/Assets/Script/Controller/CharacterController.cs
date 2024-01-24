@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
+    /// <summary>
+    /// Character Info contain information to send to FightingController
+    /// Action Flags are hardcode bridge that connect animator with this script
+    /// Combo System
+    /// MAX_BUFFER_SIZE to control max input inside buffer when it exceed it will start remove first buffer
+    /// allTrigger is to control animation when add more trigger inside animator please add those trigger here too
+    /// Reset Buffer time is to clear buffer after player stop press button
+    /// </summary>
+    
     // Character Info
     public bool PlayerNumber{ get; set; }
     public bool IsFront { get; set; }
@@ -24,7 +33,6 @@ public class CharacterController : MonoBehaviour
     private Dictionary<string, List<string>> combos = new Dictionary<string, List<string>>();
     private int MAX_BUFFER_SIZE = 7;
     private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
-    private float actionExecutionDelay = 0.2f;
     private float lastInputTime;
     private float bufferResetDelay = 0.01f;
     

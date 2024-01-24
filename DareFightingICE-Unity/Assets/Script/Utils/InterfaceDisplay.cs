@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class InterfaceDisplay : MonoBehaviour
 {
+    /// <summary>
+    /// This is for user display (Hp and energy bar in future) it get data from FightingController
+    /// </summary>
     public CharacterController player1; // Reference to player 1's controller
     public CharacterController player2; // Reference to player 2's controller
     public float currentFrame;

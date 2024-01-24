@@ -9,6 +9,9 @@ public enum State
     Air,
     Down,
 }
+/// <summary>
+/// This singleton used to carry all setting from start and launch scene to gameplay
+/// </summary>
 public class GameSetting : Singleton<GameSetting>
 {
     public int p1Hp;

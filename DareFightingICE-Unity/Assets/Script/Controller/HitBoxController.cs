@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
-
+/// <summary>
+/// This script inside HitBox you can control it damage type of damage directly inside animation
+/// </summary>
 public class HitBoxController : MonoBehaviour
 {
     public bool isActive = false;

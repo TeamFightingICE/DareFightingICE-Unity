@@ -3,6 +3,9 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// This used for control keyboard inside launch and start only
+/// </summary>
 public class UIKeyboardControl : MonoBehaviour
 {
     public Selectable firstButton; // Assign this in the inspector with your first button

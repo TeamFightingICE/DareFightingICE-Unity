@@ -8,6 +8,9 @@ using UnityEngine.UI;
 
 public class LaunchController : MonoBehaviour
 {
+    /// <summary>
+    /// This script use to collect every input inside launch scene to GameSetting and FlagSetting
+    /// </summary>
     [SerializeField] private TMP_InputField p1Hp;
     [SerializeField] private TMP_InputField p2Hp;
     [SerializeField] private TMP_InputField roundLimit;

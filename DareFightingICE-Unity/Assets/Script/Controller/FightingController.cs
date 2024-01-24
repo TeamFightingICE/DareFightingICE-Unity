@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class FightingController : MonoBehaviour
 {
+    /// <summary>
+    /// Control everything in FightingScene
+    /// include timer ending and flip character
+    /// </summary>
     [SerializeField] private GameObject zen;
     [SerializeField] private GameObject spawnP1;
     [SerializeField] private GameObject spawnP2;
@@ -157,7 +161,7 @@ public class FightingController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("SpriteRenderer not found on " + character.name);
+            //Debug.LogError("SpriteRenderer not found on " + character.name);
         }
     }
 }
