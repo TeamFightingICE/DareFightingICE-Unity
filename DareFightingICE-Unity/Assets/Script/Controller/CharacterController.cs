@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CharacterController : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class CharacterController : MonoBehaviour
     private int MAX_BUFFER_SIZE = 7;
     private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
     private float lastInputTime;
-    private float bufferResetDelay = 0.01f;
+    private float bufferResetDelay = 0.1f;
     
     // Character Control
     public float speed = 5.0f;
@@ -47,7 +48,8 @@ public class CharacterController : MonoBehaviour
     public bool isCrouching = false;
     public State state = State.Stand;
     [SerializeField] private Animator _animator;
-    private float _timer = 0f;
+    private float jumpTimer = 0f;
+    [SerializeField]private float jumpDelay = 0.1f;
     private float lastDirectionalInputTime = 0.5f;
     private float directionalInputDelay = 0f;
     
@@ -70,6 +72,9 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private HitBoxController rightHand;
     [SerializeField] private HitBoxController leftFoot;
     [SerializeField] private HitBoxController rightFoot;
+    
+    // SoundControl
+    [SerializeField] private GameObject counchSound;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -159,7 +164,7 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.LeftArrow) && canBlock)
             { 
-                if (Input.GetKey(KeyCode.UpArrow) && isGrounded)
+                if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
                 {
                     PerformBackwardJump(-1);
                 }
@@ -226,7 +231,7 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.RightArrow) && canBlock)
             { 
-                if (Input.GetKey(KeyCode.UpArrow) && isGrounded)
+                if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
                 {
                     PerformBackwardJump(1);
                 }
@@ -340,7 +345,7 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.J) && canBlock)
             { 
-                if (Input.GetKey(KeyCode.I) && isGrounded)
+                if (Input.GetKeyDown(KeyCode.I) && isGrounded)
                 {
                     PerformBackwardJump(-1);
                 }
@@ -407,7 +412,7 @@ public class CharacterController : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.L) && canBlock)
             { 
-                if (Input.GetKey(KeyCode.I) && isGrounded)
+                if (Input.GetKeyDown(KeyCode.I) && isGrounded)
                 {
                     PerformBackwardJump(1);
                 }
@@ -493,6 +498,15 @@ public class CharacterController : MonoBehaviour
                 else
                 {
                     SetState(State.Stand);
+                    if (jumpTimer > 0)
+                    {
+                        jumpTimer -= Time.deltaTime;
+                        canJump = false;
+                    }
+                    else
+                    {
+                        canJump = true;
+                    }
                     _animator.SetBool("INAIR",false);
                 }
             }
@@ -650,14 +664,25 @@ public class CharacterController : MonoBehaviour
         if (canJump)
         {
            _animator.SetTrigger("JUMP");
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce); 
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            jumpTimer = jumpDelay;
+            canJump = false;
         }
     }
     
     private void PerformCrounch()
     {
+        if (!isCrouching)
+        {
+            counchSound.SetActive(true);
+        }
         isCrouching = true;
         _animator.SetBool("CROUCH",true);
+    }
+
+    public void ResetCounch()
+    {
+        counchSound.SetActive(false);
     }
     private void PerformForwardJump(float direction)
     {
@@ -667,6 +692,8 @@ public class CharacterController : MonoBehaviour
             Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
             rb.velocity = forwardJumpVelocity;
             _animator.SetTrigger("FORWARD_JUMP");
+            jumpTimer = jumpDelay;
+            canJump = false;
         }
         
     }
@@ -678,6 +705,9 @@ public class CharacterController : MonoBehaviour
         {
             Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
             rb.velocity = forwardJumpVelocity;
+            _animator.SetTrigger("FORWARD_JUMP");
+            jumpTimer = jumpDelay;
+            canJump = false;
         }
         
     }
