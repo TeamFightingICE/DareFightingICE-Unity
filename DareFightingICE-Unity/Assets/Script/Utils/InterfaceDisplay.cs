@@ -33,6 +33,10 @@ public class InterfaceDisplay : MonoBehaviour
         string player1HpText = "Player 1 HP: " + player1.Hp;
         string player2HpText = "Player 2 HP: " + player2.Hp;
         string frameLimitText = "Frame Limit: " + currentFrame;
+        string player1Energy = "Player 1 Energy: " + player1.Energy;
+        string player2Energy = "Player 2 Energy: " + player2.Energy;
+        string player1Combo = "Player 1 Combo: " + player1.currentCombo;
+        string player2Combo = "Player 2 Combo: " + player2.currentCombo;
 
         // Set up the style for the GUI
         GUIStyle style = new GUIStyle();
@@ -43,6 +47,6 @@ public class InterfaceDisplay : MonoBehaviour
         style.normal.textColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
 
         // Draw the information strings on the screen
-        GUI.Label(rect, fpsText + "\n" + player1HpText + "\n" + player2HpText + "\n" + frameLimitText, style);
+        GUI.Label(rect, fpsText + "\n" + player1HpText + "\n" + player2HpText + "\n" +player1Energy + "\n" + player2Energy + "\n" + player1Combo + "\n" + player2Combo + "\n" + frameLimitText, style);
     }
 }

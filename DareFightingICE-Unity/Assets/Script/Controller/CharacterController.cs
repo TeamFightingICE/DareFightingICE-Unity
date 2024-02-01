@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -34,8 +35,13 @@ public class CharacterController : MonoBehaviour
     private Dictionary<string, List<string>> combos = new Dictionary<string, List<string>>();
     private int MAX_BUFFER_SIZE = 7;
     private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
+    private string[] comboTriggers = {"STAND_F_D_DFA","STAND_F_D_DFB","STAND_D_DB_BA","STAND_D_DB_BB","STAND_D_DF_FA","STAND_D_DF_FB","STAND_D_DF_FC","AIR_D_DF_FB","AIR_F_D_DFA","AIR_F_D_DFB","AIR_D_DB_BA","AIR_D_DB_BB","AIR_D_DF_FA"};
     private float lastInputTime;
     private float bufferResetDelay = 0.1f;
+    
+    public int currentCombo = 0;
+    private float timeSinceLastHit = 0f;
+    private float comboResetTime = 0.5f;
     
     // Character Control
     public float speed = 5.0f;
@@ -78,7 +84,15 @@ public class CharacterController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        
         combos.Add("F_D_DFA", new List<string> {"F","D","D","F","A"});
+        combos.Add("F_D_DFB", new List<string> {"F","D","D","F","B"});
+        combos.Add("D_DB_BA", new List<string> {"D","D","B","B","A"});
+        combos.Add("D_DB_BB", new List<string> {"D","D","B","B","B"});
+        combos.Add("D_DF_FA", new List<string> {"D","D","F","F","A"});
+        combos.Add("D_DF_FB", new List<string> {"D","D","F","F","B"});
+        combos.Add("D_DF_FC", new List<string> {"D","D","F","F","C"});
+        
         combos.Add("FA", new List<string> {"F","A"});
         combos.Add("FB", new List<string> {"F","B"});
         combos.Add("DA", new List<string> {"D","A"});
@@ -105,7 +119,7 @@ public class CharacterController : MonoBehaviour
         }
         CheckCombo();
         ResetBuffer();
-
+        UpdateComboTimer();
     }
 
     private void HandleInputP1()
@@ -283,6 +297,34 @@ public class CharacterController : MonoBehaviour
         // if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
         // if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
         // if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
+        if (Input.GetKeyDown(KeyCode.Q) && canAttack)
+        {
+            ExecuteGivenCombo("F_D_DFA");
+        }
+        if (Input.GetKeyDown(KeyCode.W) && canAttack)
+        {
+            ExecuteGivenCombo("F_D_DFB");
+        }
+        if (Input.GetKeyDown(KeyCode.E) && canAttack)
+        {
+            ExecuteGivenCombo("D_DB_BA");
+        }
+        if (Input.GetKeyDown(KeyCode.R) && canAttack)
+        {
+            ExecuteGivenCombo("D_DB_BB");
+        }
+        if (Input.GetKeyDown(KeyCode.A) && canAttack)
+        {
+            ExecuteGivenCombo("D_DF_FA");
+        }
+        if (Input.GetKeyDown(KeyCode.S) && canAttack)
+        {
+            ExecuteGivenCombo("D_DF_FB");
+        }
+        if (Input.GetKeyDown(KeyCode.D) && canAttack)
+        {
+            ExecuteGivenCombo("D_DF_FC");
+        }
         // Combat input
         if (Input.GetKeyDown(KeyCode.Z) && canAttack) { AddInput("A"); }
         if (Input.GetKeyDown(KeyCode.X) && canAttack) { AddInput("B"); }
@@ -546,6 +588,14 @@ public class CharacterController : MonoBehaviour
             inputBuffer.Clear();
         }
     }
+
+    public void ResetSpacialCombo()
+    {
+        foreach (var trigger in comboTriggers)
+        {
+            _animator.ResetTrigger(trigger);
+        }
+    }
     private bool IsComboMatch(List<string> comboSequence)
     {
         for (int i = 0; i < comboSequence.Count; i++)
@@ -556,11 +606,11 @@ public class CharacterController : MonoBehaviour
         return true;
     }
     
-    private void ExecuteGivenCombo(string comboName,State _state)
+    private void ExecuteGivenCombo(string comboName)
     {
         string action = "";
         print(comboName);
-        switch (_state)
+        switch (state)
         {
             case State.Stand:
                 action = "STAND_" + comboName;
@@ -729,21 +779,64 @@ public class CharacterController : MonoBehaviour
 
     public void SetTarget(string target)
     {
+        leftHand._characterController = this;
+        rightHand._characterController = this;
+        leftFoot._characterController = this;
+        rightFoot._characterController = this;
+        
         leftHand.target = target;
         rightHand.target = target;
         leftFoot.target = target;
         rightFoot.target = target;
     }
 
-    public void TakeHit(int damage)
+    public void TakeHit(int damage,int getEnegy,int guardDamage,int guardEnergy)
     {
-        Hp -= damage;
+        if (isGuard)
+        {
+            Hp -= guardDamage;
+            Energy += guardEnergy;
+        }
+        else
+        {
+            Hp -= damage;
+            Energy += getEnegy;
+        }
         _animator.SetTrigger("GETHIT");
     }
 
-    public void TakeThorw(int damage)
+    public void TakeThorw(int damage,int getEnegy)
     {
         Hp -= damage;
+        Energy += getEnegy;
         _animator.SetTrigger("GET_THROW");
+    }
+
+    public void GetReward(int energy)
+    {
+        timeSinceLastHit = 0f;
+        if (currentCombo < 9)
+        {
+            currentCombo ++;
+        }
+        else
+        {
+            currentCombo = 9;
+        }
+        this.Energy += energy;
+    }
+
+    private void ResetCombo()
+    {
+        currentCombo = 0;
+    }
+
+    private void UpdateComboTimer()
+    {
+        timeSinceLastHit += Time.deltaTime;
+        if (timeSinceLastHit >= comboResetTime)
+        {
+            ResetCombo();
+        }
     }
 }

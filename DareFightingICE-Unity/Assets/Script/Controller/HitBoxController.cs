@@ -8,11 +8,16 @@ using UnityEngine;
 /// </summary>
 public class HitBoxController : MonoBehaviour
 {
+    public CharacterController _characterController;
     public bool isActive = false;
     public string target = "";
     public bool isHit = false;
     public bool isThrow = false;
     public int damage;
+    public int getEnergy;
+    public int guardDamage;
+    public int guardEnergy;
+    public int giveEnergy;
     public GameObject hitEffect1;
     public GameObject hitEffect2;
     public GameObject hitEffect3;
@@ -32,17 +37,25 @@ public class HitBoxController : MonoBehaviour
         Debug.LogWarning("Hit");
         if (isActive && other.gameObject.CompareTag(target))
         {
-
             //Call hit effect when character gets hit.
-            Instantiate(hitEffect1, this.transform,false);
+            int tempDamage = damage;
+            print(_characterController.currentCombo);
+            if (_characterController.currentCombo > 3)
+            {
+                tempDamage += (int)(5 * (4f / _characterController.currentCombo));
+                print(tempDamage);
+            }
+            ComboChecker(_characterController.currentCombo);
 
             // Handle collision, e.g., apply damage
             if (isHit)
             {
-                other.GetComponent<CharacterController>().TakeHit(damage);
+                _characterController.GetReward(giveEnergy);
+                other.GetComponent<CharacterController>().TakeHit(tempDamage,getEnergy,guardDamage,guardEnergy);
             }else if (isThrow)
             {
-                other.GetComponent<CharacterController>().TakeThorw(damage);
+                _characterController.GetReward(giveEnergy);
+                other.GetComponent<CharacterController>().TakeThorw(tempDamage,getEnergy);
             }
         }
     }
@@ -58,5 +71,27 @@ public class HitBoxController : MonoBehaviour
         isThrow = false;
         damage = 0;
         isActive = false;
+    }
+
+    private void ComboChecker(int comboCount)
+    {
+        switch (comboCount)
+        {
+            case 1:
+                Instantiate(hitEffect1, this.transform,false);
+                break;
+            case 2:
+                Instantiate(hitEffect2, this.transform,false);
+                break;
+            case 3:
+                Instantiate(hitEffect3, this.transform,false);
+                break;
+            case >3:
+                Instantiate(hitEffect4, this.transform,false);
+                break;
+            default:
+                Instantiate(hitEffect1, this.transform,false);
+                break;
+        }
     }
 }
