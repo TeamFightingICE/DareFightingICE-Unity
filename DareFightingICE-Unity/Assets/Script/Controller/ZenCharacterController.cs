@@ -4,10 +4,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class CharacterController : MonoBehaviour
+public class ZenCharacterController : MonoBehaviour
 {
     /// <summary>
-    /// Character Info contain information to send to FightingController
+    /// zenCharacter Info contain information to send to FightingController
     /// Action Flags are hardcode bridge that connect animator with this script
     /// Combo System
     /// MAX_BUFFER_SIZE to control max input inside buffer when it exceed it will start remove first buffer
@@ -15,12 +15,14 @@ public class CharacterController : MonoBehaviour
     /// Reset Buffer time is to clear buffer after player stop press button
     /// </summary>
     
-    // Character Info
+    // zenCharacter Info
     public bool PlayerNumber{ get; set; }
     public bool IsFront { get; set; }
     public int Hp { get; set; }
     public int Energy { get; set; }
-    public CharacterController otherPlayer{get; set; }
+    public ZenCharacterController otherPlayer{get; set; }
+
+    public TextAsset csvFile;
     
     // Action Flags
     public bool canWalk = true;
@@ -43,7 +45,7 @@ public class CharacterController : MonoBehaviour
     private float timeSinceLastHit = 0f;
     private float comboResetTime = 0.5f;
     
-    // Character Control
+    // zenCharacter Control
     public float speed = 5.0f;
     public float jumpForce = 7.0f;
     public Transform groundCheck;
@@ -297,34 +299,35 @@ public class CharacterController : MonoBehaviour
         // if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
         // if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
         // if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
-        if (Input.GetKeyDown(KeyCode.Q) && canAttack)
-        {
-            ExecuteGivenCombo("F_D_DFA");
-        }
-        if (Input.GetKeyDown(KeyCode.W) && canAttack)
-        {
-            ExecuteGivenCombo("F_D_DFB");
-        }
-        if (Input.GetKeyDown(KeyCode.E) && canAttack)
-        {
-            ExecuteGivenCombo("D_DB_BA");
-        }
-        if (Input.GetKeyDown(KeyCode.R) && canAttack)
-        {
-            ExecuteGivenCombo("D_DB_BB");
-        }
-        if (Input.GetKeyDown(KeyCode.A) && canAttack)
-        {
-            ExecuteGivenCombo("D_DF_FA");
-        }
-        if (Input.GetKeyDown(KeyCode.S) && canAttack)
-        {
-            ExecuteGivenCombo("D_DF_FB");
-        }
-        if (Input.GetKeyDown(KeyCode.D) && canAttack)
-        {
-            ExecuteGivenCombo("D_DF_FC");
-        }
+        // if (Input.GetKeyDown(KeyCode.Q) && canAttack)
+        // {
+        //     ExecuteGivenCombo("F_D_DFA");
+        // }
+        // if (Input.GetKeyDown(KeyCode.W) && canAttack)
+        // {
+        //     ExecuteGivenCombo("F_D_DFB");
+        // }
+        // if (Input.GetKeyDown(KeyCode.E) && canAttack)
+        // {
+        //     ExecuteGivenCombo("D_DB_BA");
+        // }
+        // if (Input.GetKeyDown(KeyCode.R) && canAttack)
+        // {
+        //     ExecuteGivenCombo("D_DB_BB");
+        // }
+        // if (Input.GetKeyDown(KeyCode.A) && canAttack)
+        // {
+        //     ExecuteGivenCombo("D_DF_FA");
+        // }
+        // if (Input.GetKeyDown(KeyCode.S) && canAttack)
+        // {
+        //     ExecuteGivenCombo("D_DF_FB");
+        // }
+        // if (Input.GetKeyDown(KeyCode.D) && canAttack)
+        // {
+        //     ExecuteGivenCombo("D_DF_FC");
+        // }
+        
         // Combat input
         if (Input.GetKeyDown(KeyCode.Z) && canAttack) { AddInput("A"); }
         if (Input.GetKeyDown(KeyCode.X) && canAttack) { AddInput("B"); }
@@ -537,7 +540,7 @@ public class CharacterController : MonoBehaviour
                     SetState(State.Crouch);
                     _animator.SetBool("INAIR",false);
                 }
-                else
+                else if (!isCrouching)
                 {
                     SetState(State.Stand);
                     if (jumpTimer > 0)
@@ -559,7 +562,6 @@ public class CharacterController : MonoBehaviour
                 canWalk = false;
             }
         }
-        
     }
     private void CheckCombo()
     {
@@ -609,7 +611,7 @@ public class CharacterController : MonoBehaviour
     private void ExecuteGivenCombo(string comboName)
     {
         string action = "";
-        print(comboName);
+        
         switch (state)
         {
             case State.Stand:
@@ -625,11 +627,12 @@ public class CharacterController : MonoBehaviour
                 PerformActtack(action);
                 break;
         }
+        print(action);
     }
     private void ExecuteCombo(string comboName)
     {
         string action = "";
-        print(comboName);
+        
         switch (state)
         {
             case State.Stand:
@@ -645,6 +648,7 @@ public class CharacterController : MonoBehaviour
                 PerformActtack(action);
                 break;
         }
+        print(action);
     }
 
     private void SetState(State state)
@@ -654,17 +658,29 @@ public class CharacterController : MonoBehaviour
     
     private void PerformActtack(string actionname)
     {
-        if (canAttack && !isGuard)
+        int requireEnergy = MotionManager.Instance.GetStartGiveEnergyForMotion("zen",actionname);
+        if ((canAttack && !isGuard))
         {
-            _animator.SetTrigger(actionname);
-            canDash = false;
-            canAttack = false;
-            inputBuffer.Clear();
+            if (Energy >= (int)(Mathf.Abs(requireEnergy)) && requireEnergy != 1)
+            {
+                SetMotionData(MotionManager.Instance.GetMotionAttributes("zen",actionname));
+                Energy += requireEnergy;
+                _animator.SetTrigger(actionname);
+                canDash = false;
+                canAttack = false;
+                inputBuffer.Clear();
+            }
+            else
+            {
+                inputBuffer.Clear();
+                return;
+            }
         }
     }
     
     private void PerformWalk(float direction)
     {
+        rb.mass = 8;
         Vector2 movement = new Vector2(direction * speed, rb.velocity.y);
         rb.velocity = movement;
 
@@ -779,10 +795,10 @@ public class CharacterController : MonoBehaviour
 
     public void SetTarget(string target)
     {
-        leftHand._characterController = this;
-        rightHand._characterController = this;
-        leftFoot._characterController = this;
-        rightFoot._characterController = this;
+        leftHand.zenCharacterController = this;
+        rightHand.zenCharacterController = this;
+        leftFoot.zenCharacterController = this;
+        rightFoot.zenCharacterController = this;
         
         leftHand.target = target;
         rightHand.target = target;
@@ -790,28 +806,109 @@ public class CharacterController : MonoBehaviour
         rightFoot.target = target;
     }
 
-    public void TakeHit(int damage,int getEnegy,int guardDamage,int guardEnergy)
+    public void SetMotionData(MotionAttribute motionAttribute)
     {
-        if (isGuard)
+        leftHand.SetData(motionAttribute);
+        rightHand.SetData(motionAttribute);
+        leftFoot.SetData(motionAttribute);
+        rightFoot.SetData(motionAttribute);
+    }
+    public void TakeHit(ZenCharacterController attacker,int getHitEnergy,int damage,int getEnegy,int guardDamage,int guardEnergy,AttackType type,bool isDown)
+    {
+        switch (state)
         {
-            Hp -= guardDamage;
-            Energy += guardEnergy;
+            case State.Air:
+                if (isGuard && type == AttackType.HIGH || type == AttackType.MIDDLE)
+                {
+                    Hp -= guardDamage;
+                    AddEnergy(getHitEnergy);
+                    attacker.GetReward(guardEnergy);
+                    _animator.SetTrigger("GETHIT");
+                }
+                else
+                {
+                    if (isDown)
+                    {
+                        _animator.SetTrigger("GETKNOCK");
+                    }
+                    else
+                    {
+                        _animator.SetTrigger("GETHIT");
+                    }
+                    Hp -= damage;
+                    AddEnergy(getHitEnergy);
+                    attacker.GetReward(getEnegy);
+                }
+                break;
+            case State.Stand:
+                if (isGuard && type == AttackType.HIGH || type == AttackType.MIDDLE)
+                {
+                    Hp -= guardDamage;
+                    AddEnergy(getHitEnergy);
+                    attacker.GetReward(guardEnergy);
+                    _animator.SetTrigger("GETHIT");
+                }
+                else
+                {
+                    if (isDown)
+                    {
+                        _animator.SetTrigger("GETKNOCK");
+                    }
+                    else
+                    {
+                        _animator.SetTrigger("GETHIT");
+                    }
+                    Hp -= damage;
+                    AddEnergy(getHitEnergy);
+                    attacker.GetReward(guardEnergy);
+                }
+                break;
+            case State.Crouch:
+                if (isGuard && type == AttackType.HIGH || type == AttackType.LOW)
+                {
+                    Hp -= guardDamage;
+                    AddEnergy(getHitEnergy);
+                    attacker.GetReward(guardEnergy);
+                    _animator.SetTrigger("GETHIT");
+                }
+                else
+                {
+                    if (isDown)
+                    {
+                        _animator.SetTrigger("GETKNOCK");
+                    }
+                    else
+                    {
+                        _animator.SetTrigger("GETHIT");
+                    }
+                    Hp -= damage;
+                    AddEnergy(getHitEnergy);
+                    attacker.GetReward(guardEnergy);
+                }
+                break;
         }
-        else
+        
+    }
+
+    public void TakeThorw(ZenCharacterController attacker,int giveEnergy,int damage,int getEnegy)
+    {
+        if (isGrounded)
         {
             Hp -= damage;
-            Energy += getEnegy;
+            Energy += giveEnergy;
+            attacker.GetReward(getEnegy);
+            _animator.SetTrigger("GET_THROW");
         }
-        _animator.SetTrigger("GETHIT");
     }
-
-    public void TakeThorw(int damage,int getEnegy)
+    void AddEnergy(int amount)
     {
-        Hp -= damage;
-        Energy += getEnegy;
-        _animator.SetTrigger("GET_THROW");
-    }
+        Energy += amount;
+        if (Energy > 300)
+        {
+            Energy = 300;
+        }
 
+    }
     public void GetReward(int energy)
     {
         timeSinceLastHit = 0f;
@@ -824,6 +921,10 @@ public class CharacterController : MonoBehaviour
             currentCombo = 9;
         }
         this.Energy += energy;
+        if (this.Energy >= 300)
+        {
+            Energy = 300;
+        }
     }
 
     private void ResetCombo()
@@ -838,5 +939,35 @@ public class CharacterController : MonoBehaviour
         {
             ResetCombo();
         }
+    }
+    
+    public void SpawnLargeFireball()
+    {
+        Vector2 fireballDirection = new Vector2(1, 0);
+        if (IsFront)
+        {
+            fireballDirection = new Vector2(1, 0);
+        }
+        else
+        {
+            fireballDirection = new Vector2(0, 1);
+        }
+        float fireballForce = 10f;
+        leftHand.SpawnBigProjectile(fireballDirection,fireballForce);
+    }
+
+    public void SpawnSmallFireball()
+    {
+        Vector2 fireballDirection = new Vector2(1, 0);
+        if (IsFront)
+        {
+            fireballDirection = new Vector2(1, 0);
+        }
+        else
+        {
+            fireballDirection = new Vector2(0, 1);
+        }
+        float fireballForce = 10f;
+        leftHand.SpawnSmallProjectile(fireballDirection,fireballForce);
     }
 }

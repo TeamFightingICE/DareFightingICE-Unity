@@ -25,7 +25,7 @@ public class FrameData : MonoBehaviour
         characterData[1] = controller.character[1].GetComponent<CharacterData>();
         currentFrameNumber = interfaceDisplay.currentFrame;
         currentRound = 0;
-        front[0] = controller.character[0].GetComponent<CharacterController>().IsFront;
-        front[1] = controller.character[1].GetComponent<CharacterController>().IsFront;
+        front[0] = controller.character[0].GetComponent<ZenCharacterController>().IsFront;
+        front[1] = controller.character[1].GetComponent<ZenCharacterController>().IsFront;
     }
 }

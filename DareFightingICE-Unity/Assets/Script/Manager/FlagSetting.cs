@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FlagSetting : Singleton<FlagSetting>
 {
@@ -82,6 +83,17 @@ public class FlagSetting : Singleton<FlagSetting>
     
     public void ResetData()
     {
-        
+     slowmotion = false;
+     debugActionFlag = false;
+     debugFrameDataFlag = false;
+     muteFlag = false;
+    }
+
+    public void SetData(Toggle slow, Toggle debug, Toggle frame,Toggle mute)
+    {
+     slowmotion = slow;
+     debugActionFlag = debug;
+     debugFrameDataFlag = frame;
+     muteFlag = mute;
     }
 }

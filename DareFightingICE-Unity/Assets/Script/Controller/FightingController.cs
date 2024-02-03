@@ -15,7 +15,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private GameObject spawnP2;
     [SerializeField] private GameObject LeftBorder;
     [SerializeField] private GameObject RightBorder;
-    [SerializeField] private float flipThreshold = 2.0f;
+    [SerializeField] private float flipThreshold = 1.0f;
     private bool isStart = false;
     public List<GameObject> character;
     private float framelimit;
@@ -31,28 +31,28 @@ public class FightingController : MonoBehaviour
         ClearList();
         framelimit = GameSetting.Instance.frameLimit;
         GameObject zen1 = Instantiate(zen, spawnP1.transform.position, spawnP1.transform.rotation);
-        zen1.GetComponent<CharacterController>().PlayerNumber = true;
-        zen1.GetComponent<CharacterController>().IsFront = true;
-        zen1.GetComponent<CharacterController>().Hp = GameSetting.Instance.p1Hp;
-        zen1.GetComponent<CharacterController>().Energy = 0;
+        zen1.GetComponent<ZenCharacterController>().PlayerNumber = true;
+        zen1.GetComponent<ZenCharacterController>().IsFront = true;
+        zen1.GetComponent<ZenCharacterController>().Hp = GameSetting.Instance.p1Hp;
+        zen1.GetComponent<ZenCharacterController>().Energy = 0;
         GameObject zen2 = Instantiate(zen, spawnP2.transform.position, spawnP2.transform.rotation);
-        zen2.GetComponent<CharacterController>().PlayerNumber = false;
-        zen2.GetComponent<CharacterController>().IsFront = false;
-        zen2.GetComponent<CharacterController>().Hp = GameSetting.Instance.p2Hp;
-        zen2.GetComponent<CharacterController>().Energy = 0;
+        zen2.GetComponent<ZenCharacterController>().PlayerNumber = false;
+        zen2.GetComponent<ZenCharacterController>().IsFront = false;
+        zen2.GetComponent<ZenCharacterController>().Hp = GameSetting.Instance.p2Hp;
+        zen2.GetComponent<ZenCharacterController>().Energy = 0;
         Vector3 scale = zen2.transform.localScale;
         scale.x *= -1;
         zen2.transform.localScale = scale;
-        zen1.GetComponent<CharacterController>().otherPlayer = zen2.GetComponent<CharacterController>();
-        zen2.GetComponent<CharacterController>().otherPlayer = zen1.GetComponent<CharacterController>();
+        zen1.GetComponent<ZenCharacterController>().otherPlayer = zen2.GetComponent<ZenCharacterController>();
+        zen2.GetComponent<ZenCharacterController>().otherPlayer = zen1.GetComponent<ZenCharacterController>();
         zen1.tag = "Player1";
         zen2.tag = "Player2";
-        zen1.GetComponent<CharacterController>().SetTarget("Player2");
-        zen2.GetComponent<CharacterController>().SetTarget("Player1");
+        zen1.GetComponent<ZenCharacterController>().SetTarget("Player2");
+        zen2.GetComponent<ZenCharacterController>().SetTarget("Player1");
         character.Add(zen1);
         character.Add(zen2);
-        _display.player1 = zen1.GetComponent<CharacterController>();
-        _display.player2 = zen2.GetComponent<CharacterController>();
+        _display.player1 = zen1.GetComponent<ZenCharacterController>();
+        _display.player2 = zen2.GetComponent<ZenCharacterController>();
         isStart = true;
     }
     // Update is called once per frame
@@ -88,7 +88,7 @@ public class FightingController : MonoBehaviour
     {
         GameObject player1 = character[0];
         GameObject player2 = character[1];
-        if (player1.GetComponent<CharacterController>().Hp <= 0 || player2.GetComponent<CharacterController>().Hp <= 0)
+        if (player1.GetComponent<ZenCharacterController>().Hp <= 0 || player2.GetComponent<ZenCharacterController>().Hp <= 0)
         {
             return true;
         }
@@ -116,20 +116,20 @@ public class FightingController : MonoBehaviour
         if (distanceBetweenPlayers > flipThreshold)
         {
             // Determine if players need to flip based on their relative positions
-            if (player1Position < player2Position && !player1.GetComponent<CharacterController>().IsFront)
+            if (player1Position < player2Position && !player1.GetComponent<ZenCharacterController>().IsFront)
             {
                 FlipCharacter(player1);
             }
-            else if (player1Position > player2Position && player1.GetComponent<CharacterController>().IsFront)
+            else if (player1Position > player2Position && player1.GetComponent<ZenCharacterController>().IsFront)
             {
                 FlipCharacter(player1);
             }
 
-            if (player2Position < player1Position && !player2.GetComponent<CharacterController>().IsFront)
+            if (player2Position < player1Position && !player2.GetComponent<ZenCharacterController>().IsFront)
             {
                 FlipCharacter(player2);
             }
-            else if (player2Position > player1Position && player2.GetComponent<CharacterController>().IsFront)
+            else if (player2Position > player1Position && player2.GetComponent<ZenCharacterController>().IsFront)
             {
                 FlipCharacter(player2);
             }
@@ -138,7 +138,7 @@ public class FightingController : MonoBehaviour
 
     private void FlipCharacter(GameObject character)
     {
-        CharacterController charController = character.GetComponent<CharacterController>();
+        ZenCharacterController charController = character.GetComponent<ZenCharacterController>();
         charController.IsFront = !charController.IsFront;
         Vector3 scale = character.transform.localScale;
         scale.x *= -1;
@@ -153,7 +153,7 @@ public class FightingController : MonoBehaviour
     //         spriteRenderer.flipX = !spriteRenderer.flipX;
     //
     //         // Optionally, adjust facing direction property if you have one
-    //         CharacterController charController = character.GetComponent<CharacterController>();
+    //         ZenCharacterController charController = character.GetComponent<ZenCharacterController>();
     //         if (charController != null)
     //         {
     //             charController.IsFront = !charController.IsFront;

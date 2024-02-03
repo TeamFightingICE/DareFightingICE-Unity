@@ -3,25 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
+
+public enum AttackType
+{
+    MOVE,
+    HIGH,
+    MIDDLE,
+    LOW,
+    THROW,
+    
+}
 /// <summary>
 /// This script inside HitBox you can control it damage type of damage directly inside animation
 /// </summary>
 public class HitBoxController : MonoBehaviour
 {
-    public CharacterController _characterController;
-    public bool isActive = false;
+    [FormerlySerializedAs("_characterController")] public ZenCharacterController zenCharacterController;
+    private bool isActive = false;
     public string target = "";
-    public bool isHit = false;
-    public bool isThrow = false;
-    public int damage;
-    public int getEnergy;
-    public int guardDamage;
-    public int guardEnergy;
-    public int giveEnergy;
+    private bool isHit = false;
+    private bool isThrow = false;
+    private int damage;
+    private int getEnergy;
+    private int guardDamage;
+    private int guardEnergy;
+    private int giveEnergy;
     public GameObject hitEffect1;
     public GameObject hitEffect2;
     public GameObject hitEffect3;
     public GameObject hitEffect4;
+    private AttackType attackType = AttackType.MIDDLE;
+    private bool isDown;
+    private int impactX;
+    private int impactY;
+    public bool isProjectile;
+    private int projDamage;
+    [SerializeField] private GameObject smallFireball;
+    [SerializeField] private GameObject largeFireball;
     private void OnEnable()
     {
         Activate();
@@ -39,24 +58,29 @@ public class HitBoxController : MonoBehaviour
         {
             //Call hit effect when character gets hit.
             int tempDamage = damage;
-            print(_characterController.currentCombo);
-            if (_characterController.currentCombo > 3)
+            print(zenCharacterController.currentCombo);
+            if (zenCharacterController.currentCombo > 3)
             {
-                tempDamage += (int)(5 * (4f / _characterController.currentCombo));
+                tempDamage += (int)(5 * (4f / zenCharacterController.currentCombo));
                 print(tempDamage);
             }
-            ComboChecker(_characterController.currentCombo);
+            ComboChecker(zenCharacterController.currentCombo);
 
             // Handle collision, e.g., apply damage
             if (isHit)
             {
-                _characterController.GetReward(giveEnergy);
-                other.GetComponent<CharacterController>().TakeHit(tempDamage,getEnergy,guardDamage,guardEnergy);
+                other.GetComponent<ZenCharacterController>().TakeHit(zenCharacterController,giveEnergy,tempDamage,getEnergy,guardDamage,guardEnergy,attackType,isDown);
+                if (isProjectile)
+                {
+                    Destroy(this.gameObject);
+                }
             }else if (isThrow)
             {
-                _characterController.GetReward(giveEnergy);
-                other.GetComponent<CharacterController>().TakeThorw(tempDamage,getEnergy);
+                other.GetComponent<ZenCharacterController>().TakeThorw(zenCharacterController,giveEnergy,tempDamage,getEnergy);
             }
+        }else if (other.gameObject.name == "Border" && isProjectile)
+        {
+            Destroy(this.gameObject);
         }
     }
 
@@ -94,4 +118,89 @@ public class HitBoxController : MonoBehaviour
                 break;
         }
     }
+
+    public void CopyData(HitBoxController parent)
+    {
+        damage = parent.projDamage;
+        getEnergy = parent.getEnergy;
+        guardDamage = parent.guardDamage;
+        guardEnergy = parent.guardEnergy;
+        giveEnergy = parent.giveEnergy;
+        attackType = parent.attackType;
+        isDown = parent.isDown;
+        impactX = parent.impactX;
+        impactY = parent.impactY;
+        isHit = true;
+        target = parent.target;
+        zenCharacterController = parent.zenCharacterController;
+        isProjectile = true;
+    }
+    public void SetData(MotionAttribute motionAttribute)
+    {
+        if (motionAttribute.activeTime >= 100)
+        {
+            projDamage = motionAttribute.hitDamage;
+        }
+        else
+        {
+            damage = motionAttribute.hitDamage;
+        }
+        getEnergy = motionAttribute.hitAddEnergy;
+        guardDamage = motionAttribute.guardDamage;
+        guardEnergy = motionAttribute.guardAddEnergy;
+        giveEnergy = motionAttribute.giveEnergy;
+        attackType = motionAttribute.attackType;
+        isDown = motionAttribute.isDown;
+        impactX = motionAttribute.impactX;
+        impactY = motionAttribute.impactY;
+        if (attackType != AttackType.THROW && motionAttribute.activeTime < 100)
+        {
+            isHit = true;
+        }
+        else if (attackType == AttackType.THROW)
+        {
+            isThrow = true;
+        }
+    }
+    public void SpawnSmallProjectile(Vector2 direction, float force)
+    {
+        // Instantiate the fireball at the position of the hitbox with the same rotation
+        GameObject fireballInstance = Instantiate(smallFireball, transform.position, Quaternion.identity);
+
+        // Get the Rigidbody2D component of the fireball
+        Rigidbody2D rb = fireballInstance.GetComponent<Rigidbody2D>();
+        fireballInstance.GetComponent<HitBoxController>().CopyData(this);
+        // Check if the Rigidbody2D component exists to avoid null reference errors
+        if (rb != null)
+        {
+            // Add force to the fireball to propel it in the specified direction
+            rb.AddForce(direction * force, ForceMode2D.Impulse);
+        }
+        else
+        {
+            Debug.LogError("Spawned fireball does not have a Rigidbody2D component.");
+        }
+    }
+    
+    public void SpawnBigProjectile(Vector2 direction, float force)
+    {
+        // Instantiate the fireball at the position of the hitbox with the same rotation
+        GameObject fireballInstance = Instantiate(largeFireball, transform.position, Quaternion.identity);
+
+        // Get the Rigidbody2D component of the fireball
+        Rigidbody2D rb = fireballInstance.GetComponent<Rigidbody2D>();
+        fireballInstance.GetComponent<HitBoxController>().CopyData(this);
+        fireballInstance.GetComponent<HitBoxController>().isDown = true;
+        // Check if the Rigidbody2D component exists to avoid null reference errors
+        if (rb != null)
+        {
+            // Add force to the fireball to propel it in the specified direction
+            rb.AddForce(direction * force, ForceMode2D.Impulse);
+        }
+        else
+        {
+            Debug.LogError("Spawned fireball does not have a Rigidbody2D component.");
+        }
+    }
+    
 }

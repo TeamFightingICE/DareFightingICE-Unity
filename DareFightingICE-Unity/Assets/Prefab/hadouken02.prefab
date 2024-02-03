@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5716232181233162678}
   - component: {fileID: 2266082828493795547}
   - component: {fileID: 4622875163713270709}
+  - component: {fileID: -173741536094638122}
   m_Layer: 8
   m_Name: hadouken02
   m_TagString: Untagged
@@ -262,4 +263,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 1
+  zenCharacterController: {fileID: 0}
+  target: 
+  hitEffect1: {fileID: 8661219560971955374, guid: 41271d9b73fba034690299258ceb7f40, type: 3}
+  hitEffect2: {fileID: 8058527749564740004, guid: e21814eec4439ac43b3dcc1c52fbe866, type: 3}
+  hitEffect3: {fileID: 6513078127744245549, guid: d0f549edcbfc34f4e8ffb10d6fb8f5ca, type: 3}
+  hitEffect4: {fileID: 8354731913380125649, guid: 828ce3c553d309e49867baca66538e15, type: 3}
+  isProjectile: 0
+  smallFireball: {fileID: 0}
+  largeFireball: {fileID: 0}
+--- !u!50 &-173741536094638122
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7028443251016671101}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 6

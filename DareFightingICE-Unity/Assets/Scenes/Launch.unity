@@ -2360,6 +2360,9 @@ MonoBehaviour:
   debugFlag: {fileID: 957769030}
   frameFlag: {fileID: 314261522}
   muteFlag: {fileID: 380911230}
+  zenMotion: {fileID: 4900000, guid: ea1ea85c918833a4bba7bed6a1bd61ee, type: 3}
+  ludMotion: {fileID: 4900000, guid: 902419475a138b94293937f2f65f2435, type: 3}
+  garnetMotion: {fileID: 4900000, guid: f8e8677656bee944c935b8f56d00f3c4, type: 3}
 --- !u!1 &809799223
 GameObject:
   m_ObjectHideFlags: 0
@@ -5590,10 +5593,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3752630490052007620, guid: bae0cf98177825548af636b8274fae30, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6707692294084070560, guid: bae0cf98177825548af636b8274fae30, type: 3}
       propertyPath: m_Name
       value: ZEN
@@ -5601,6 +5600,10 @@ PrefabInstance:
     - target: {fileID: 6707692294084070560, guid: bae0cf98177825548af636b8274fae30, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7271878502447391511, guid: bae0cf98177825548af636b8274fae30, type: 3}
+      propertyPath: speed
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7593,6 +7596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8591c8c7af0b3fa40bb5b45d4bd49d9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  csvFile: {fileID: 0}
   canWalk: 1
   canBlock: 1
   canAttack: 1
@@ -8692,20 +8696,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterController: {fileID: 0}
-  isActive: 0
+  zenCharacterController: {fileID: 0}
   target: 
-  isHit: 0
-  isThrow: 0
-  damage: 0
-  getEnergy: 0
-  guardDamage: 0
-  guardEnergy: 0
-  giveEnergy: 0
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
   hitEffect3: {fileID: 0}
   hitEffect4: {fileID: 0}
+  isProjectile: 0
+  smallFireball: {fileID: 0}
+  largeFireball: {fileID: 0}
 --- !u!4 &3292075741090667229
 Transform:
   m_ObjectHideFlags: 0
@@ -10062,20 +10061,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterController: {fileID: 0}
-  isActive: 0
+  zenCharacterController: {fileID: 0}
   target: 
-  isHit: 0
-  isThrow: 0
-  damage: 0
-  getEnergy: 0
-  guardDamage: 0
-  guardEnergy: 0
-  giveEnergy: 0
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
   hitEffect3: {fileID: 0}
   hitEffect4: {fileID: 0}
+  isProjectile: 0
+  smallFireball: {fileID: 0}
+  largeFireball: {fileID: 0}
 --- !u!4 &5169839924935465326
 Transform:
   m_ObjectHideFlags: 0
@@ -10991,20 +10985,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterController: {fileID: 0}
-  isActive: 0
+  zenCharacterController: {fileID: 0}
   target: 
-  isHit: 0
-  isThrow: 0
-  damage: 0
-  getEnergy: 0
-  guardDamage: 0
-  guardEnergy: 0
-  giveEnergy: 0
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
   hitEffect3: {fileID: 0}
   hitEffect4: {fileID: 0}
+  isProjectile: 0
+  smallFireball: {fileID: 0}
+  largeFireball: {fileID: 0}
 --- !u!1 &6600406162986077274
 GameObject:
   m_ObjectHideFlags: 0
@@ -12675,20 +12664,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterController: {fileID: 0}
-  isActive: 0
+  zenCharacterController: {fileID: 0}
   target: 
-  isHit: 0
-  isThrow: 0
-  damage: 0
-  getEnergy: 0
-  guardDamage: 0
-  guardEnergy: 0
-  giveEnergy: 0
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
   hitEffect3: {fileID: 0}
   hitEffect4: {fileID: 0}
+  isProjectile: 0
+  smallFireball: {fileID: 0}
+  largeFireball: {fileID: 0}
 --- !u!4 &9159541865947570219
 Transform:
   m_ObjectHideFlags: 0

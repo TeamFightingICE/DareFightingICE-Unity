@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.TextCore.Text;
 
 public class CharacterData : MonoBehaviour
@@ -53,7 +54,7 @@ public class CharacterData : MonoBehaviour
   //  private int hitCount;
 
   //  private int lastHitFrame;
-    public CharacterController Character;
+    [FormerlySerializedAs("Character")] public ZenCharacterController zenCharacter;
     public InterfaceDisplay Interface;
 
     // private Deque<Key> inputCommands;
@@ -63,17 +64,17 @@ public class CharacterData : MonoBehaviour
 
     void Update()
     {
-        playerNumber = Character.PlayerNumber;
-        energy = Character.Energy;
-        x = Character.GetComponent<Transform>().position.x;   
-        y = Character.GetComponent<Transform>().position.y;
+        playerNumber = zenCharacter.PlayerNumber;
+        energy = zenCharacter.Energy;
+        x = zenCharacter.GetComponent<Transform>().position.x;   
+        y = zenCharacter.GetComponent<Transform>().position.y;
   
-        speedX = Character.GetComponent<Rigidbody2D>().velocity.x;
-        speedY = Character.GetComponent<Rigidbody2D>().velocity.y;
-        state = Character.state;
-        // Add action information in CharacterController
+        speedX = zenCharacter.GetComponent<Rigidbody2D>().velocity.x;
+        speedY = zenCharacter.GetComponent<Rigidbody2D>().velocity.y;
+        state = zenCharacter.state;
+        // Add action information in ZenCharacterController
         action = new Action();
-        front = Character.IsFront;
+        front = zenCharacter.IsFront;
         // need to check what is this for
         control = false;
         remainingFrame = Interface.currentFrame;
