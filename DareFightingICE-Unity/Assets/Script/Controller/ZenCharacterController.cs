@@ -83,6 +83,7 @@ public class ZenCharacterController : MonoBehaviour
     
     // SoundControl
     [SerializeField] private GameObject counchSound;
+    public AIController aiController;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -111,19 +112,35 @@ public class ZenCharacterController : MonoBehaviour
     void Update()
     {
         CheckState();
-        if (PlayerNumber)
+        if (GameSetting.Instance.p1Control != ControlType.KEYBOARD || GameSetting.Instance.p2Control != ControlType.KEYBOARD)
         {
-            HandleInputP1();
+            UpdateAI();
         }
-        else
+        if (GameSetting.Instance.p1Control == ControlType.KEYBOARD)
         {
-            HandleInputP2();
+            if (PlayerNumber)
+            {
+                HandleInputP1();
+            }
+            
+        }
+        else if (GameSetting.Instance.p2Control == ControlType.KEYBOARD)
+        {
+            if (!PlayerNumber)
+            {
+                HandleInputP2();
+            }
         }
         CheckCombo();
         ResetBuffer();
         UpdateComboTimer();
     }
-
+    void UpdateAI()
+    {
+        // Assuming aiController.Input() returns an object similar to the Key class in your Java example
+        Key aiInput = aiController.Input();
+        HandleAIInput(aiInput);
+    }
     private void HandleInputP1()
     {
         float currentTime = Time.time;
@@ -970,4 +987,181 @@ public class ZenCharacterController : MonoBehaviour
         float fireballForce = 10f;
         leftHand.SpawnSmallProjectile(fireballDirection,fireballForce);
     }
+
+    public void HandleAIInput(Key key)
+    {
+        float currentTime = Time.time;
+        if (key.D)
+        {
+            if (currentTime - lastCrouchInputTime > CrouchInputDelay && !isCrouching)
+            {
+                lastCrouchInputTime = currentTime;
+                AddInput("D");
+            }
+            if (isGrounded)
+            {
+                PerformCrounch();
+            }
+        }else
+        {
+            isCrouching = false;
+            _animator.SetBool("CROUCH",false);
+        }
+        // Movement input
+        if (IsFront)
+        {
+            if (key.IsKeyPressed("R"))
+            {
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
+                {
+                    canWalk = false;
+                    PerformFrontDash(new Vector2(1,0));
+                }
+                else
+                {
+                    lastForwardDashTime = currentTime;
+                }
+            }
+            else if (key.IsKeyHeld("R"))
+            {
+                if (currentTime - lastDirectionalInputTime > directionalInputDelay)
+                {
+                    lastDirectionalInputTime = currentTime;
+                    AddInput("F");
+                }
+
+                if (canWalk)
+                {
+                    canWalk = false;
+                    PerformWalk(1);
+                }
+                
+                
+            }
+            else if (key.IsKeyPressed("L"))
+            {
+                keyPressTime = currentTime;
+            }
+            else if (key.IsKeyHeld("L") && canBlock)
+            { 
+                if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
+                {
+                    PerformBackwardJump(-1);
+                }
+                else
+                {
+                    if (currentTime - lastThrowInputTime > throwInputDelay)
+                    {
+                        lastThrowInputTime = currentTime;
+                        AddInput("THROW");
+                    }
+                    PerformBlock();
+                }
+            }
+            else if (key.IsKeyRelease("L"))
+            {
+                if (currentTime - keyPressTime <= tapThreshold && canDash)
+                {
+                    var direction = new Vector2(-1, 0);
+                    PerformBackStep(direction);
+                    canDash = false;
+                }
+                else if (currentTime - keyPressTime > tapThreshold && canBlock)
+                {
+                    PerformBlock();
+                }
+            }
+            else
+            {
+                _animator.SetBool("FORWARD_WALK", false);
+                _animator.SetBool("GUARD", false);
+            }
+        }
+        else
+        {
+            if (key.IsKeyPressed("L"))
+            {
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
+                {
+                    canWalk = false;
+                    PerformFrontDash(new Vector2(-1,0));
+                }
+                else
+                {
+                    lastForwardDashTime = currentTime;
+                }
+            }
+            else if (key.IsKeyHeld("L") && canWalk)
+            {
+                if (currentTime - lastDirectionalInputTime > directionalInputDelay)
+                {
+                    lastDirectionalInputTime = currentTime;
+                    AddInput("F");
+                }
+                if (canWalk)
+                {
+                    canWalk = false;
+                    PerformWalk(-1);
+                }
+                
+            }
+            else if (key.IsKeyPressed("R"))
+            {
+                keyPressTime = currentTime;
+            }
+            else if (key.IsKeyHeld("R") && canBlock)
+            { 
+                if (key.IsKeyPressed("U") && isGrounded)
+                {
+                    PerformBackwardJump(1);
+                }
+                else
+                {
+                    if (currentTime - lastThrowInputTime > throwInputDelay)
+                    {
+                        lastThrowInputTime = currentTime;
+                        AddInput("THROW");
+                    }
+                    PerformBlock();
+                }
+            }
+            else if (key.IsKeyRelease("R"))
+            {
+                if (currentTime - keyPressTime <= tapThreshold && canDash)
+                {
+                    var direction = new Vector2(1, 0);
+                    PerformBackStep(direction);
+                    canDash = false;
+                }
+                else if (currentTime - keyPressTime > tapThreshold && canBlock)
+                {
+                    PerformBlock();
+                }
+            }
+            else
+            {
+                _animator.SetBool("FORWARD_WALK", false);
+                _animator.SetBool("GUARD", false);
+            }
+        }
+
+        if (key.IsKeyPressed("U"))
+        {
+            if (Mathf.Abs(rb.velocity.x) > 0 && isGrounded)
+            {
+                AddInput("U");
+                PerformForwardJump(rb.velocity.x > 0 ? 1 : -1);
+            }
+            else if (isGrounded)
+            {
+                AddInput("U");
+                PerformJump();
+            }
+        }
+        
+        if (key.A && canAttack) { AddInput("A"); }
+        if (key.B && canAttack) { AddInput("B"); }
+        if (key.C && canAttack) { AddInput("C"); }
+    }
+    
 }

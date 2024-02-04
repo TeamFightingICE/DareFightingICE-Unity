@@ -22,6 +22,8 @@ public class GameSetting : Singleton<GameSetting>
     public int p2Hp;
     public int roundLimit;
     public int frameLimit;
+    public ControlType p1Control;
+    public ControlType p2Control;
 
     public void Setdata(int hp1,int hp2,int rLimit,int fLimit)
     {
@@ -31,6 +33,11 @@ public class GameSetting : Singleton<GameSetting>
         frameLimit = fLimit;
     }
 
+    public void SetCharacterData(ControlType p1,ControlType p2)
+    {
+        p1Control = p1;
+        p2Control = p2;
+    }
     // Update is called once per frame
     void Update()
     {

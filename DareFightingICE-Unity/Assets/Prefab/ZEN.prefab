@@ -4384,6 +4384,7 @@ GameObject:
   - component: {fileID: 7271878502447391511}
   - component: {fileID: 6981872168070382828}
   - component: {fileID: 7294415594422771734}
+  - component: {fileID: 5804501619965292335}
   m_Layer: 7
   m_Name: ZEN
   m_TagString: Player
@@ -4568,6 +4569,7 @@ MonoBehaviour:
   leftFoot: {fileID: 4159632758813826161}
   rightFoot: {fileID: 1687300829348452}
   counchSound: {fileID: 3559360832115976531}
+  aiController: {fileID: 5804501619965292335}
 --- !u!50 &6981872168070382828
 Rigidbody2D:
   serializedVersion: 4
@@ -4630,6 +4632,19 @@ CapsuleCollider2D:
   m_Offset: {x: -0.08669428, y: -0.24452722}
   m_Size: {x: 0.2364105, y: 0.9523591}
   m_Direction: 0
+--- !u!114 &5804501619965292335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6707692294084070560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8a8c35bb577cf444bccd3208a41b9bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterController: {fileID: 7271878502447391511}
 --- !u!1 &6761308839968659522
 GameObject:
   m_ObjectHideFlags: 0
