@@ -1162,6 +1162,8 @@ public class ZenCharacterController : MonoBehaviour
         if (key.A && canAttack) { AddInput("A"); }
         if (key.B && canAttack) { AddInput("B"); }
         if (key.C && canAttack) { AddInput("C"); }
+        
+        key.UpdatePreviousState();
     }
     
 }
