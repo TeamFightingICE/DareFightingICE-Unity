@@ -3,7 +3,7 @@ using UnityEngine;
 public class AIController : MonoBehaviour, IAIInterface
 {
     public ZenCharacterController characterController;
-
+    private ScreenData _screenData;
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         // Initialize AI with game data
@@ -11,9 +11,14 @@ public class AIController : MonoBehaviour, IAIInterface
 
     public void GetInformation(FrameData frameData)
     {
-        // Update AI with the latest game state
+        
     }
 
+    public void GetScreenData(ScreenData screenData)
+    {
+        
+    }
+    
     public void Processing()
     {
         // AI decision-making logic goes here
@@ -35,7 +40,7 @@ public class AIController : MonoBehaviour, IAIInterface
     {
         // Process round-end information
     }
-
+    
     void Update()
     {
         FrameData frameData = new FrameData(); // You'll need to define how FrameData is structured and populated
@@ -46,6 +51,7 @@ public class AIController : MonoBehaviour, IAIInterface
         ApplyInputToCharacter(Input());
     }
 
+    
     void ApplyInputToCharacter(Key input)
     {
         // Convert AI input into character actions

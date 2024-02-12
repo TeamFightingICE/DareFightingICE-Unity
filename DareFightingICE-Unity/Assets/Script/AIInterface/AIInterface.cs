@@ -6,6 +6,7 @@ public interface IAIInterface
 {
     void Initialize(GameData gameData, bool isPlayerOne);
     void GetInformation(FrameData frameData);
+    void GetScreenData(ScreenData screenData);
     void Processing();
     Key Input();
     void Close();

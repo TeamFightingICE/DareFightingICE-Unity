@@ -116,20 +116,14 @@ public class ZenCharacterController : MonoBehaviour
         {
             UpdateAI();
         }
-        if (GameSetting.Instance.p1Control == ControlType.KEYBOARD)
+        
+        if (GameSetting.Instance.p1Control == ControlType.KEYBOARD && PlayerNumber)
         {
-            if (PlayerNumber)
-            {
-                HandleInputP1();
-            }
-            
+            HandleInputP1();
         }
-        else if (GameSetting.Instance.p2Control == ControlType.KEYBOARD)
+        if (GameSetting.Instance.p2Control == ControlType.KEYBOARD && !PlayerNumber)
         {
-            if (!PlayerNumber)
-            {
-                HandleInputP2();
-            }
+            HandleInputP2();
         }
         CheckCombo();
         ResetBuffer();
@@ -835,7 +829,7 @@ public class ZenCharacterController : MonoBehaviour
         switch (state)
         {
             case State.Air:
-                if (isGuard && type == AttackType.HIGH || type == AttackType.MIDDLE)
+                if (isGuard && (type == AttackType.HIGH || type == AttackType.MIDDLE))
                 {
                     Hp -= guardDamage;
                     AddEnergy(getHitEnergy);
@@ -858,7 +852,7 @@ public class ZenCharacterController : MonoBehaviour
                 }
                 break;
             case State.Stand:
-                if (isGuard && type == AttackType.HIGH || type == AttackType.MIDDLE)
+                if (isGuard && (type == AttackType.HIGH || type == AttackType.MIDDLE))
                 {
                     Hp -= guardDamage;
                     AddEnergy(getHitEnergy);
@@ -877,11 +871,11 @@ public class ZenCharacterController : MonoBehaviour
                     }
                     Hp -= damage;
                     AddEnergy(getHitEnergy);
-                    attacker.GetReward(guardEnergy);
+                    attacker.GetReward(getEnegy);
                 }
                 break;
             case State.Crouch:
-                if (isGuard && type == AttackType.HIGH || type == AttackType.LOW)
+                if (isGuard && (type == AttackType.HIGH || type == AttackType.LOW))
                 {
                     Hp -= guardDamage;
                     AddEnergy(getHitEnergy);
@@ -900,7 +894,7 @@ public class ZenCharacterController : MonoBehaviour
                     }
                     Hp -= damage;
                     AddEnergy(getHitEnergy);
-                    attacker.GetReward(guardEnergy);
+                    attacker.GetReward(getEnegy);
                 }
                 break;
         }
