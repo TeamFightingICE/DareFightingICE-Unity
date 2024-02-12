@@ -1159,5 +1159,4 @@ public class ZenCharacterController : MonoBehaviour
         
         key.UpdatePreviousState();
     }
-    
 }

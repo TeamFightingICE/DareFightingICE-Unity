@@ -18,9 +18,17 @@ public class FightingController : MonoBehaviour
     [SerializeField] private float flipThreshold = 1.0f;
     private bool isStart = false;
     public List<GameObject> character;
+
     private float framelimit;
 
     [SerializeField] private InterfaceDisplay _display;
+
+    [SerializeField] private AudioSource P1HeartBeat;
+    [SerializeField] private AudioSource P2HeartBeat;
+    [SerializeField] private AudioSource P1EnegryIncrease;
+    [SerializeField] private AudioSource P2EnegryIncrease;
+    [SerializeField] private int P1EnergyLevel;
+    [SerializeField] private int P2EnergyLevel ;
     void Start()
     {
         SetupScene();
@@ -54,10 +62,41 @@ public class FightingController : MonoBehaviour
         _display.player1 = zen1.GetComponent<ZenCharacterController>();
         _display.player2 = zen2.GetComponent<ZenCharacterController>();
         isStart = true;
+        P1EnergyLevel = 0;
+        P2EnergyLevel = 0;
     }
     // Update is called once per frame
     void Update()
     {
+        // Special Sound effects Part
+        // heartbeat for player1
+        if (character[0].GetComponent<ZenCharacterController>().Hp < 50)
+        {
+            P1HeartBeat.Play();
+        }
+        // heartbeat for player2
+        if (character[1].GetComponent<ZenCharacterController>().Hp < 50)
+        {
+            P2HeartBeat.Play();
+        }
+        //Energy Increase for PLayer1
+        if(character[0].GetComponent<ZenCharacterController>().Energy >= 50)
+        {
+            if (character[0].GetComponent<ZenCharacterController>().Energy >= P1EnergyLevel+50)
+            {
+                P1EnergyLevel = P1EnergyLevel + 50;
+                P1EnegryIncrease.Play();
+            }
+        }
+        //Energy Increase for PLayer2
+        if (character[1].GetComponent<ZenCharacterController>().Energy >= 50)
+        {
+            if (character[1].GetComponent<ZenCharacterController>().Energy >= P2EnergyLevel + 50)
+            {
+                P2EnergyLevel = P2EnergyLevel + 50;
+                P2EnegryIncrease.Play();
+            }
+        }
         if (framelimit <= 0 || CheckField())
         {
             End();
