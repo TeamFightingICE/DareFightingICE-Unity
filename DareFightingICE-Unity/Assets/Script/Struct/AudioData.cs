@@ -42,10 +42,10 @@ public class AudioData : MonoBehaviour
 
     private void Update()
     {
-        TransoformAudio();
+        TransformAudio();
     }
 
-    private void TransoformAudio()
+    private void TransformAudio()
     {
         AudioListener.GetOutputData(rawData[0], 0);
         AudioListener.GetOutputData(rawData[1], 1);
@@ -55,9 +55,6 @@ public class AudioData : MonoBehaviour
         spectrogramData[1] = mfcc.melSpectrogram(rawData[1]);
         rawDataAsBytes = ConvertToByteArray1(rawData);
         spectrogramDataAsBytes = ConvertToByteArray2(spectrogramData);
-
-
-
     }
 
     byte[] ConvertToByteArray1(float[][] samples)

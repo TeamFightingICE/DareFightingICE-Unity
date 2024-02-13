@@ -1,12 +1,19 @@
+using System;
 using UnityEngine;
 
 public class AIController : MonoBehaviour, IAIInterface
 {
     public ZenCharacterController characterController;
     private ScreenData _screenData;
+    private bool _isPlayerOne;
+    private bool _toggleFlag;
+    private Key _inputKey;
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         // Initialize AI with game data
+        _isPlayerOne = isPlayerOne;
+        _toggleFlag = true;
+        _inputKey = new Key();
     }
 
     public void GetInformation(FrameData frameData)
@@ -28,7 +35,8 @@ public class AIController : MonoBehaviour, IAIInterface
     {
         // Return the AI's input (actions to take)
         // You'll need to define how you want to structure the Key type or use an existing input structure
-        return new Key();
+        Debug.Log(InputManager.Instance.GetInput(_isPlayerOne).B);
+        return InputManager.Instance.GetInput(_isPlayerOne);
     }
 
     public void Close()
@@ -43,7 +51,7 @@ public class AIController : MonoBehaviour, IAIInterface
     
     void Update()
     {
-        FrameData frameData = new FrameData(); // You'll need to define how FrameData is structured and populated
+        FrameData frameData = null; // You'll need to define how FrameData is structured and populated
         GetInformation(frameData);
         Processing();
 

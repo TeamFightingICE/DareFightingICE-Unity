@@ -1,0 +1,1 @@
+tools\protoc.exe -I protos protos\*.proto --csharp_out=DareFightingICE-Unity\Assets\Script\Service --grpc_out=DareFightingICE-Unity\Assets\Script\Service --plugin=protoc-gen-grpc=tools\grpc_csharp_plugin.exe 
