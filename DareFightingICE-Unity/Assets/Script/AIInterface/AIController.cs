@@ -11,7 +11,7 @@ public class AIController : MonoBehaviour, IAIInterface
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         // Initialize AI with game data
-        _isPlayerOne = isPlayerOne;
+        _isPlayerOne = true;
         _toggleFlag = true;
         _inputKey = new Key();
     }
@@ -35,7 +35,7 @@ public class AIController : MonoBehaviour, IAIInterface
     {
         // Return the AI's input (actions to take)
         // You'll need to define how you want to structure the Key type or use an existing input structure
-        Debug.Log(InputManager.Instance.GetInput(_isPlayerOne).B);
+        Debug.Log("AIController.Key.B" + InputManager.Instance.GetInput(_isPlayerOne).B);
         return InputManager.Instance.GetInput(_isPlayerOne);
     }
 

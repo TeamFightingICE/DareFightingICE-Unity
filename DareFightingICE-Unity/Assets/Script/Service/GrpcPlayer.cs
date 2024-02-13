@@ -12,7 +12,8 @@ using UnityEngine.UIElements;
 public class GrpcPlayer
 {
     public UniqueId PlayerUUID {  get; set; }
-    private bool isCancelled;
+    public bool IsCancelled { get; set; }
+    public PlayerGameState CurrentState { get; set; }
 
     private bool playerNumber;
     private string playerName;
@@ -24,41 +25,25 @@ public class GrpcPlayer
     private ScreenData screenData;
     private FrameData nonDelayFrameData;
 
-    private IServerStreamWriter<PlayerGameState> responseStream;
-    private ServerCallContext serverCallContext;
     private bool waitFlag;
 
     public GrpcPlayer()
     {
         this.PlayerUUID = new UniqueId();
-        this.isCancelled = true;
+        this.IsCancelled = true;
 
         this.waitFlag = false;
 
         this.isControl = false;
     }
-
     public void InitializeRPC(InitializeRequest request)
     {
         this.playerName = request.PlayerName;
         this.isBlind = request.IsBlind;
     }
-    public void ParticipateRPC(IServerStreamWriter<PlayerGameState> responseStream, ServerCallContext serverCallContext)
-    {
-        if (!this.isCancelled)
-        {
-            this.onCancel();
-        }
-
-        this.isCancelled = false;
-        this.responseStream = responseStream;
-        this.serverCallContext = serverCallContext;
-    }
     public void onCancel()
     {
-        this.isCancelled = true;
-        this.responseStream = null;
-        this.serverCallContext = null;
+        this.IsCancelled = true;
     }
     public bool IsGameStarted()
     {
@@ -81,27 +66,18 @@ public class GrpcPlayer
     {
         PlayerGameState state = new PlayerGameState();
         state.StateFlag = GrpcFlag.Initialize;
-        this.onNext(state);
+        this.CurrentState = state;
     }
     public void onGameUpdate()
     {
         PlayerGameState state = new PlayerGameState();
         state.StateFlag = GrpcFlag.Processing;
-        this.onNext(state);
+        this.CurrentState = state;
     }
     public void onRoundEnd()
     {
         PlayerGameState state = new PlayerGameState();
         state.StateFlag = GrpcFlag.RoundEnd;
-        this.onNext(state);
-    }
-    public async void onNext(PlayerGameState state)
-    {
-        if (this.serverCallContext.CancellationToken.IsCancellationRequested)
-        {
-            this.onCancel();
-            return;
-        }
-        await this.responseStream.WriteAsync(state);
+        this.CurrentState = state;
     }
 }

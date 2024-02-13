@@ -33,7 +33,7 @@ public class LaunchController : MonoBehaviour
         GameSetting.Instance.ResetData();
         FlagSetting.Instance.ResetData();
         MotionManager.Instance.LoadMotion(zenMotion,garnetMotion,ludMotion);
-        // GRPCServer.Instance.StartGrpcServer();
+        GrpcServer.Instance.StartGrpcServer();
     }
 
     public void Launch()

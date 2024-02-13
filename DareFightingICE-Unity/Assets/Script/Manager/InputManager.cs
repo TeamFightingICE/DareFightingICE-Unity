@@ -4,8 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class InputManager : Singleton<InputManager>
+public class InputManager
 {
+    private static InputManager instance;
+    public static InputManager Instance { 
+        get { 
+            if (instance == null)
+                instance = new InputManager();
+            return instance;
+        }
+    }
     private Key p1Key;
     private Key p2Key;
     public InputManager()
