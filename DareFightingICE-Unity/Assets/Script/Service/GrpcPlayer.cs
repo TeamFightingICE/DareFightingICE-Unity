@@ -20,10 +20,10 @@ public class GrpcPlayer
     private bool isBlind;
 
     private bool isControl;
-    private FrameData frameData;
+    /*private FrameData frameData;
     private AudioData audioData;
     private ScreenData screenData;
-    private FrameData nonDelayFrameData;
+    private FrameData nonDelayFrameData;*/
 
     private bool waitFlag;
 

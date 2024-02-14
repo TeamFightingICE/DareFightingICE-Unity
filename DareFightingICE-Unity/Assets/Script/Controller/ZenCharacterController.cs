@@ -21,6 +21,8 @@ public class ZenCharacterController : MonoBehaviour
     public int Hp { get; set; }
     public int Energy { get; set; }
     public ZenCharacterController otherPlayer{get; set; }
+    
+    public List<GameObject> AttackDeque;
 
     public TextAsset csvFile;
     
@@ -55,6 +57,7 @@ public class ZenCharacterController : MonoBehaviour
     public bool isGrounded;
     public bool isCrouching = false;
     public State state = State.Stand;
+    public Action Action = Action.NEUTRAL;
     [SerializeField] private Animator _animator;
     private float jumpTimer = 0f;
     [SerializeField]private float jumpDelay = 0.1f;
@@ -334,10 +337,10 @@ public class ZenCharacterController : MonoBehaviour
         // {
         //     ExecuteGivenCombo("D_DF_FB");
         // }
-        // if (Input.GetKeyDown(KeyCode.D) && canAttack)
-        // {
-        //     ExecuteGivenCombo("D_DF_FC");
-        // }
+        if (Input.GetKeyDown(KeyCode.D) && canAttack)
+        {
+            ExecuteGivenCombo("D_DF_FC");
+        }
         
         // Combat input
         if (Input.GetKeyDown(KeyCode.Z) && canAttack) { AddInput("A"); }
@@ -964,7 +967,7 @@ public class ZenCharacterController : MonoBehaviour
             fireballDirection = new Vector2(0, 1);
         }
         float fireballForce = 10f;
-        leftHand.SpawnBigProjectile(fireballDirection,fireballForce);
+        AttackDeque.Add(leftHand.SpawnBigProjectile(fireballDirection,fireballForce));
     }
 
     public void SpawnSmallFireball()
@@ -979,7 +982,7 @@ public class ZenCharacterController : MonoBehaviour
             fireballDirection = new Vector2(0, 1);
         }
         float fireballForce = 10f;
-        leftHand.SpawnSmallProjectile(fireballDirection,fireballForce);
+        AttackDeque.Add(leftHand.SpawnSmallProjectile(fireballDirection,fireballForce));
     }
 
     public void HandleAIInput(Key key)
@@ -1153,10 +1156,10 @@ public class ZenCharacterController : MonoBehaviour
             }
         }
         
-        if (key.A && canAttack) { AddInput("A"); }
-        if (key.B && canAttack) { AddInput("B"); }
-        if (key.C && canAttack) { AddInput("C"); }
-        
-        key.UpdatePreviousState();
+        if (key.IsKeyPressed("A") && canAttack) { AddInput("A"); }
+        if (key.IsKeyPressed("B") && canAttack) { AddInput("B"); }
+        if (key.IsKeyPressed("C") && canAttack) { AddInput("C"); }
+
+        InputManager.Instance.UpdateKey(PlayerNumber);
     }
 }

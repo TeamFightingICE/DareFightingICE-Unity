@@ -36,4 +36,16 @@ public class InputManager
     {
         return (playerNumber) ? p1Key : p2Key;
     }
+
+    public void UpdateKey(bool playerNumber)
+    {
+        if (playerNumber)
+        {
+            this.p1Key.UpdatePreviousState();
+        }
+        else
+        {
+            this.p2Key.UpdatePreviousState(); 
+        }
+    }
 }

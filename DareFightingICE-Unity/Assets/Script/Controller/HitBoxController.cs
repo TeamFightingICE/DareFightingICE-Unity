@@ -72,11 +72,12 @@ public class HitBoxController : MonoBehaviour
                 other.GetComponent<ZenCharacterController>().TakeHit(zenCharacterController,giveEnergy,tempDamage,getEnergy,guardDamage,guardEnergy,attackType,isDown);
                 if (isProjectile)
                 {
+                    zenCharacterController.AttackDeque.Remove(this.gameObject);
                     Destroy(this.gameObject);
                 }
             }else if (isThrow)
             {
-                other.GetComponent<ZenCharacterController>().TakeThorw(zenCharacterController,giveEnergy,tempDamage,getEnergy);
+                zenCharacterController.TakeThorw(zenCharacterController,giveEnergy,tempDamage,getEnergy);
             }
         }else if (other.gameObject.name == "Border" && isProjectile)
         {
@@ -162,7 +163,7 @@ public class HitBoxController : MonoBehaviour
             isThrow = true;
         }
     }
-    public void SpawnSmallProjectile(Vector2 direction, float force)
+    public GameObject SpawnSmallProjectile(Vector2 direction, float force)
     {
         // Instantiate the fireball at the position of the hitbox with the same rotation
         GameObject fireballInstance = Instantiate(smallFireball, transform.position, Quaternion.identity);
@@ -175,14 +176,16 @@ public class HitBoxController : MonoBehaviour
         {
             // Add force to the fireball to propel it in the specified direction
             rb.AddForce(direction * force, ForceMode2D.Impulse);
+            return fireballInstance;
         }
         else
         {
             Debug.LogError("Spawned fireball does not have a Rigidbody2D component.");
+            return null;
         }
     }
     
-    public void SpawnBigProjectile(Vector2 direction, float force)
+    public GameObject SpawnBigProjectile(Vector2 direction, float force)
     {
         // Instantiate the fireball at the position of the hitbox with the same rotation
         GameObject fireballInstance = Instantiate(largeFireball, transform.position, Quaternion.identity);
@@ -196,10 +199,12 @@ public class HitBoxController : MonoBehaviour
         {
             // Add force to the fireball to propel it in the specified direction
             rb.AddForce(direction * force, ForceMode2D.Impulse);
+            return fireballInstance;
         }
         else
         {
             Debug.LogError("Spawned fireball does not have a Rigidbody2D component.");
+            return fireballInstance;
         }
     }
     

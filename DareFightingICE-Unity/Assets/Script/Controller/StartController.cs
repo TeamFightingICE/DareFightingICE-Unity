@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum ControlType
 {
@@ -15,6 +16,7 @@ public class StartController : MonoBehaviour
 {
     public TMP_Text p1Control;
     public TMP_Text p2Control;
+    public Button playBtn;
     private int[] _repeatCount = new[] { 1, 3, 5, 10, 100, 500, 1000 };
 
     // Current control types for each player
@@ -29,9 +31,21 @@ public class StartController : MonoBehaviour
 
     void Update()
     {
-        
+        //CheckCondition();
     }
 
+    public void CheckCondition()
+    {
+        if (false)
+        {
+            playBtn.interactable = false;
+        }
+        else
+        {
+            playBtn.interactable = true;
+        }
+    }
+    
     // Called to cycle through control types for each player
     public void SelectControl(int player)
     {

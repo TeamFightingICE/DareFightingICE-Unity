@@ -1,31 +1,19 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FrameData : MonoBehaviour
+public class FrameData
 {
-    [SerializeField] private CharacterData[] characterData;
+    public CharacterData[] CharacterData { get; set; }
 
-    [SerializeField] private float currentFrameNumber;
+    public float CurrentFrameNumber { get; set; }
 
-    [SerializeField] private int currentRound;
+    public int CurrentRound { get; set; }
 
-    public InterfaceDisplay interfaceDisplay;
-    public FightingController controller;
+    public List<AttackData> ProjectileData { get; set; }
 
-   // private Deque<AttackData> projectileData;
+    public bool EmptyFlag { get; set; }
 
-    private bool emptyFlag;
-
-    private bool[] front;
-    void Update()
-    {
-        characterData[0] = controller.character[0].GetComponent<CharacterData>();
-        characterData[1] = controller.character[1].GetComponent<CharacterData>();
-        currentFrameNumber = interfaceDisplay.currentFrame;
-        currentRound = 0;
-        front[0] = controller.character[0].GetComponent<ZenCharacterController>().IsFront;
-        front[1] = controller.character[1].GetComponent<ZenCharacterController>().IsFront;
-    }
+    public bool[] Front { get; set; }
+    
 }

@@ -55,10 +55,13 @@ public class Key
         return lever;
     }
     
-    private bool previousR = false;
-    private bool previousL = false;
-    private bool previousU = false;
-    private bool previousD = false;
+    public bool previousR = false;
+    public bool previousL = false;
+    public bool previousU = false;
+    public bool previousD = false;
+    public bool previousA = false;
+    public bool previousB = false;
+    public bool previousC = false;
     // Add other keys as needed
 
     // Call this method at the end of each frame to update the previous state
@@ -68,6 +71,9 @@ public class Key
         previousL = L;
         previousU = U;
         previousD = D;
+        previousA = A;
+        previousB = B;
+        previousC = C;
         // Update other keys as needed
     }
 
@@ -80,6 +86,9 @@ public class Key
             case "L": return L && !previousL;
             case "U": return U && !previousU;
             case "D": return D && !previousD;
+            case "A": return A && !previousA;
+            case "B": return B && !previousB;
+            case "C": return C && !previousC;
             // Add other keys as needed
             default: return false;
         }
@@ -90,10 +99,13 @@ public class Key
     {
         switch (key)
         {
-            case "R": return L && previousR;
-            case "L": return R && previousL;
+            case "R": return R && previousR;
+            case "L": return L && previousL;
             case "U": return U && previousU;
             case "D": return D && previousD;
+            case "A": return A && !previousA;
+            case "B": return B && !previousB;
+            case "C": return C && !previousC;
             // Add other keys as needed
             default: return false;
         }
@@ -103,10 +115,13 @@ public class Key
     {
         switch (key)
         {
-            case "R": return !L && previousR;
-            case "L": return !R && previousL;
+            case "R": return !R && previousR;
+            case "L": return !L && previousL;
             case "U": return !U && previousU;
             case "D": return !D && previousD;
+            case "A": return A && !previousA;
+            case "B": return B && !previousB;
+            case "C": return C && !previousC;
             // Add other keys as needed
             default: return false;
         }

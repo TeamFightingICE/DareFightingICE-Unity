@@ -891,6 +891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   p1Control: {fileID: 202652176}
   p2Control: {fileID: 1594208236}
+  playBtn: {fileID: 1944957703}
 --- !u!1 &809799223
 GameObject:
   m_ObjectHideFlags: 0

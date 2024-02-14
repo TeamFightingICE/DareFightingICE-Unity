@@ -18,10 +18,13 @@ public class FightingController : MonoBehaviour
     [SerializeField] private float flipThreshold = 1.0f;
     private bool isStart = false;
     public List<GameObject> character;
+    private AIController[] _aiControllers = new AIController[2];
+    private ZenCharacterController[] _controllers = new ZenCharacterController[2];
+    
 
     private float framelimit;
 
-    [SerializeField] private InterfaceDisplay _display;
+    public InterfaceDisplay _display;
 
     [SerializeField] private AudioSource P1HeartBeat;
     [SerializeField] private AudioSource P2HeartBeat;
@@ -29,9 +32,13 @@ public class FightingController : MonoBehaviour
     [SerializeField] private AudioSource P2EnegryIncrease;
     [SerializeField] private int P1EnergyLevel;
     [SerializeField] private int P2EnergyLevel ;
+    
     void Start()
     {
         SetupScene();
+        _aiControllers[0].Initialize(GameDataManager.Instance.GameData,true);
+        _aiControllers[1].Initialize(GameDataManager.Instance.GameData,false);
+
     }
 
     private void SetupScene()
@@ -57,13 +64,34 @@ public class FightingController : MonoBehaviour
         zen2.tag = "Player2";
         zen1.GetComponent<ZenCharacterController>().SetTarget("Player2");
         zen2.GetComponent<ZenCharacterController>().SetTarget("Player1");
+        _aiControllers[0] = zen1.GetComponent<AIController>();
+        _aiControllers[1] = zen2.GetComponent<AIController>();
+        _controllers[0] = zen1.GetComponent<ZenCharacterController>();
+        _controllers[1] = zen2.GetComponent<ZenCharacterController>();
         character.Add(zen1);
         character.Add(zen2);
-        _display.player1 = zen1.GetComponent<ZenCharacterController>();
-        _display.player2 = zen2.GetComponent<ZenCharacterController>();
         isStart = true;
         P1EnergyLevel = 0;
         P2EnergyLevel = 0;
+        _display.SetPlayerController(_controllers[0],_controllers[1]);
+        FrameDataManager.Instance.SetupFrameData(character[0],character[1],_display);
+    }
+
+    public void ResetRound()
+    {
+        character[0].transform.position = spawnP1.transform.position;
+        character[0].transform.rotation = spawnP1.transform.rotation;
+        _controllers[0].IsFront = true;
+        _controllers[0].Hp = GameSetting.Instance.p1Hp;
+        _controllers[0].Energy = 0;
+        
+        character[1].transform.position = spawnP2.transform.position;
+        character[1].transform.rotation = spawnP2.transform.rotation;
+        _controllers[1].IsFront = true;
+        _controllers[1].Hp = GameSetting.Instance.p2Hp;
+        _controllers[1].Energy = 0;
+        Vector3 scale = character[1].transform.localScale;
+        scale.x *= -1;
     }
     // Update is called once per frame
     void Update()
@@ -99,10 +127,11 @@ public class FightingController : MonoBehaviour
         }
         if (framelimit <= 0 || CheckField())
         {
-            End();
+            OnRoundEnd();
         }
         else if (isStart)
         {
+            FrameDataManager.Instance.ProcessFrameData();
             framelimit -= 1;
             _display.currentFrame = framelimit;
             HandlePositionOverlap();
@@ -117,10 +146,18 @@ public class FightingController : MonoBehaviour
         }
         character.Clear();
     }
-    void End()
+    void OnRoundEnd()
     {
+        RoundResult result = new RoundResult
+        {
+            CurrentRound = 0,
+            ElaspedFrame = _display.GetElaspedFrame(),
+            RemainingHPs = new int[]{_controllers[0].Hp,_controllers[1].Hp}
+        };
         isStart = false;
-        SetupScene();
+        _aiControllers[0].RoundEnd(result);
+        _aiControllers[1].RoundEnd(result);
+        ResetRound();
     }
 
     bool CheckField()

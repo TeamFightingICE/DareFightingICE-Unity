@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.XR;
 
 [RequireComponent(typeof(AudioListener))]
-public class AudioData : MonoBehaviour
+public class AIAudioData : MonoBehaviour
 {
     public float[][] rawData ;
     public float[][] fftData ;

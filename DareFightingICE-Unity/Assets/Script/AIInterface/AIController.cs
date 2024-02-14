@@ -1,13 +1,21 @@
 using System;
 using UnityEngine;
 
-public class AIController : MonoBehaviour, IAIInterface
+
+public class AIController : MonoBehaviour
 {
     public ZenCharacterController characterController;
-    private ScreenData _screenData;
+    private AIScreenData _screenData;
     private bool _isPlayerOne;
     private bool _toggleFlag;
     private Key _inputKey;
+    
+    //Test
+    public void Awake()
+    {
+        _inputKey = new Key();
+    }
+
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         // Initialize AI with game data
@@ -15,7 +23,7 @@ public class AIController : MonoBehaviour, IAIInterface
         _toggleFlag = true;
         _inputKey = new Key();
     }
-
+    
     public void GetInformation(FrameData frameData)
     {
         
@@ -35,7 +43,15 @@ public class AIController : MonoBehaviour, IAIInterface
     {
         // Return the AI's input (actions to take)
         // You'll need to define how you want to structure the Key type or use an existing input structure
-        Debug.Log("AIController.Key.B" + InputManager.Instance.GetInput(_isPlayerOne).B);
+        
+        if (characterController.PlayerNumber)
+        {
+            _inputKey.B = true;
+            _isPlayerOne = true;
+            InputManager.Instance.SetInput(true,_inputKey);
+            //_inputKey.UpdatePreviousState();
+            Debug.Log("AIController.Key.R : " + InputManager.Instance.GetInput(_isPlayerOne).B );
+        }
         return InputManager.Instance.GetInput(_isPlayerOne);
     }
 
@@ -44,19 +60,18 @@ public class AIController : MonoBehaviour, IAIInterface
         // Cleanup resources if needed
     }
 
-    public void RoundEnd(int p1Hp, int p2Hp, int frames)
+    public void RoundEnd(RoundResult result)
     {
         // Process round-end information
     }
     
     void Update()
     {
-        FrameData frameData = null; // You'll need to define how FrameData is structured and populated
+        FrameData frameData = FrameDataManager.Instance.GetFrameData(); // You'll need to define how FrameData is structured and populated
+        ScreenData screenData = new ScreenData();
         GetInformation(frameData);
+        GetScreenData(screenData);
         Processing();
-
-        // Example of applying AI decisions to control a character
-        ApplyInputToCharacter(Input());
     }
 
     

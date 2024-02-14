@@ -26,7 +26,12 @@ public class InterfaceDisplay : MonoBehaviour
     {
         Application.targetFrameRate = 60;
     }
-    
+
+    public void SetPlayerController(ZenCharacterController p1,ZenCharacterController p2)
+    {
+        player1 = p1;
+        player2 = p2;
+    }
     void Update()
     {
         float msec = deltaTime * 1000.0f;
@@ -68,6 +73,13 @@ public class InterfaceDisplay : MonoBehaviour
         {
             energy2.color = Color.red;
         }
+    }
+
+    public int GetElaspedFrame()
+    {
+        float _temp = GameSetting.Instance.frameLimit - currentFrame;
+        int result = Mathf.RoundToInt(_temp);
+        return result;
     }
     // void OnGUI()
     // {
