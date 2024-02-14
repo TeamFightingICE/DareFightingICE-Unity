@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Unity.VisualScripting;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.UIElements;
 
@@ -20,18 +21,19 @@ public class GrpcPlayer
     private bool isBlind;
 
     private bool isControl;
-    /*private FrameData frameData;
-    private AudioData audioData;
+    private FrameData frameData;
+    // private AudioData audioData;
     private ScreenData screenData;
-    private FrameData nonDelayFrameData;*/
+    // private FrameData nonDelayFrameData;
 
     private bool waitFlag;
 
-    public GrpcPlayer()
+    public GrpcPlayer(bool playerNumber)
     {
         this.PlayerUUID = new UniqueId();
         this.IsCancelled = true;
 
+        this.playerNumber = playerNumber;
         this.waitFlag = false;
 
         this.isControl = false;
@@ -40,6 +42,7 @@ public class GrpcPlayer
     {
         this.playerName = request.PlayerName;
         this.isBlind = request.IsBlind;
+        this.IsCancelled = false;
     }
     public void onCancel()
     {
@@ -47,9 +50,9 @@ public class GrpcPlayer
     }
     public bool IsGameStarted()
     {
-        return true;
+        return (this.frameData != null && !this.frameData.EmptyFlag && this.frameData.CurrentFrameNumber > 0);
     }
-    public void onInput(PlayerInput request)
+    public void OnInput(PlayerInput request)
     {
         if (this.IsGameStarted())
         {
@@ -62,22 +65,41 @@ public class GrpcPlayer
             this.waitFlag = false;
         }
     }
-    public void onInitialize(GameData gameData)
+    public void OnInitialize(GameData gameData)
     {
-        PlayerGameState state = new PlayerGameState();
-        state.StateFlag = GrpcFlag.Initialize;
-        this.CurrentState = state;
+        this.CurrentState = new PlayerGameState
+        {
+            StateFlag = GrpcFlag.Initialize,
+            GameData = gameData.ToProto()
+        };
     }
-    public void onGameUpdate()
+    public void SetInformation(bool isControl, FrameData frameData, ScreenData screenData)
     {
-        PlayerGameState state = new PlayerGameState();
-        state.StateFlag = GrpcFlag.Processing;
-        this.CurrentState = state;
+        this.isControl = isControl;
+        this.frameData = new FrameData(frameData);
+        this.screenData = new ScreenData(screenData);
     }
-    public void onRoundEnd()
+    public void OnGameUpdate()
     {
-        PlayerGameState state = new PlayerGameState();
-        state.StateFlag = GrpcFlag.RoundEnd;
-        this.CurrentState = state;
+        if (!isBlind)
+        {
+            frameData.RemoveVisualData();
+        }
+        PlayerGameState newState = new PlayerGameState
+        {
+            StateFlag = GrpcFlag.Processing,
+            IsControl = isControl,
+            FrameData = frameData.ToProto(),
+        };
+        this.CurrentState = newState;
+        
+    }
+    public void OnRoundEnd(RoundResult roundResult)
+    {
+        this.CurrentState = new PlayerGameState
+        {
+            StateFlag = GrpcFlag.RoundEnd,
+            RoundResult = roundResult.ToProto()
+        };
     }
 }

@@ -9,7 +9,7 @@ public class GrpcServer : Singleton<GrpcServer>
     private Server server;
     private GrpcPlayer[] players;
     public GrpcServer() {
-        this.players = new GrpcPlayer[] { new GrpcPlayer(), new GrpcPlayer() };
+        this.players = new GrpcPlayer[] { new GrpcPlayer(true), new GrpcPlayer(false) };
     }
     public void StartGrpcServer()
     {

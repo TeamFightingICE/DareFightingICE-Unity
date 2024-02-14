@@ -1,6 +1,8 @@
 ﻿using DareFightingICE.Grpc.Proto;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,5 +21,17 @@ public class GrpcUtil
         key.L = grpcKey.L;
         key.R = grpcKey.R;
         return key;
+    }
+
+    public static byte[] CompressBytes(byte[] data)
+    {
+        using (var memoryStream = new MemoryStream())
+        {
+            using (var gzip = new GZipStream(memoryStream, CompressionMode.Compress, true))
+            {
+                gzip.Write(data, 0, data.Length);
+            }
+            return memoryStream.ToArray();
+        }
     }
 }

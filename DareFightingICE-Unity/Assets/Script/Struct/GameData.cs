@@ -1,3 +1,4 @@
+using DareFightingICE.Grpc.Proto;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,4 +51,16 @@ public class GameData
     }
 
     // Additional methods (e.g., GetMaxHP, GetMaxEnergy, GetCharacterName, GetAiName) can be added as needed
+
+    public GrpcGameData ToProto()
+    {
+        GrpcGameData gameData = new GrpcGameData
+        {
+            MaxHps = { MaxHPs },
+            MaxEnergies = { MaxEnergies },
+            CharacterNames = { CharacterNames},
+            AiNames = { AiNames }
+        };
+        return gameData;
+    }
 }

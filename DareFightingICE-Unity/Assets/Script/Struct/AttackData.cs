@@ -1,3 +1,4 @@
+using DareFightingICE.Grpc.Proto;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -157,5 +158,60 @@ public class AttackData
 		this.AttackType = 0;
 		this.DownProp = false;
 		this.IsProjectile = false;
+	}
+
+	public AttackData(AttackData other)
+	{
+		this.SettingHitArea = new HitArea(other.SettingHitArea);
+		this.SettingSpeedX = other.SettingSpeedX;
+		this.SettingSpeedY = other.SettingSpeedY;
+		this.CurrentHitArea = new HitArea(other.CurrentHitArea);
+		this.CurrentFrame = other.CurrentFrame;
+		this.PlayerNumber = other.PlayerNumber;
+		this.SpeedX = other.SpeedX;
+		this.SpeedY = other.SpeedY;
+		this.StartUp = other.StartUp;
+		this.Active = other.Active;
+		this.HitDamage = other.HitDamage;
+		this.GuardDamage = other.GuardDamage;
+		this.StartAddEnergy = other.StartAddEnergy;
+		this.HitAddEnergy = other.HitAddEnergy;
+		this.GuardAddEnergy = other.GuardAddEnergy;
+		this.GiveEnergy = other.GiveEnergy;
+		this.ImpactX = other.ImpactX;
+		this.ImpactY = other.ImpactY;
+		this.GiveGuardRecov = other.GiveGuardRecov;
+		this.AttackType = other.AttackType;
+		this.DownProp = other.DownProp;
+		this.IsProjectile = other.IsProjectile;
+	}
+
+	public GrpcAttackData ToProto()
+	{
+		return new GrpcAttackData
+		{
+			SettingHitArea = SettingHitArea.ToProto(),
+			SettingSpeedX = SettingSpeedX,
+			SettingSpeedY = SettingSpeedY,
+			CurrentHitArea = CurrentHitArea.ToProto(),
+			CurrentFrame = CurrentFrame,
+			PlayerNumber = PlayerNumber,
+			SpeedX = SpeedX,
+			SpeedY = SpeedY,
+			StartUp = StartUp,
+			Active = Active,
+			HitDamage = HitDamage,
+			GuardDamage = GuardDamage,
+			StartAddEnergy = StartAddEnergy,
+			HitAddEnergy = HitAddEnergy,
+			GuardAddEnergy = GuardAddEnergy,
+			GiveEnergy = GiveEnergy,
+			ImpactX = ImpactX,
+			ImpactY = ImpactY,
+			GiveGuardRecov = GiveGuardRecov,
+			AttackType = AttackType,
+			DownProp = DownProp,
+			IsProjectile = IsProjectile,
+		};
 	}
 }

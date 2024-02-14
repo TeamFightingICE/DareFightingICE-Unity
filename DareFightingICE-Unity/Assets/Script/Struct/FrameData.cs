@@ -1,6 +1,10 @@
+using DareFightingICE.Grpc.Proto;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEngine.VFX;
 
 public class FrameData
 {
@@ -15,5 +19,61 @@ public class FrameData
     public bool EmptyFlag { get; set; }
 
     public bool[] Front { get; set; }
-    
+
+    public FrameData()
+    {
+        this.CharacterData = new CharacterData[] { null, null };
+        this.CurrentFrameNumber = -1;
+        this.CurrentRound = -1;
+        this.ProjectileData = new List<AttackData>();
+        this.EmptyFlag = true;
+        this.Front = new bool[2];
+    }
+
+    public FrameData(FrameData other)
+    {
+        this.CharacterData = new CharacterData[2] { new CharacterData(other.CharacterData[0]), new CharacterData(other.CharacterData[1]) };
+        this.CurrentFrameNumber = other.CurrentFrameNumber;
+        this.CurrentRound = other.CurrentRound;
+        this.ProjectileData = new List<AttackData>();
+        foreach (var item in other.ProjectileData)
+        {
+            this.ProjectileData.Add(new AttackData(item));
+        }
+        this.EmptyFlag = other.EmptyFlag;
+        this.Front = new bool[2] { other.Front[0], other.Front[1] };
+    }
+
+    public void RemoveVisualData()
+    {
+        this.CharacterData = new CharacterData[2];
+        this.CurrentRound = -1;
+        this.ProjectileData = new List<AttackData>();
+    }
+
+    public GrpcFrameData ToProto()
+    {
+        GrpcFrameData frameData = new GrpcFrameData
+        {
+            CurrentFrameNumber = (int) CurrentFrameNumber,
+            CurrentRound = CurrentRound,
+            EmptyFlag = EmptyFlag,
+            Front = { Front },
+        };
+        frameData.CharacterData.Add(new GrpcCharacterData());
+        frameData.CharacterData.Add(new GrpcCharacterData());
+        if (this.CharacterData[0] != null)
+        {
+            frameData.CharacterData[0] = this.CharacterData[0].ToProto();
+        }
+        if (this.CharacterData[1] != null)
+        {
+            frameData.CharacterData[1] = this.CharacterData[1].ToProto();
+        }
+        foreach (var projectile in this.ProjectileData)
+        {
+            frameData.ProjectileData.Add(projectile.ToProto());
+        }
+        return frameData;
+    }
 }

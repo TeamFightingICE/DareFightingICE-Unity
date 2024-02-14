@@ -50,22 +50,10 @@ public class ScreenDataManager : Singleton<ScreenDataManager>
         return pixels;
     }
 
-    public byte[] CompressBytes(byte[] data)
-    {
-        using (var memoryStream = new MemoryStream())
-        {
-            using (var gzip = new GZipStream(memoryStream, CompressionMode.Compress, true))
-            {
-                gzip.Write(data, 0, data.Length);
-            }
-            return memoryStream.ToArray();
-        }
-    }
-
     public ScreenData GetScreenData()
     {
         byte[] picturebyte = GetScreenDataAsBytes(CaptureScreen(960, 640), true);
-        byte[] compress = CompressBytes(picturebyte);
+        byte[] compress = GrpcUtil.CompressBytes(picturebyte);
         ScreenData data = new ScreenData
         {
             DisplayBytes = compress

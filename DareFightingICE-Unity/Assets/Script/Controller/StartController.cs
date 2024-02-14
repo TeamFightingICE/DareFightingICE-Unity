@@ -31,19 +31,20 @@ public class StartController : MonoBehaviour
 
     void Update()
     {
-        //CheckCondition();
+        playBtn.interactable = CheckCondition();
     }
 
-    public void CheckCondition()
+    public bool CheckCondition()
     {
-        if (false)
+        if (p1CurrentControl != ControlType.KEYBOARD && GrpcServer.Instance.GetPlayer(true).IsCancelled)
         {
-            playBtn.interactable = false;
+            return false;
         }
-        else
+        else if (p2CurrentControl != ControlType.KEYBOARD && GrpcServer.Instance.GetPlayer(false).IsCancelled)
         {
-            playBtn.interactable = true;
+            return false;
         }
+        return true;
     }
     
     // Called to cycle through control types for each player

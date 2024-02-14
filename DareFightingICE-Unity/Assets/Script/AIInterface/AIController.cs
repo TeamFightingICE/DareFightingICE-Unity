@@ -5,64 +5,66 @@ using UnityEngine;
 public class AIController : MonoBehaviour
 {
     public ZenCharacterController characterController;
-    private AIScreenData _screenData;
-    private bool _isPlayerOne;
-    private bool _toggleFlag;
-    private Key _inputKey;
+
+    private IAIInterface ai;
+    private GrpcPlayer grpcPlayer;
+
+    private GameData gameData;
+    private FrameData frameData;
+    private ScreenData screenData;
+
+    private bool isPlayerOne;
     
-    //Test
     public void Awake()
     {
-        _inputKey = new Key();
+
     }
 
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
-        // Initialize AI with game data
-        _isPlayerOne = true;
-        _toggleFlag = true;
-        _inputKey = new Key();
+        this.gameData = gameData;
+        this.isPlayerOne = isPlayerOne;
+        this.grpcPlayer = GrpcServer.Instance.GetPlayer(isPlayerOne);
+        this.grpcPlayer.OnInitialize(gameData);
+        this.ai?.Initialize(gameData, isPlayerOne);
     }
     
     public void GetInformation(FrameData frameData)
     {
-        
+        this.frameData = frameData;
+        this.ai?.GetInformation(frameData);
     }
 
     public void GetScreenData(ScreenData screenData)
     {
-        
+        this.screenData = screenData;
+        this.ai?.GetScreenData(screenData);
     }
     
     public void Processing()
     {
-        // AI decision-making logic goes here
+        this.grpcPlayer.SetInformation(true, frameData, screenData);
+        this.grpcPlayer.OnGameUpdate();
+        this.ai?.Processing();
     }
 
     public Key Input()
     {
-        // Return the AI's input (actions to take)
-        // You'll need to define how you want to structure the Key type or use an existing input structure
-        
-        if (characterController.PlayerNumber)
-        {
-            _inputKey.B = true;
-            _isPlayerOne = true;
-            InputManager.Instance.SetInput(true,_inputKey);
-            //_inputKey.UpdatePreviousState();
-            Debug.Log("AIController.Key.R : " + InputManager.Instance.GetInput(_isPlayerOne).B );
+        if (ai != null) {
+            return this.ai.Input();
         }
-        return InputManager.Instance.GetInput(_isPlayerOne);
+        return InputManager.Instance.GetInput(isPlayerOne);
     }
 
     public void Close()
     {
-        // Cleanup resources if needed
+        this.ai?.Close();
     }
 
-    public void RoundEnd(RoundResult result)
+    public void RoundEnd(RoundResult roundResult)
     {
-        // Process round-end information
+        this.grpcPlayer.OnRoundEnd(roundResult);
+        this.ai?.RoundEnd(roundResult);
     }
     
     void Update()

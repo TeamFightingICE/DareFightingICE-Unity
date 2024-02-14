@@ -32,49 +32,20 @@ public class ServiceImpl : Service.ServiceBase
 
         context.CancellationToken.Register(() => { player.onCancel(); }, false);
 
-        // Mock
-        player.CurrentState = new PlayerGameState();
-        player.CurrentState.StateFlag = GrpcFlag.Initialize;
-        player.CurrentState.GameData = new GrpcGameData();
-        player.CurrentState.GameData.MaxHps.Add(400);
-        player.CurrentState.GameData.MaxHps.Add(400);
-        player.CurrentState.GameData.MaxEnergies.Add(300);
-        player.CurrentState.GameData.MaxEnergies.Add(300);
-        player.CurrentState.GameData.CharacterNames.Add("ZEN");
-        player.CurrentState.GameData.CharacterNames.Add("ZEN");
-        player.CurrentState.GameData.AiNames.Add("KickAI");
-        player.CurrentState.GameData.AiNames.Add("Keyboard");
-        // END Mock
-
         while (!context.CancellationToken.IsCancellationRequested)
         {
             if (player.CurrentState != null)
             {
                 await responseStream.WriteAsync(player.CurrentState);
                 player.CurrentState = null;
-
-                // Mock
-                player.CurrentState = new PlayerGameState();
-                player.CurrentState.StateFlag = GrpcFlag.Processing;
-                //player.CurrentState.FrameData.Front.Add(true);
-                //player.CurrentState.FrameData.Front.Add(false);
-                player.CurrentState.IsControl = true;
-                // END Mock
             }
         }
     }
 
     public override Task<Empty> Input(PlayerInput request, ServerCallContext context)
     {
-        try
-        {
-            GrpcPlayer player = server.GetPlayerWithUniqueId(request.PlayerUuid);
-            player.onInput(request);
-        }
-        catch (Exception ex)
-        {
-            UnityEngine.Debug.LogException(ex);
-        }
+        GrpcPlayer player = server.GetPlayerWithUniqueId(request.PlayerUuid);
+        player.OnInput(request);
         return Task.FromResult(new Empty());
     }
 }

@@ -36,11 +36,11 @@ public class FrameDataManager : Singleton<FrameDataManager>
     
     public void UpdateCharacterData()
     {
-        CharacterData _data1 = new CharacterData(_controllers[0].PlayerNumber, _controllers[0].Energy,character[0].transform.position.x,character[0].transform.position.y,rb[0].velocity.x,rb[0].velocity.y,_controllers[0].state,action,_controllers[0].IsFront,true,0);
+        CharacterData _data1 = new CharacterData(_controllers[0].PlayerNumber, _controllers[0].Hp, _controllers[0].Energy,character[0].transform.position.x,character[0].transform.position.y,rb[0].velocity.x,rb[0].velocity.y,_controllers[0].state,action,_controllers[0].IsFront,true,0);
         characterData[0] = _data1;
         front[0] = _controllers[0].IsFront;
         
-        CharacterData _data2 = new CharacterData(_controllers[1].PlayerNumber, _controllers[1].Energy,character[1].transform.position.x,character[1].transform.position.y,rb[1].velocity.x,rb[1].velocity.y,_controllers[1].state,action,_controllers[1].IsFront,true,0);
+        CharacterData _data2 = new CharacterData(_controllers[1].PlayerNumber, _controllers[1].Hp, _controllers[1].Energy,character[1].transform.position.x,character[1].transform.position.y,rb[1].velocity.x,rb[1].velocity.y,_controllers[1].state,action,_controllers[1].IsFront,true,0);
         characterData[1] = _data2;
         front[1] = _controllers[1].IsFront;
     }

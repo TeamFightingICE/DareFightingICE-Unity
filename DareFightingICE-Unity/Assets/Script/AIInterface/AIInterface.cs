@@ -10,5 +10,5 @@ public interface IAIInterface
     void Processing();
     Key Input();
     void Close();
-    void RoundEnd(int p1Hp, int p2Hp, int frames);
+    void RoundEnd(RoundResult roundResult);
 }
