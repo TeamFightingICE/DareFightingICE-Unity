@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FightingController : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private GameObject RightBorder;
     [SerializeField] private float flipThreshold = 1.0f;
     private bool isStart = false;
+    private int currentRound = 1;
     public List<GameObject> character;
     private AIController[] _aiControllers = new AIController[2];
     private ZenCharacterController[] _controllers = new ZenCharacterController[2];
@@ -55,9 +57,7 @@ public class FightingController : MonoBehaviour
         zen2.GetComponent<ZenCharacterController>().IsFront = false;
         zen2.GetComponent<ZenCharacterController>().Hp = GameSetting.Instance.p2Hp;
         zen2.GetComponent<ZenCharacterController>().Energy = 0;
-        Vector3 scale = zen2.transform.localScale;
-        scale.x *= -1;
-        zen2.transform.localScale = scale;
+        zen2.transform.localScale = new Vector3(-3.5f, 3.5f,3.5f);
         zen1.GetComponent<ZenCharacterController>().otherPlayer = zen2.GetComponent<ZenCharacterController>();
         zen2.GetComponent<ZenCharacterController>().otherPlayer = zen1.GetComponent<ZenCharacterController>();
         zen1.tag = "Player1";
@@ -90,8 +90,15 @@ public class FightingController : MonoBehaviour
         _controllers[1].IsFront = true;
         _controllers[1].Hp = GameSetting.Instance.p2Hp;
         _controllers[1].Energy = 0;
-        Vector3 scale = character[1].transform.localScale;
-        scale.x *= -1;
+        Vector3 scaleP2 = character[1].transform.localScale;
+        Vector3 scaleP1 = character[0].transform.localScale;
+        scaleP2.x = Mathf.Abs(scaleP2.x) * (_controllers[1].IsFront ? 1 : -1);
+        scaleP1.x = Mathf.Abs(scaleP1.x) * (_controllers[0].IsFront ? 1 : -1);
+        character[1].transform.localScale = scaleP2;
+        character[0].transform.localScale = scaleP1;
+        framelimit = GameSetting.Instance.frameLimit;
+        currentRound++;
+        isStart = true;
     }
     // Update is called once per frame
     void Update()
@@ -150,14 +157,22 @@ public class FightingController : MonoBehaviour
     {
         RoundResult result = new RoundResult
         {
-            CurrentRound = 0,
+            CurrentRound = currentRound,
             ElaspedFrame = _display.GetElaspedFrame(),
             RemainingHPs = new int[]{_controllers[0].Hp,_controllers[1].Hp}
         };
         isStart = false;
         _aiControllers[0].RoundEnd(result);
         _aiControllers[1].RoundEnd(result);
-        ResetRound();
+        if (currentRound < GameSetting.Instance.roundLimit)
+        {
+            ResetRound();
+        }
+        else
+        {
+            SceneManager.LoadScene("Start");
+        }
+        
     }
 
     bool CheckField()
