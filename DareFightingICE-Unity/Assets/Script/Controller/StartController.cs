@@ -5,13 +5,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum ControlType
-{
-    KEYBOARD,
-    AI,
-    GRPC
-}
-
 public class StartController : MonoBehaviour
 {
     public TMP_Text p1Control;
@@ -68,7 +61,7 @@ public class StartController : MonoBehaviour
     {
         GameData _gameData = new GameData();
         GameDataManager.Instance.SetGameData(_gameData);
-        GameSetting.Instance.SetCharacterData(p1CurrentControl,p2CurrentControl);
+        GameSetting.Instance.SetCharacterData(p1CurrentControl, p2CurrentControl);
         SceneManager.LoadScene("Gameplay");
     }
 

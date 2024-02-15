@@ -90,6 +90,8 @@ public class GrpcPlayer
             StateFlag = GrpcFlag.Processing,
             IsControl = isControl,
             FrameData = frameData.ToProto(),
+            AudioData = audioData.ToProto(),
+            ScreenData = screenData.ToProto()
         };
         this.CurrentState = newState;
         

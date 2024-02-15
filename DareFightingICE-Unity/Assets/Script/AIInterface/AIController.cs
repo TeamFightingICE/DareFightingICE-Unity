@@ -76,10 +76,9 @@ public class AIController : MonoBehaviour
     
     void Update()
     {
-        ScreenData screenData = new ScreenData();
         GetInformation(FrameDataManager.Instance.GetFrameData());
         GetAudioData(AudioDataManager.Instance.GetAudioData());
-        GetScreenData(screenData);
+        GetScreenData(new ScreenData());
         Processing();
     }
 
