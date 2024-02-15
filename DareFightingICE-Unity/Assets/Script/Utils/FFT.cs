@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class FFT : MonoBehaviour
+public class FFT
 {
     public float[] real;
 

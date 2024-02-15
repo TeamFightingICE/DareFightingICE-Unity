@@ -75,6 +75,7 @@ public class FightingController : MonoBehaviour
         P2EnergyLevel = 0;
         _display.SetPlayerController(_controllers[0],_controllers[1]);
         FrameDataManager.Instance.SetupFrameData(character[0],character[1],_display);
+        AudioDataManager.Instance.Initialize();
     }
 
     public void ResetRound()
@@ -139,6 +140,7 @@ public class FightingController : MonoBehaviour
         else if (isStart)
         {
             FrameDataManager.Instance.ProcessFrameData();
+            AudioDataManager.Instance.ProcessAudioData();
             framelimit -= 1;
             _display.currentFrame = framelimit;
             HandlePositionOverlap();

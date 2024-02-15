@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class MFCC : MonoBehaviour
+public class MFCC
 {
     private static  int n_mfcc = 20;
 

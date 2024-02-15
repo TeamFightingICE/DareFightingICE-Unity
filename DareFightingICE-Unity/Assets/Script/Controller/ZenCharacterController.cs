@@ -310,37 +310,37 @@ public class ZenCharacterController : MonoBehaviour
         }
         
         // TESTING
-        // if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
-        // if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
-        // if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
-        // if (Input.GetKeyDown(KeyCode.Q) && canAttack)
-        // {
-        //     ExecuteGivenCombo("F_D_DFA");
-        // }
-        // if (Input.GetKeyDown(KeyCode.W) && canAttack)
-        // {
-        //     ExecuteGivenCombo("F_D_DFB");
-        // }
-        // if (Input.GetKeyDown(KeyCode.E) && canAttack)
-        // {
-        //     ExecuteGivenCombo("D_DB_BA");
-        // }
-        // if (Input.GetKeyDown(KeyCode.R) && canAttack)
-        // {
-        //     ExecuteGivenCombo("D_DB_BB");
-        // }
-        // if (Input.GetKeyDown(KeyCode.A) && canAttack)
-        // {
-        //     ExecuteGivenCombo("D_DF_FA");
-        // }
-        // if (Input.GetKeyDown(KeyCode.S) && canAttack)
-        // {
-        //     ExecuteGivenCombo("D_DF_FB");
-        // }
+         /*if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
+         if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
+         if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
+         if (Input.GetKeyDown(KeyCode.Q) && canAttack)
+         {
+             ExecuteGivenCombo("F_D_DFA");
+         }
+         if (Input.GetKeyDown(KeyCode.W) && canAttack)
+         {
+             ExecuteGivenCombo("F_D_DFB");
+         }
+         if (Input.GetKeyDown(KeyCode.E) && canAttack)
+         {
+             ExecuteGivenCombo("D_DB_BA");
+         }
+         if (Input.GetKeyDown(KeyCode.R) && canAttack)
+         {
+             ExecuteGivenCombo("D_DB_BB");
+         }
+         if (Input.GetKeyDown(KeyCode.A) && canAttack)
+         {
+             ExecuteGivenCombo("D_DF_FA");
+         }
+         if (Input.GetKeyDown(KeyCode.S) && canAttack)
+         {
+             ExecuteGivenCombo("D_DF_FB");
+         }
         if (Input.GetKeyDown(KeyCode.D) && canAttack)
         {
             ExecuteGivenCombo("D_DF_FC");
-        }
+        }*/
         
         // Combat input
         if (Input.GetKeyDown(KeyCode.Z) && canAttack) { AddInput("A"); }
