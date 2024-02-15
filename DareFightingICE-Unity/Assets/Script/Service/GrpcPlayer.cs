@@ -21,7 +21,7 @@ public class GrpcPlayer
 
     private bool isControl;
     private FrameData frameData;
-    // private AudioData audioData;
+    private AudioData audioData;
     private ScreenData screenData;
     // private FrameData nonDelayFrameData;
 
@@ -72,10 +72,11 @@ public class GrpcPlayer
             GameData = gameData.ToProto()
         };
     }
-    public void SetInformation(bool isControl, FrameData frameData, ScreenData screenData)
+    public void SetInformation(bool isControl, FrameData frameData, AudioData audioData, ScreenData screenData)
     {
         this.isControl = isControl;
         this.frameData = new FrameData(frameData);
+        this.audioData = new AudioData(audioData);
         this.screenData = new ScreenData(screenData);
     }
     public void OnGameUpdate()

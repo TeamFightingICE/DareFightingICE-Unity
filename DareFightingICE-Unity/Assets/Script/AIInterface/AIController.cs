@@ -11,6 +11,7 @@ public class AIController : MonoBehaviour
 
     private GameData gameData;
     private FrameData frameData;
+    private AudioData audioData;
     private ScreenData screenData;
 
     private bool isPlayerOne;
@@ -35,6 +36,12 @@ public class AIController : MonoBehaviour
         this.ai?.GetInformation(frameData);
     }
 
+    public void GetAudioData(AudioData audioData)
+    {
+        this.audioData = audioData;
+        this.ai?.GetAudioData(audioData);
+    }
+
     public void GetScreenData(ScreenData screenData)
     {
         this.screenData = screenData;
@@ -43,7 +50,7 @@ public class AIController : MonoBehaviour
     
     public void Processing()
     {
-        this.grpcPlayer.SetInformation(true, frameData, screenData);
+        this.grpcPlayer.SetInformation(true, frameData, audioData, screenData);
         this.grpcPlayer.OnGameUpdate();
         this.ai?.Processing();
     }
@@ -69,9 +76,9 @@ public class AIController : MonoBehaviour
     
     void Update()
     {
-        FrameData frameData = FrameDataManager.Instance.GetFrameData(); // You'll need to define how FrameData is structured and populated
         ScreenData screenData = new ScreenData();
-        GetInformation(frameData);
+        GetInformation(FrameDataManager.Instance.GetFrameData());
+        GetAudioData(AudioDataManager.Instance.GetAudioData());
         GetScreenData(screenData);
         Processing();
     }

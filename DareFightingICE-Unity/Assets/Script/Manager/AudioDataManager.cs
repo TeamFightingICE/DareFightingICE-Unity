@@ -105,11 +105,11 @@ public class AudioDataManager : Singleton<AudioDataManager>
     {
         AudioData data = new AudioData
         {
-            rawData = rawData,
-            fftData = fftData,
-            rawDataAsBytes = rawDataAsBytes,
-            spectrogramData = spectrogramData,
-            spectrogramDataAsBytes = spectrogramDataAsBytes
+            RawData = rawData,
+            FftData = fftData,
+            RawDataAsBytes = rawDataAsBytes,
+            SpectrogramData = spectrogramData,
+            SpectrogramDataAsBytes = spectrogramDataAsBytes
         };
         return data;
     }
