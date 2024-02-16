@@ -19,12 +19,17 @@ public class MainController : MonoBehaviour
         FlagSetting.Instance.ResetData();
         MotionManager.Instance.LoadMotion(zenMotion, garnetMotion, ludMotion);
         MotionManager.Instance.LoadMotionData();
-        GrpcServer.Instance.StartGrpcServer();
-
+        
+        Platform runningPlatform = PlatformUtil.GetRunningPlatform();
+        if (runningPlatform == Platform.Windows || runningPlatform == Platform.Linux)
+        {
+            GrpcServer.Instance.StartGrpcServer();
+        }
+        
         string[] args = Environment.GetCommandLineArgs();
         FlagSetting.Instance.LoadArgs(args);
         
-        if (FlagSetting.Instance.grpcAuto)
+        if (FlagSetting.Instance.grpcAuto && GrpcServer.Instance.IsOpen)
         {
             SceneManager.LoadScene("GrpcAuto");
         }

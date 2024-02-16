@@ -16,10 +16,14 @@ public class LaunchController : MonoBehaviour
     [SerializeField] private Toggle debugFlag;
     [SerializeField] private Toggle frameFlag;
     [SerializeField] private Toggle muteFlag;
+    public Button grpcAutoBtn;
 
     void Start()
     {
         
+    }
+    void Update() {
+        grpcAutoBtn.interactable = GrpcServer.Instance.IsOpen;
     }
 
     public void Launch()
@@ -28,6 +32,8 @@ public class LaunchController : MonoBehaviour
     }
 
     public void GrpcAuto() {
+        if (!GrpcServer.Instance.IsOpen) return;
+
         SceneManager.LoadScene("GrpcAuto");
     }
     

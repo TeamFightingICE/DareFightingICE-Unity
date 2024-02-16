@@ -15,12 +15,14 @@ public class StartController : MonoBehaviour
     private int[] _repeatCount = new[] { 1, 3, 5, 10, 100, 500, 1000 };
 
     // Current control types for each player
-    private ControlType p1CurrentControl = ControlType.GRPC;
-    private ControlType p2CurrentControl = ControlType.GRPC;
+    private ControlType p1CurrentControl;
+    private ControlType p2CurrentControl;
 
     void Start()
     {
-
+        ControlType defaultControlType = GrpcServer.Instance.IsOpen ? ControlType.GRPC : ControlType.KEYBOARD;
+        p1CurrentControl = defaultControlType;
+        p2CurrentControl = defaultControlType;
     }
 
     void Update()
@@ -71,6 +73,10 @@ public class StartController : MonoBehaviour
     private ControlType GetNextControlType(ControlType currentType)
     {
         int nextIndex = ((int)currentType + 1) % Enum.GetValues(typeof(ControlType)).Length;
+        if ((ControlType)nextIndex == ControlType.GRPC && !GrpcServer.Instance.IsOpen)
+        {
+            return GetNextControlType((ControlType)nextIndex);
+        }
         return (ControlType)nextIndex;
     }
 

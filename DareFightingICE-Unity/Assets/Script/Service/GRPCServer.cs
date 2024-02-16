@@ -1,7 +1,8 @@
-using Grpc.Core;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Grpc.Core;
 using DareFightingICE.Grpc.Proto;
 
 public class GrpcServer : Singleton<GrpcServer>
@@ -25,9 +26,14 @@ public class GrpcServer : Singleton<GrpcServer>
                 Services = { Service.BindService(new ServiceImpl()) },
                 Ports = { new ServerPort("localhost", port, ServerCredentials.Insecure) }
             };
-            server.Start();
-            this.IsOpen = true;
-            Debug.Log("Server started, listening on " + port);
+            
+            try {
+                server.Start();
+                this.IsOpen = true;
+                Debug.Log("Server started, listening on " + port);
+            } catch (Exception e) {
+                Debug.Log("Server failed to start: " + e.Message);
+            }
         }
     }
     public void StopGrpcServer()
