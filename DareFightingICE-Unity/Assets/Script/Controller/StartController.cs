@@ -18,6 +18,9 @@ public class StartController : MonoBehaviour
     private ControlType p1CurrentControl;
     private ControlType p2CurrentControl;
 
+    public Button p1ControlBtn;
+    public Button p2ControlBtn;
+
     void Start()
     {
         ControlType defaultControlType = GrpcServer.Instance.IsOpen ? ControlType.GRPC : ControlType.KEYBOARD;
@@ -45,16 +48,16 @@ public class StartController : MonoBehaviour
     }
     
     // Called to cycle through control types for each player
-    public void SelectControl(int player)
+    public void SelectControl(int player, int offset)
     {
         if (player == 1)
         {
-            p1CurrentControl = GetNextControlType(p1CurrentControl);
+            p1CurrentControl = GetNextControlType(p1CurrentControl, offset);
             p1Control.text = p1CurrentControl.ToString();
         }
         else if (player == 2)
         {
-            p2CurrentControl = GetNextControlType(p2CurrentControl);
+            p2CurrentControl = GetNextControlType(p2CurrentControl, offset);
             p2Control.text = p2CurrentControl.ToString();
         }
 
@@ -70,12 +73,13 @@ public class StartController : MonoBehaviour
     }
 
     // Utility method to get the next control type, cycling through the enum
-    private ControlType GetNextControlType(ControlType currentType)
+    private ControlType GetNextControlType(ControlType currentType, int offset)
     {
-        int nextIndex = ((int)currentType + 1) % Enum.GetValues(typeof(ControlType)).Length;
+        int n_controlType = Enum.GetValues(typeof(ControlType)).Length;
+        int nextIndex = ((int)currentType + offset + n_controlType) % n_controlType;
         if ((ControlType)nextIndex == ControlType.GRPC && !GrpcServer.Instance.IsOpen)
         {
-            return GetNextControlType((ControlType)nextIndex);
+            return GetNextControlType((ControlType)nextIndex, offset);
         }
         return (ControlType)nextIndex;
     }

@@ -42,8 +42,11 @@ public class GrpcServer : Singleton<GrpcServer>
         server?.ShutdownAsync().Wait();
     }
     void OnApplicationQuit() {
-        StopGrpcServer();
-        Debug.Log("Server stopped");
+        if (this.IsOpen) {
+            StopGrpcServer();
+            this.IsOpen = false;
+            Debug.Log("Server stopped");
+        }
     }
     public GrpcPlayer GetPlayer(bool playerNumber)
     {

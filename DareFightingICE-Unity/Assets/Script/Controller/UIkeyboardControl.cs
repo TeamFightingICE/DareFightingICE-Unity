@@ -10,12 +10,14 @@ public class UIKeyboardControl : MonoBehaviour
 {
     public Selectable firstButton; // Assign this in the inspector with your first button
     private Selectable lastButton;
-    
+    public GameObject gameController;
+    private StartController startController;
     private float nextTimeAllowedToPress = 0f; // Timer to track delay
     public float delayBetweenPresses = 0.5f; // Delay in seconds
 
     void Start()
     {
+        startController = gameController.GetComponent<StartController>();
         if (firstButton != null)
         {
             EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
@@ -86,6 +88,28 @@ public class UIKeyboardControl : MonoBehaviour
             if (selectedButton != null)
             {
                 selectedButton.onClick.Invoke();
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) && startController != null)
+        {
+            if (EventSystem.current.currentSelectedGameObject == startController.p1ControlBtn.gameObject)
+            {
+                startController.SelectControl(1, -1);
+            }
+            else if (EventSystem.current.currentSelectedGameObject == startController.p2ControlBtn.gameObject)
+            {
+                startController.SelectControl(2, -1);
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && startController != null)
+        {
+            if (EventSystem.current.currentSelectedGameObject == startController.p1ControlBtn.gameObject)
+            {
+                startController.SelectControl(1, 1);
+            }
+            else if (EventSystem.current.currentSelectedGameObject == startController.p2ControlBtn.gameObject)
+            {
+                startController.SelectControl(2, 1);
             }
         }
     }

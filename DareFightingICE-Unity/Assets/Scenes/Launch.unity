@@ -1949,6 +1949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstButton: {fileID: 1944957703}
+  gameController: {fileID: 671561678}
   delayBetweenPresses: 0.1
 --- !u!4 &671561680
 Transform:
