@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class FlagSetting : Singleton<FlagSetting>
@@ -80,20 +81,48 @@ public class FlagSetting : Singleton<FlagSetting>
      */
     public bool grpc = false;
     public bool grpcAuto = false;
+
+    public bool loadArgs = false;
     
     public void ResetData()
     {
-     slowmotion = false;
-     debugActionFlag = false;
-     debugFrameDataFlag = false;
-     muteFlag = false;
+        slowmotion = false;
+        debugActionFlag = false;
+        debugFrameDataFlag = false;
+        muteFlag = false;
     }
 
-    public void SetData(Toggle slow, Toggle debug, Toggle frame,Toggle mute)
+    public void SetData(Toggle slow, Toggle debug, Toggle frame, Toggle mute)
     {
-     slowmotion = slow;
-     debugActionFlag = debug;
-     debugFrameDataFlag = frame;
-     muteFlag = mute;
+        slowmotion = slow;
+        debugActionFlag = debug;
+        debugFrameDataFlag = frame;
+        muteFlag = mute;
+    }
+
+    public void LoadArgs(string[] args) {
+        if (loadArgs) return;
+
+        for (int i = 0; i < args.Length; i++)
+        {
+            switch (args[i].ToLower())
+            {
+                case "--limithp":
+                    FlagSetting.Instance.limitHpFlag = true;
+                    GameSetting.Instance.P1HP = int.Parse(args[++i]);
+                    GameSetting.Instance.P2HP = int.Parse(args[++i]);
+                    break;
+                case "-r":
+                    GameSetting.Instance.RoundLimit = int.Parse(args[++i]);
+                    break;
+                case "-f":
+                    GameSetting.Instance.FrameLimit = int.Parse(args[++i]);
+                    break;
+                case "--grpc-auto":
+                    FlagSetting.Instance.grpcAuto = true;
+                    break;
+            }
+        }
+        loadArgs = true;
     }
 }

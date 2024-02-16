@@ -30,20 +30,25 @@ public class LaunchController : MonoBehaviour
 
     void Start()
     {
-        GameSetting.Instance.ResetData();
         FlagSetting.Instance.ResetData();
         MotionManager.Instance.LoadMotion(zenMotion, garnetMotion, ludMotion);
         GrpcServer.Instance.StartGrpcServer();
+
+        string[] args = Environment.GetCommandLineArgs();
+        FlagSetting.Instance.LoadArgs(args);
+        
+        if (FlagSetting.Instance.grpcAuto)
+        {
+            GrpcAuto();
+        }
     }
 
     public void Launch()
     {
-        GameSetting.Instance.SetData(int.Parse(p1Hp.text), int.Parse(p2Hp.text), int.Parse(roundLimit.text), int.Parse(frameLimit.text));
         SceneManager.LoadScene("Start");
     }
 
     public void GrpcAuto() {
-        GameSetting.Instance.SetData(400, 400, 1, 3600);
         SceneManager.LoadScene("GrpcAuto");
     }
     

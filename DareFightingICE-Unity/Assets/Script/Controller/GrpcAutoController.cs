@@ -7,6 +7,7 @@ public class GrpcAutoController : MonoBehaviour
 {
     void Start()
     {
+        FlagSetting.Instance.grpcAuto = true;
         GameSetting.Instance.SetRunWithGrpcAuto(true);
     }
 
@@ -21,6 +22,7 @@ public class GrpcAutoController : MonoBehaviour
     }
 
     public void Cancel() {
+        FlagSetting.Instance.grpcAuto = false;
         GameSetting.Instance.SetRunWithGrpcAuto(false);
         SceneManager.LoadScene("Launch");
     }

@@ -18,10 +18,10 @@ public enum Action
 /// </summary>
 public class GameSetting : Singleton<GameSetting>
 {
-    public int P1HP { get; set; }
-    public int P2HP { get; set; }
-    public int RoundLimit { get; set; }
-    public int FrameLimit { get; set; }
+    public int P1HP { get; set; } = 400;
+    public int P2HP { get; set; } = 400;
+    public int RoundLimit { get; set; } = 3;
+    public int FrameLimit { get; set; } = 3600;
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
     public bool IsRunWithGrpcAuto { get; set; }

@@ -78,4 +78,7 @@ public class StartController : MonoBehaviour
         p1Control.text = $"{p1CurrentControl}";
         p2Control.text = $"{p2CurrentControl}";
     }
+    public void Back() {
+        SceneManager.LoadScene("Launch");
+    }
 }
