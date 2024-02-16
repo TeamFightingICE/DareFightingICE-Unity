@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 public class GrpcPlayer
@@ -15,7 +16,7 @@ public class GrpcPlayer
     public bool IsCancelled { get; set; }
     public PlayerGameState CurrentState { get; set; }
 
-    private bool playerNumber;
+    public bool PlayerNumber { get; set; }
     private string playerName;
     private bool isBlind;
 
@@ -25,15 +26,17 @@ public class GrpcPlayer
     private ScreenData screenData;
     // private FrameData nonDelayFrameData;
 
-    private bool waitFlag;
+    private bool notifyCompleted;
+    private IServerStreamWriter<PlayerGameState> responseStream;
+    private ServerCallContext serverCallContext;
 
     public GrpcPlayer(bool playerNumber)
     {
         this.PlayerUUID = new UniqueId();
         this.IsCancelled = true;
 
-        this.playerNumber = playerNumber;
-        this.waitFlag = false;
+        this.PlayerNumber = playerNumber;
+        this.notifyCompleted = false;
 
         this.isControl = false;
     }
@@ -43,34 +46,42 @@ public class GrpcPlayer
         this.isBlind = request.IsBlind;
         this.IsCancelled = false;
     }
-    public void onCancel()
+    public async Task ParticipateRPC(IServerStreamWriter<PlayerGameState> responseStream, ServerCallContext context) {
+        context.CancellationToken.Register(() => { this.OnCancel(); }, false);
+
+        this.notifyCompleted = false;
+        this.responseStream = responseStream;
+        this.serverCallContext = context;
+
+        await Task.Run(() => {
+            while (!context.CancellationToken.IsCancellationRequested && GrpcServer.Instance.IsOpen && !this.notifyCompleted)
+            {
+                
+            }
+        });
+
+        this.OnCancel();
+    }
+    public void OnCancel()
     {
         this.IsCancelled = true;
+        this.responseStream = null;
+        this.serverCallContext = null;
     }
-    public bool IsGameStarted()
+    public bool IsGameStarted
     {
-        return (this.frameData != null && !this.frameData.EmptyFlag && this.frameData.CurrentFrameNumber > 0);
+        get
+        {
+            return this.frameData != null && !this.frameData.EmptyFlag && this.frameData.CurrentFrameNumber > 0;
+        }
     }
     public void OnInput(PlayerInput request)
     {
-        if (this.IsGameStarted())
+        if (this.IsGameStarted)
         {
             Key key = GrpcUtil.FromGrpcKey(request.InputKey);
-            InputManager.Instance.SetInput(playerNumber, key);
+            InputManager.Instance.SetInput(PlayerNumber, key);
         }
-
-        if (this.waitFlag)
-        {
-            this.waitFlag = false;
-        }
-    }
-    public void OnInitialize(GameData gameData)
-    {
-        this.CurrentState = new PlayerGameState
-        {
-            StateFlag = GrpcFlag.Initialize,
-            GameData = gameData.ToProto()
-        };
     }
     public void SetInformation(bool isControl, FrameData frameData, AudioData audioData, ScreenData screenData)
     {
@@ -79,13 +90,26 @@ public class GrpcPlayer
         this.audioData = new AudioData(audioData);
         this.screenData = new ScreenData(screenData);
     }
-    public void OnGameUpdate()
+    public async void OnInitialize(GameData gameData)
     {
+        if (this.IsCancelled) return;
+
+        this.CurrentState = new PlayerGameState
+        {
+            StateFlag = GrpcFlag.Initialize,
+            GameData = gameData.ToProto()
+        };
+        await this.responseStream.WriteAsync(this.CurrentState);
+    }
+    public async void OnGameUpdate()
+    {
+        if (!this.IsGameStarted || this.IsCancelled) return;
+
         if (!isBlind)
         {
             frameData.RemoveVisualData();
         }
-        PlayerGameState newState = new PlayerGameState
+        this.CurrentState = new PlayerGameState
         {
             StateFlag = GrpcFlag.Processing,
             IsControl = isControl,
@@ -93,15 +117,23 @@ public class GrpcPlayer
             AudioData = audioData.ToProto(),
             ScreenData = screenData.ToProto()
         };
-        this.CurrentState = newState;
-        
+        await this.responseStream.WriteAsync(this.CurrentState);
     }
-    public void OnRoundEnd(RoundResult roundResult)
+    public async void OnRoundEnd(RoundResult roundResult)
     {
+        if (this.IsCancelled) return;
+
+        bool isGameEnd = roundResult.CurrentRound >= GameSetting.Instance.RoundLimit;
         this.CurrentState = new PlayerGameState
         {
-            StateFlag = roundResult.CurrentRound < GameSetting.Instance.RoundLimit ? GrpcFlag.RoundEnd : GrpcFlag.GameEnd,
+            StateFlag = isGameEnd ? GrpcFlag.GameEnd : GrpcFlag.RoundEnd,
             RoundResult = roundResult.ToProto()
         };
+        await this.responseStream.WriteAsync(this.CurrentState);
+
+        if (isGameEnd)
+        {
+            this.notifyCompleted = true;
+        }
     }
 }

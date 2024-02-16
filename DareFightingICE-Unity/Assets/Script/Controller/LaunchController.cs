@@ -36,18 +36,14 @@ public class LaunchController : MonoBehaviour
         GrpcServer.Instance.StartGrpcServer();
     }
 
-    public void Setting() {
-        GameSetting.Instance.SetData(int.Parse(p1Hp.text), int.Parse(p2Hp.text), int.Parse(roundLimit.text), int.Parse(frameLimit.text));
-    }
-
     public void Launch()
     {
-        Setting();
+        GameSetting.Instance.SetData(int.Parse(p1Hp.text), int.Parse(p2Hp.text), int.Parse(roundLimit.text), int.Parse(frameLimit.text));
         SceneManager.LoadScene("Start");
     }
 
     public void GrpcAuto() {
-        Setting();
+        GameSetting.Instance.SetData(400, 400, 1, 3600);
         SceneManager.LoadScene("GrpcAuto");
     }
     

@@ -641,7 +641,6 @@ public class ZenCharacterController : MonoBehaviour
                 PerformActtack(action);
                 break;
         }
-        print(action);
     }
     private void ExecuteCombo(string comboName)
     {
@@ -662,7 +661,6 @@ public class ZenCharacterController : MonoBehaviour
                 PerformActtack(action);
                 break;
         }
-        print(action);
     }
 
     private void SetState(State state)
@@ -673,9 +671,9 @@ public class ZenCharacterController : MonoBehaviour
     private void PerformActtack(string actionname)
     {
         int requireEnergy = MotionManager.Instance.GetStartGiveEnergyForMotion("zen",actionname);
-        if ((canAttack && !isGuard))
+        if (canAttack && !isGuard)
         {
-            if (Energy >= (int)(Mathf.Abs(requireEnergy)) && requireEnergy != 1)
+            if (Energy >= Mathf.Abs(requireEnergy) && requireEnergy != 1)
             {
                 SetMotionData(MotionManager.Instance.GetMotionAttributes("zen",actionname));
                 Energy += requireEnergy;

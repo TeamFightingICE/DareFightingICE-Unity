@@ -29,25 +29,7 @@ public class ServiceImpl : Service.ServiceBase
     {
         Debug.Log("Incoming participate request");
         GrpcPlayer player = server.GetPlayerWithUniqueId(request.PlayerUuid);
-
-        context.CancellationToken.Register(() => { player.onCancel(); }, false);
-
-        while (!context.CancellationToken.IsCancellationRequested && server.IsOpen)
-        {
-            if (player.CurrentState != null)
-            {
-                await responseStream.WriteAsync(player.CurrentState);
-
-                if (player.CurrentState.StateFlag == GrpcFlag.GameEnd)
-                {
-                    break;
-                }
-                else
-                {
-                    player.CurrentState = null;
-                }
-            }
-        }
+        await player.ParticipateRPC(responseStream, context);    
     }
 
     public override Task<Empty> Input(PlayerInput request, ServerCallContext context)

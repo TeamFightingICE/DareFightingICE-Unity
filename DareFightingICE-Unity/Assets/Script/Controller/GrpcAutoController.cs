@@ -5,24 +5,23 @@ using UnityEngine.SceneManagement;
 
 public class GrpcAutoController : MonoBehaviour
 {
-    private GrpcServer server;
-
     void Start()
     {
-        server = GrpcServer.Instance;
+        GameSetting.Instance.SetRunWithGrpcAuto(true);
     }
 
     void Update()
     {
-        if (server.RunFlag) {
-            server.RunFlag = false;
-            GameDataManager.Instance.SetGameData(server.GameData);
+        if (GrpcServer.Instance.RunFlag) {
+            GrpcServer.Instance.RunFlag = false;
+            GameDataManager.Instance.SetGameData(GrpcServer.Instance.GameData);
             GameSetting.Instance.SetCharacterData(ControlType.GRPC, ControlType.GRPC);
             SceneManager.LoadScene("Gameplay");
         }
     }
 
     public void Cancel() {
+        GameSetting.Instance.SetRunWithGrpcAuto(false);
         SceneManager.LoadScene("Launch");
     }
 }

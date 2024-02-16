@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,10 +23,7 @@ public class FightingController : MonoBehaviour
     public List<GameObject> character;
     private AIController[] _aiControllers = new AIController[2];
     private ZenCharacterController[] _controllers = new ZenCharacterController[2];
-    
-
     private float framelimit;
-
     public InterfaceDisplay _display;
 
     [SerializeField] private AudioSource P1HeartBeat;
@@ -39,9 +37,10 @@ public class FightingController : MonoBehaviour
     {
         SetupScene();
         MotionManager.Instance.LoadMotionData();
-        _aiControllers[0].Initialize(GameDataManager.Instance.GameData,true);
-        _aiControllers[1].Initialize(GameDataManager.Instance.GameData,false);
+        _aiControllers[0].Initialize(GameDataManager.Instance.GameData, true);
+        _aiControllers[1].Initialize(GameDataManager.Instance.GameData, false);
 
+        Thread.Sleep(100);
     }
 
     private void SetupScene()
@@ -81,7 +80,8 @@ public class FightingController : MonoBehaviour
         P1EnergyLevel = 0;
         P2EnergyLevel = 0;
 
-        _display.SetPlayerController(_controllers[0],_controllers[1]);
+        _display.SetPlayerController(_controllers[0], _controllers[1]);
+        _display.currentRound = currentRound;
 
         FrameDataManager.Instance.SetupFrameData(character[0],character[1],_display);
         AudioDataManager.Instance.Initialize();
@@ -110,9 +110,10 @@ public class FightingController : MonoBehaviour
         Vector3 scaleP2 = character[1].transform.localScale;
         scaleP2.x = Mathf.Abs(scaleP2.x) * (_controllers[1].IsFront ? 1 : -1);
         character[1].transform.localScale = scaleP2;
-        
+
         framelimit = GameSetting.Instance.FrameLimit;
         currentRound++;
+        _display.currentRound = currentRound;
         isStart = true;
     }
     // Update is called once per frame
@@ -171,6 +172,8 @@ public class FightingController : MonoBehaviour
     }
     void OnRoundEnd()
     {
+        Thread.Sleep(100);
+
         RoundResult result = new RoundResult
         {
             CurrentRound = currentRound,
@@ -185,6 +188,17 @@ public class FightingController : MonoBehaviour
         if (currentRound < GameSetting.Instance.RoundLimit)
         {
             ResetRound();
+        }
+        else
+        {
+            OnGameEnd();
+        }
+    }
+
+    void OnGameEnd() {
+        if (GameSetting.Instance.IsRunWithGrpcAuto)
+        {
+            SceneManager.LoadScene("GrpcAuto");
         }
         else
         {

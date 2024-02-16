@@ -297,7 +297,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1214147990157504670}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -577,7 +577,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1712011482188508838}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2338,7 +2338,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4777495813175521804}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -4543,6 +4543,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8591c8c7af0b3fa40bb5b45d4bd49d9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AttackDeque: []
   csvFile: {fileID: 4900000, guid: ea1ea85c918833a4bba7bed6a1bd61ee, type: 3}
   canWalk: 1
   canBlock: 1
@@ -4561,6 +4562,7 @@ MonoBehaviour:
   isGrounded: 1
   isCrouching: 0
   state: 0
+  Action: 0
   _animator: {fileID: 3752630490052007620}
   jumpDelay: 0.1
   dashforce: 10
@@ -5026,7 +5028,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7216923133517058551}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1

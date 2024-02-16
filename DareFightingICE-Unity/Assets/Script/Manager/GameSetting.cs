@@ -24,6 +24,7 @@ public class GameSetting : Singleton<GameSetting>
     public int FrameLimit { get; set; }
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
+    public bool IsRunWithGrpcAuto { get; set; }
 
     public void SetData(int p1Hp, int p2Hp, int roundLimit, int frameLimit)
     {
@@ -37,6 +38,10 @@ public class GameSetting : Singleton<GameSetting>
     {
         this.P1ControlType = p1ControlType;
         this.P2ControlType = p2ControlType;
+    }
+    public void SetRunWithGrpcAuto(bool isRunWithGrpcAuto)
+    {
+        this.IsRunWithGrpcAuto = isRunWithGrpcAuto;
     }
     // Update is called once per frame
     void Update()

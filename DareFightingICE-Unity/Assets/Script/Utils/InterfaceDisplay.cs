@@ -1,4 +1,5 @@
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,8 @@ public class InterfaceDisplay : MonoBehaviour
     public ZenCharacterController player1; // Reference to player 1's controller
     public ZenCharacterController player2; // Reference to player 2's controller
     public float currentFrame;
+    public int remainingSecond;
+    public int currentRound;
 
     [SerializeField] private Image hp1;
     [SerializeField] private Image hp2;
@@ -27,7 +30,7 @@ public class InterfaceDisplay : MonoBehaviour
         Application.targetFrameRate = 60;
     }
 
-    public void SetPlayerController(ZenCharacterController p1,ZenCharacterController p2)
+    public void SetPlayerController(ZenCharacterController p1, ZenCharacterController p2)
     {
         player1 = p1;
         player2 = p2;
@@ -38,13 +41,21 @@ public class InterfaceDisplay : MonoBehaviour
         float fps = 1.0f / deltaTime;
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
         fpsText.text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+        // fpsText.text = $"Round: {currentRound}";
         hp1.fillAmount = (float)player1.Hp / GameSetting.Instance.P1HP;
         hp2.fillAmount = (float)player2.Hp / GameSetting.Instance.P2HP;
         energy1.fillAmount = (float)player1.Energy / 300;
         energy2.fillAmount = (float)player2.Energy / 300;
-        timerText.text = "Frame Limit: " + currentFrame;
-        p1Status.text = $"P1 HP : {player1.Hp} Energy : {player1.Energy}";
-        p2Status.text = $"P2 HP : {player2.Hp} Energy : {player2.Energy}";
+        // timerText.text = "Frame Limit: " + currentFrame;
+        // if (Math.Floor(currentFrame / 60) != remainingSecond)
+        // {
+        //     remainingSecond = (int)Math.Floor(currentFrame / 60);
+        //     timerText.text = remainingSecond.ToString();
+        // }
+        remainingSecond = (int)Math.Floor(currentFrame / 60);
+        timerText.text = remainingSecond.ToString();
+        p1Status.text = $"P1 HP: {player1.Hp} Energy: {player1.Energy}";
+        p2Status.text = $"P2 HP: {player2.Hp} Energy: {player2.Energy}";
         SetEnergyColor();
     }
 
@@ -53,7 +64,8 @@ public class InterfaceDisplay : MonoBehaviour
         if (player1.Energy == 300)
         {
             energy1.color = Color.blue;
-        }else if (player1.Energy > 150)
+        }
+        else if (player1.Energy > 150)
         {
             energy1.color = Color.yellow;
         }
@@ -65,7 +77,8 @@ public class InterfaceDisplay : MonoBehaviour
         if (player2.Energy == 300)
         {
             energy2.color = Color.blue;
-        }else if (player2.Energy > 150)
+        }
+        else if (player2.Energy > 150)
         {
             energy2.color = Color.yellow;
         }
