@@ -44,6 +44,8 @@ public class LaunchController : MonoBehaviour
     }
 
     public void GrpcAuto() {
+        GameSetting.Instance.Setdata(int.Parse(p1Hp.text),int.Parse(p2Hp.text),int.Parse(roundLimit.text),int.Parse(frameLimit.text));
+        MotionManager.Instance.LoadMotionData();
         SceneManager.LoadScene("GrpcAuto");
     }
     
