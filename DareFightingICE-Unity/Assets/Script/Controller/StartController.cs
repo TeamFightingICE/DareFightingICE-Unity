@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,18 +15,18 @@ public class StartController : MonoBehaviour
     private int[] _repeatCount = new[] { 1, 3, 5, 10, 100, 500, 1000 };
 
     // Current control types for each player
-    private ControlType p1CurrentControl = ControlType.KEYBOARD;
-    private ControlType p2CurrentControl = ControlType.KEYBOARD;
+    private ControlType p1CurrentControl = ControlType.GRPC;
+    private ControlType p2CurrentControl = ControlType.GRPC;
 
     void Start()
     {
-        // Initial display of control types
-        UpdateControlTexts();
+
     }
 
     void Update()
     {
         playBtn.interactable = CheckCondition();
+        UpdateControlTexts();
     }
 
     public bool CheckCondition()
@@ -68,15 +70,24 @@ public class StartController : MonoBehaviour
     // Utility method to get the next control type, cycling through the enum
     private ControlType GetNextControlType(ControlType currentType)
     {
-        int nextIndex = ((int)currentType + 1) % System.Enum.GetValues(typeof(ControlType)).Length;
+        int nextIndex = ((int)currentType + 1) % Enum.GetValues(typeof(ControlType)).Length;
         return (ControlType)nextIndex;
     }
 
     // Update control text for both players
     private void UpdateControlTexts()
     {
-        p1Control.text = $"{p1CurrentControl}";
-        p2Control.text = $"{p2CurrentControl}";
+        p1Control.text = $"{ControlTypeUtil.GetString(p1CurrentControl)}";
+        p2Control.text = $"{ControlTypeUtil.GetString(p2CurrentControl)}";
+
+        if (p1CurrentControl == ControlType.GRPC)
+        {
+            p1Control.text += GrpcServer.Instance.GetPlayer(true).IsCancelled ? " (Disconnected)" : " (Connected)";
+        }
+        if (p2CurrentControl == ControlType.GRPC)
+        {
+            p2Control.text += GrpcServer.Instance.GetPlayer(false).IsCancelled ? " (Disconnected)" : " (Connected)";
+        }
     }
     public void Back() {
         SceneManager.LoadScene("Launch");

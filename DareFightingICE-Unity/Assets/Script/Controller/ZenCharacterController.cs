@@ -20,7 +20,7 @@ public class ZenCharacterController : MonoBehaviour
     public bool IsFront { get; set; }
     public int Hp { get; set; }
     public int Energy { get; set; }
-    public ZenCharacterController otherPlayer{get; set; }
+    public ZenCharacterController otherPlayer { get; set; }
     
     public List<GameObject> AttackDeque;
 
@@ -77,7 +77,7 @@ public class ZenCharacterController : MonoBehaviour
     private float keyPressTime;
     private float tapThreshold = 0.2f;
     
-    [SerializeField]private float dashforce = 0;
+    [SerializeField] private float dashforce = 0;
     // HitBoxController
     [SerializeField] private HitBoxController leftHand;
     [SerializeField] private HitBoxController rightHand;

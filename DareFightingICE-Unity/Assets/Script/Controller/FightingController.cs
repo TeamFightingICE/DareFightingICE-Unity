@@ -31,16 +31,15 @@ public class FightingController : MonoBehaviour
     [SerializeField] private AudioSource P1EnegryIncrease;
     [SerializeField] private AudioSource P2EnegryIncrease;
     [SerializeField] private int P1EnergyLevel;
-    [SerializeField] private int P2EnergyLevel ;
+    [SerializeField] private int P2EnergyLevel;
     
     void Start()
     {
         SetupScene();
-        MotionManager.Instance.LoadMotionData();
         _aiControllers[0].Initialize(GameDataManager.Instance.GameData, true);
         _aiControllers[1].Initialize(GameDataManager.Instance.GameData, false);
 
-        Thread.Sleep(100);
+        Thread.Sleep(1000); // wait for 1 second to let the AI initialize
     }
 
     private void SetupScene()
@@ -196,14 +195,7 @@ public class FightingController : MonoBehaviour
     }
 
     void OnGameEnd() {
-        if (GameSetting.Instance.IsRunWithGrpcAuto)
-        {
-            SceneManager.LoadScene("GrpcAuto");
-        }
-        else
-        {
-            SceneManager.LoadScene("Start");
-        }
+        SceneManager.LoadScene("Result");
     }
 
     bool CheckField()
