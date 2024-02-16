@@ -18,25 +18,25 @@ public enum Action
 /// </summary>
 public class GameSetting : Singleton<GameSetting>
 {
-    public int p1Hp;
-    public int p2Hp;
-    public int roundLimit;
-    public int frameLimit;
-    public ControlType p1Control;
-    public ControlType p2Control;
+    public int P1HP { get; set; }
+    public int P2HP { get; set; }
+    public int RoundLimit { get; set; }
+    public int FrameLimit { get; set; }
+    public ControlType P1ControlType { get; set; }
+    public ControlType P2ControlType { get; set; }
 
-    public void Setdata(int hp1,int hp2,int rLimit,int fLimit)
+    public void SetData(int p1Hp, int p2Hp, int roundLimit, int frameLimit)
     {
-        p1Hp = hp1;
-        p2Hp = hp2;
-        roundLimit = rLimit;
-        frameLimit = fLimit;
+        this.P1HP = p1Hp;
+        this.P2HP = p2Hp;
+        this.RoundLimit = roundLimit;
+        this.FrameLimit = frameLimit;
     }
 
-    public void SetCharacterData(ControlType p1,ControlType p2)
+    public void SetCharacterData(ControlType p1ControlType, ControlType p2ControlType)
     {
-        p1Control = p1;
-        p2Control = p2;
+        this.P1ControlType = p1ControlType;
+        this.P2ControlType = p2ControlType;
     }
     // Update is called once per frame
     void Update()

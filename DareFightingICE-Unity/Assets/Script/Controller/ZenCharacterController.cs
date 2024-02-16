@@ -115,16 +115,16 @@ public class ZenCharacterController : MonoBehaviour
     void Update()
     {
         CheckState();
-        if (GameSetting.Instance.p1Control != ControlType.KEYBOARD || GameSetting.Instance.p2Control != ControlType.KEYBOARD)
+        if (GameSetting.Instance.P1ControlType != ControlType.KEYBOARD || GameSetting.Instance.P2ControlType != ControlType.KEYBOARD)
         {
             UpdateAI();
         }
         
-        if (GameSetting.Instance.p1Control == ControlType.KEYBOARD && PlayerNumber)
+        if (GameSetting.Instance.P1ControlType == ControlType.KEYBOARD && PlayerNumber)
         {
             HandleInputP1();
         }
-        if (GameSetting.Instance.p2Control == ControlType.KEYBOARD && !PlayerNumber)
+        if (GameSetting.Instance.P2ControlType == ControlType.KEYBOARD && !PlayerNumber)
         {
             HandleInputP2();
         }

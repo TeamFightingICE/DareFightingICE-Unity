@@ -37,7 +37,15 @@ public class ServiceImpl : Service.ServiceBase
             if (player.CurrentState != null)
             {
                 await responseStream.WriteAsync(player.CurrentState);
-                player.CurrentState = null;
+
+                if (player.CurrentState.StateFlag == GrpcFlag.GameEnd)
+                {
+                    break;
+                }
+                else
+                {
+                    player.CurrentState = null;
+                }
             }
         }
     }

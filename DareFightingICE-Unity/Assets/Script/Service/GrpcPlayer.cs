@@ -100,7 +100,7 @@ public class GrpcPlayer
     {
         this.CurrentState = new PlayerGameState
         {
-            StateFlag = GrpcFlag.RoundEnd,
+            StateFlag = roundResult.CurrentRound < GameSetting.Instance.RoundLimit ? GrpcFlag.RoundEnd : GrpcFlag.GameEnd,
             RoundResult = roundResult.ToProto()
         };
     }

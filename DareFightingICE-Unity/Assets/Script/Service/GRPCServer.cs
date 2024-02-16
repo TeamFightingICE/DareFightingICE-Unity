@@ -18,15 +18,17 @@ public class GrpcServer : Singleton<GrpcServer>
     }
     public void StartGrpcServer()
     {
-        int port = 50051;
-        server = new Server
-        {
-            Services = { Service.BindService(new ServiceImpl()) },
-            Ports = { new ServerPort("localhost", port, ServerCredentials.Insecure) }
-        };
-        server.Start();
-        this.IsOpen = true;
-        Debug.Log("Server started, listening on " + port);
+        if (this.server == null) {
+            int port = 50051;
+            server = new Server
+            {
+                Services = { Service.BindService(new ServiceImpl()) },
+                Ports = { new ServerPort("localhost", port, ServerCredentials.Insecure) }
+            };
+            server.Start();
+            this.IsOpen = true;
+            Debug.Log("Server started, listening on " + port);
+        }
     }
     public void StopGrpcServer()
     {

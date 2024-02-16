@@ -38,6 +38,7 @@ public class FightingController : MonoBehaviour
     void Start()
     {
         SetupScene();
+        MotionManager.Instance.LoadMotionData();
         _aiControllers[0].Initialize(GameDataManager.Instance.GameData,true);
         _aiControllers[1].Initialize(GameDataManager.Instance.GameData,false);
 
@@ -46,58 +47,71 @@ public class FightingController : MonoBehaviour
     private void SetupScene()
     {
         ClearList();
-        framelimit = GameSetting.Instance.frameLimit;
+        framelimit = GameSetting.Instance.FrameLimit;
+
         GameObject zen1 = Instantiate(zen, spawnP1.transform.position, spawnP1.transform.rotation);
-        zen1.GetComponent<ZenCharacterController>().PlayerNumber = true;
-        zen1.GetComponent<ZenCharacterController>().IsFront = true;
-        zen1.GetComponent<ZenCharacterController>().Hp = GameSetting.Instance.p1Hp;
-        zen1.GetComponent<ZenCharacterController>().Energy = 0;
-        GameObject zen2 = Instantiate(zen, spawnP2.transform.position, spawnP2.transform.rotation);
-        zen2.GetComponent<ZenCharacterController>().PlayerNumber = false;
-        zen2.GetComponent<ZenCharacterController>().IsFront = false;
-        zen2.GetComponent<ZenCharacterController>().Hp = GameSetting.Instance.p2Hp;
-        zen2.GetComponent<ZenCharacterController>().Energy = 0;
-        zen2.transform.localScale = new Vector3(-3.5f, 3.5f,3.5f);
-        zen1.GetComponent<ZenCharacterController>().otherPlayer = zen2.GetComponent<ZenCharacterController>();
-        zen2.GetComponent<ZenCharacterController>().otherPlayer = zen1.GetComponent<ZenCharacterController>();
         zen1.tag = "Player1";
+
+        GameObject zen2 = Instantiate(zen, spawnP2.transform.position, spawnP2.transform.rotation);
         zen2.tag = "Player2";
-        zen1.GetComponent<ZenCharacterController>().SetTarget("Player2");
-        zen2.GetComponent<ZenCharacterController>().SetTarget("Player1");
+        zen2.transform.localScale = new Vector3(-3.5f, 3.5f,3.5f);
+
         _aiControllers[0] = zen1.GetComponent<AIController>();
         _aiControllers[1] = zen2.GetComponent<AIController>();
         _controllers[0] = zen1.GetComponent<ZenCharacterController>();
         _controllers[1] = zen2.GetComponent<ZenCharacterController>();
+
+        _controllers[0].PlayerNumber = true;
+        _controllers[0].IsFront = true;
+        _controllers[0].Hp = GameSetting.Instance.P1HP;
+        _controllers[0].Energy = 0;
+        _controllers[0].otherPlayer = _controllers[1];
+        _controllers[0].SetTarget("Player2");
+
+        _controllers[1].PlayerNumber = false;
+        _controllers[1].IsFront = false;
+        _controllers[1].Hp = GameSetting.Instance.P2HP;
+        _controllers[1].Energy = 0;
+        _controllers[1].otherPlayer = _controllers[0];
+        _controllers[1].SetTarget("Player1");
+
         character.Add(zen1);
         character.Add(zen2);
-        isStart = true;
+
         P1EnergyLevel = 0;
         P2EnergyLevel = 0;
+
         _display.SetPlayerController(_controllers[0],_controllers[1]);
+
         FrameDataManager.Instance.SetupFrameData(character[0],character[1],_display);
         AudioDataManager.Instance.Initialize();
+
+        isStart = true;
     }
 
     public void ResetRound()
     {
+        _controllers[0].IsFront = true;
+        _controllers[0].Hp = GameSetting.Instance.P1HP;
+        _controllers[0].Energy = 0;
         character[0].transform.position = spawnP1.transform.position;
         character[0].transform.rotation = spawnP1.transform.rotation;
-        _controllers[0].IsFront = true;
-        _controllers[0].Hp = GameSetting.Instance.p1Hp;
-        _controllers[0].Energy = 0;
         
+        _controllers[1].IsFront = true;
+        _controllers[1].Hp = GameSetting.Instance.P2HP;
+        _controllers[1].Energy = 0;
         character[1].transform.position = spawnP2.transform.position;
         character[1].transform.rotation = spawnP2.transform.rotation;
-        _controllers[1].IsFront = true;
-        _controllers[1].Hp = GameSetting.Instance.p2Hp;
-        _controllers[1].Energy = 0;
-        Vector3 scaleP2 = character[1].transform.localScale;
+
         Vector3 scaleP1 = character[0].transform.localScale;
-        scaleP2.x = Mathf.Abs(scaleP2.x) * (_controllers[1].IsFront ? 1 : -1);
         scaleP1.x = Mathf.Abs(scaleP1.x) * (_controllers[0].IsFront ? 1 : -1);
-        character[1].transform.localScale = scaleP2;
         character[0].transform.localScale = scaleP1;
-        framelimit = GameSetting.Instance.frameLimit;
+
+        Vector3 scaleP2 = character[1].transform.localScale;
+        scaleP2.x = Mathf.Abs(scaleP2.x) * (_controllers[1].IsFront ? 1 : -1);
+        character[1].transform.localScale = scaleP2;
+        
+        framelimit = GameSetting.Instance.FrameLimit;
         currentRound++;
         isStart = true;
     }
@@ -106,30 +120,30 @@ public class FightingController : MonoBehaviour
     {
         // Special Sound effects Part
         // heartbeat for player1
-        if (character[0].GetComponent<ZenCharacterController>().Hp < 50)
+        if (_controllers[0].Hp < 50)
         {
             P1HeartBeat.Play();
         }
         // heartbeat for player2
-        if (character[1].GetComponent<ZenCharacterController>().Hp < 50)
+        if (_controllers[1].Hp < 50)
         {
             P2HeartBeat.Play();
         }
         //Energy Increase for PLayer1
-        if(character[0].GetComponent<ZenCharacterController>().Energy >= 50)
+        if(_controllers[0].Energy >= 50)
         {
-            if (character[0].GetComponent<ZenCharacterController>().Energy >= P1EnergyLevel+50)
+            if (_controllers[0].Energy >= P1EnergyLevel + 50)
             {
-                P1EnergyLevel = P1EnergyLevel + 50;
+                P1EnergyLevel += 50;
                 P1EnegryIncrease.Play();
             }
         }
         //Energy Increase for PLayer2
-        if (character[1].GetComponent<ZenCharacterController>().Energy >= 50)
+        if (_controllers[1].Energy >= 50)
         {
-            if (character[1].GetComponent<ZenCharacterController>().Energy >= P2EnergyLevel + 50)
+            if (_controllers[1].Energy >= P2EnergyLevel + 50)
             {
-                P2EnergyLevel = P2EnergyLevel + 50;
+                P2EnergyLevel += 50;
                 P2EnegryIncrease.Play();
             }
         }
@@ -161,12 +175,14 @@ public class FightingController : MonoBehaviour
         {
             CurrentRound = currentRound,
             ElaspedFrame = _display.GetElaspedFrame(),
-            RemainingHPs = new int[]{_controllers[0].Hp,_controllers[1].Hp}
+            RemainingHPs = new int[]{ _controllers[0].Hp, _controllers[1].Hp }
         };
+
         isStart = false;
         _aiControllers[0].RoundEnd(result);
         _aiControllers[1].RoundEnd(result);
-        if (currentRound < GameSetting.Instance.roundLimit)
+
+        if (currentRound < GameSetting.Instance.RoundLimit)
         {
             ResetRound();
         }
@@ -174,14 +190,11 @@ public class FightingController : MonoBehaviour
         {
             SceneManager.LoadScene("Start");
         }
-        
     }
 
     bool CheckField()
     {
-        GameObject player1 = character[0];
-        GameObject player2 = character[1];
-        if (player1.GetComponent<ZenCharacterController>().Hp <= 0 || player2.GetComponent<ZenCharacterController>().Hp <= 0)
+        if (_controllers[0].Hp <= 0 || _controllers[1].Hp <= 0)
         {
             return true;
         }
@@ -195,12 +208,9 @@ public class FightingController : MonoBehaviour
     {
         if (character.Count < 2) return; // Ensure there are two characters
 
-        GameObject player1 = character[0];
-        GameObject player2 = character[1];
-
         // Get positions of the players
-        float player1Position = player1.transform.position.x;
-        float player2Position = player2.transform.position.x;
+        float player1Position = character[0].transform.position.x;
+        float player2Position = character[1].transform.position.x;
 
         // Calculate the distance between the players
         float distanceBetweenPlayers = Mathf.Abs(player1Position - player2Position);
@@ -209,22 +219,22 @@ public class FightingController : MonoBehaviour
         if (distanceBetweenPlayers > flipThreshold)
         {
             // Determine if players need to flip based on their relative positions
-            if (player1Position < player2Position && !player1.GetComponent<ZenCharacterController>().IsFront)
+            if (player1Position < player2Position && !_controllers[0].IsFront)
             {
-                FlipCharacter(player1);
+                FlipCharacter(character[0]);
             }
-            else if (player1Position > player2Position && player1.GetComponent<ZenCharacterController>().IsFront)
+            else if (player1Position > player2Position && _controllers[0].IsFront)
             {
-                FlipCharacter(player1);
+                FlipCharacter(character[0]);
             }
 
-            if (player2Position < player1Position && !player2.GetComponent<ZenCharacterController>().IsFront)
+            if (player2Position < player1Position && !_controllers[1].IsFront)
             {
-                FlipCharacter(player2);
+                FlipCharacter(character[1]);
             }
-            else if (player2Position > player1Position && player2.GetComponent<ZenCharacterController>().IsFront)
+            else if (player2Position > player1Position && _controllers[1].IsFront)
             {
-                FlipCharacter(player2);
+                FlipCharacter(character[1]);
             }
         }
     }

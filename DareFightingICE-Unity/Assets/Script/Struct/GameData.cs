@@ -31,8 +31,8 @@ public class GameData
     private void InitializeGameData()
     {
         // Initialize HPs, Energies, and Motions
-        MaxHPs[0] = GameSetting.Instance.p1Hp;
-        MaxHPs[1] = GameSetting.Instance.p2Hp;
+        MaxHPs[0] = GameSetting.Instance.P1HP;
+        MaxHPs[1] = GameSetting.Instance.P2HP;
         MaxEnergies[0] = 300; // Default maximum energy
         MaxEnergies[1] = 300; // Default maximum energy
 

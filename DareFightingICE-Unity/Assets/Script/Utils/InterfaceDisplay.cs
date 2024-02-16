@@ -38,8 +38,8 @@ public class InterfaceDisplay : MonoBehaviour
         float fps = 1.0f / deltaTime;
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
         fpsText.text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
-        hp1.fillAmount = (float)player1.Hp / GameSetting.Instance.p1Hp;
-        hp2.fillAmount = (float)player2.Hp / GameSetting.Instance.p2Hp;
+        hp1.fillAmount = (float)player1.Hp / GameSetting.Instance.P1HP;
+        hp2.fillAmount = (float)player2.Hp / GameSetting.Instance.P2HP;
         energy1.fillAmount = (float)player1.Energy / 300;
         energy2.fillAmount = (float)player2.Energy / 300;
         timerText.text = "Frame Limit: " + currentFrame;
@@ -77,7 +77,7 @@ public class InterfaceDisplay : MonoBehaviour
 
     public int GetElaspedFrame()
     {
-        float _temp = GameSetting.Instance.frameLimit - currentFrame;
+        float _temp = GameSetting.Instance.FrameLimit - currentFrame;
         int result = Mathf.RoundToInt(_temp);
         return result;
     }
