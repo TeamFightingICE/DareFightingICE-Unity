@@ -57,11 +57,18 @@ public class GameEndController : MonoBehaviour
 
         DataManager.Instance.CurrentRound = 1;
         DataManager.Instance.RoundResults.Clear();
-        Debug.Log("CurrentGame: " + DataManager.Instance.CurrentGame + " / " + GameSetting.Instance.GameRepeatCount);
         if (DataManager.Instance.CurrentGame >= GameSetting.Instance.GameRepeatCount) 
         {
             DataManager.Instance.CurrentGame = 1;
-            SceneManager.LoadScene("Launch");
+
+            if (FlagSetting.Instance.grpcAuto)
+            {
+                SceneManager.LoadScene("GrpcAuto");
+            }
+            else
+            {
+                SceneManager.LoadScene("Start");
+            }
         }
         else 
         {

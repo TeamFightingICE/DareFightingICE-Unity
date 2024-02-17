@@ -206,6 +206,12 @@ public class FightingController : MonoBehaviour
     }
 
     void OnGameEnd() {
+        if (DataManager.Instance.CurrentGame >= GameSetting.Instance.GameRepeatCount)
+        {
+            _aiControllers[0].Close();
+            _aiControllers[1].Close();
+        }
+
         SceneManager.LoadScene("GameEnd");
     }
 

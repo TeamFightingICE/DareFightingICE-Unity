@@ -11,9 +11,10 @@ public class GameData
     public List<List<MotionAttribute>> CharacterMotions { get; private set; }
     public string[] CharacterNames { get; private set; }
     public string[] AiNames { get; private set; }
+    public int RepeatCount { get; private set; }
 
     // Constructor that allows overriding initial values
-    public GameData(string[] characterNames = null, string[] aiNames = null, int? stageWidth = null, int? stageHeight = null)
+    public GameData(string[] characterNames = null, string[] aiNames = null, int? repeatCount = null, int? stageWidth = null, int? stageHeight = null)
     {
         MaxHPs = new int[2];
         MaxEnergies = new int[2];
@@ -24,6 +25,7 @@ public class GameData
         StageHeight = stageHeight ?? 640;
         CharacterNames = characterNames ?? new string[] { "Zen", "Zen" }; // Default names
         AiNames = aiNames ?? new string[] { "AI1", "AI2" }; // Default AI names
+        RepeatCount = repeatCount ?? 1; // Default repeat count
 
         InitializeGameData();
     }

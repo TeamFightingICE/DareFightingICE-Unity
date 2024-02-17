@@ -22,15 +22,19 @@ public class GameSetting : Singleton<GameSetting>
     public int P1HP { get; set; } = 400;
     public int P2HP { get; set; } = 400;
     public int RoundLimit { get; set; } = 3;
-    public int FrameLimit { get; set; } = 120;
+    public int FrameLimit { get; set; } = 3600;
     public int GameRepeatCount { get; set; } = 1;
     public string P1AIName { get; set; }
     public string P2AIName { get; set; }
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
-    public bool IsRunWithGrpcAuto { get; set; }
     private readonly bool[] blind = new bool[2] { false, false };
     private readonly bool[] nonDelay = new bool[2] { false, false };
+
+    public void SetGameRepeatCount(int repeatCount)
+    {
+        this.GameRepeatCount = repeatCount;
+    }
 
     public string GetAIName(bool isPlayerOne)
     {
@@ -80,11 +84,6 @@ public class GameSetting : Singleton<GameSetting>
     {
         this.P1ControlType = p1ControlType;
         this.P2ControlType = p2ControlType;
-    }
-
-    public void SetRunWithGrpcAuto(bool isRunWithGrpcAuto)
-    {
-        this.IsRunWithGrpcAuto = isRunWithGrpcAuto;
     }
 
     public void ResetData()

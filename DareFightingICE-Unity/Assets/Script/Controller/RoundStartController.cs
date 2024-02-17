@@ -8,10 +8,10 @@ public class RoundStartController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(roundStart());
+        StartCoroutine(RoundStart());
     }
 
-    IEnumerator roundStart() 
+    IEnumerator RoundStart() 
     {
         yield return new WaitForSeconds(0.1f);
         SceneManager.LoadScene("Gameplay");

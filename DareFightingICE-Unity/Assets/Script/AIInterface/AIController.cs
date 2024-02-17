@@ -88,11 +88,6 @@ public class AIController : MonoBehaviour
         }
     }
 
-    public void Close()
-    {
-        this.ai.Close();
-    }
-
     public void RoundEnd(RoundResult roundResult)
     {
         this.ai.RoundEnd(roundResult);
@@ -104,6 +99,11 @@ public class AIController : MonoBehaviour
         SetAudioData(AudioDataManager.Instance.GetAudioData());
         SetScreenData(new ScreenData());
         Processing();
+    }
+
+    public void Close()
+    {
+        this.ai.Close();
     }
     
 }

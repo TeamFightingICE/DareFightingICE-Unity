@@ -81,6 +81,7 @@ public class FlagSetting : Singleton<FlagSetting>
      */
     public bool grpc = false;
     public bool grpcAuto = false;
+    public bool grpcAutoReady = false;
 
     public bool loadArgs = false;
     

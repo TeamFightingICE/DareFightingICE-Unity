@@ -3,6 +3,11 @@ package service;
 
 option csharp_namespace = "DareFightingICE.Grpc.Proto";
 
+enum GrpcStatusCode {
+	SUCCESS = 0;
+	FAILED = 1;
+}
+
 enum GrpcFlag {
 	EMPTY = 0;
 	INITIALIZE = 1;

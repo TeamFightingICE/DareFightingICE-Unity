@@ -7,6 +7,7 @@ using UnityEngine;
 using DareFightingICE.Grpc.Proto;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using UnityEngine.AI;
 
 public class ServiceImpl : Service.ServiceBase
 {
@@ -20,8 +21,10 @@ public class ServiceImpl : Service.ServiceBase
         Debug.Log("Incoming initialize request");
         GrpcPlayer player = server.GetPlayer(request.PlayerNumber);
         player.InitializeRPC(request);
-        InitializeResponse response = new InitializeResponse();
-        response.PlayerUuid = player.PlayerUUID.ToString();
+        InitializeResponse response = new InitializeResponse
+        {
+            PlayerUuid = player.PlayerUUID.ToString()
+        };
         return Task.FromResult(response);
     }
 
@@ -39,14 +42,40 @@ public class ServiceImpl : Service.ServiceBase
         return Task.FromResult(new Empty());
     }
 
-    public override Task<Empty> RunGame(RunGameRequest request, ServerCallContext context)
+    public override Task<RunGameResponse> RunGame(RunGameRequest request, ServerCallContext context)
     {
         Debug.Log("Incoming runGame request");
-        server.GameData = new GameData(
-            new string[] { request.Character1, request.Character2 },
-            new string[] { request.Player1, request.Player2 }
-        );
-        server.RunFlag = true;
-        return Task.FromResult(new Empty());
+
+        GrpcStatusCode statusCode;
+        string responseMessage;
+
+        if (!FlagSetting.Instance.grpcAuto)
+        {
+            statusCode = GrpcStatusCode.Failed;
+            responseMessage = "The game is not in gRPC auto mode.";
+        }
+        else if (!FlagSetting.Instance.grpcAutoReady)
+        {
+            statusCode = GrpcStatusCode.Failed;
+            responseMessage = "The game is not ready for running the game.";
+        }
+        else
+        {
+            server.GameData = new GameData(
+                new string[] { request.Character1, request.Character2 },
+                new string[] { request.Player1, request.Player2 },
+                request.GameNumber
+            );
+            server.RunFlag = true;
+
+            statusCode = GrpcStatusCode.Success;
+            responseMessage = "Success";
+        }
+
+        return Task.FromResult(new RunGameResponse
+        {
+            StatusCode = statusCode,
+            ResponseMessage = responseMessage
+        });
     }
 }

@@ -48,7 +48,7 @@ namespace DareFightingICE.Grpc.Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::DareFightingICE.Grpc.Proto.RunGameRequest> __Marshaller_service_RunGameRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::DareFightingICE.Grpc.Proto.RunGameRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Google.Protobuf.WellKnownTypes.Empty> __Marshaller_google_protobuf_Empty = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Google.Protobuf.WellKnownTypes.Empty.Parser));
+    static readonly grpc::Marshaller<global::DareFightingICE.Grpc.Proto.RunGameResponse> __Marshaller_service_RunGameResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::DareFightingICE.Grpc.Proto.RunGameResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::DareFightingICE.Grpc.Proto.SpectateRequest> __Marshaller_service_SpectateRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::DareFightingICE.Grpc.Proto.SpectateRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -63,14 +63,16 @@ namespace DareFightingICE.Grpc.Proto {
     static readonly grpc::Marshaller<global::DareFightingICE.Grpc.Proto.PlayerGameState> __Marshaller_service_PlayerGameState = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::DareFightingICE.Grpc.Proto.PlayerGameState.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::DareFightingICE.Grpc.Proto.PlayerInput> __Marshaller_service_PlayerInput = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::DareFightingICE.Grpc.Proto.PlayerInput.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Google.Protobuf.WellKnownTypes.Empty> __Marshaller_google_protobuf_Empty = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Google.Protobuf.WellKnownTypes.Empty.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::DareFightingICE.Grpc.Proto.RunGameRequest, global::Google.Protobuf.WellKnownTypes.Empty> __Method_RunGame = new grpc::Method<global::DareFightingICE.Grpc.Proto.RunGameRequest, global::Google.Protobuf.WellKnownTypes.Empty>(
+    static readonly grpc::Method<global::DareFightingICE.Grpc.Proto.RunGameRequest, global::DareFightingICE.Grpc.Proto.RunGameResponse> __Method_RunGame = new grpc::Method<global::DareFightingICE.Grpc.Proto.RunGameRequest, global::DareFightingICE.Grpc.Proto.RunGameResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
         "RunGame",
         __Marshaller_service_RunGameRequest,
-        __Marshaller_google_protobuf_Empty);
+        __Marshaller_service_RunGameResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::DareFightingICE.Grpc.Proto.SpectateRequest, global::DareFightingICE.Grpc.Proto.SpectatorGameState> __Method_Spectate = new grpc::Method<global::DareFightingICE.Grpc.Proto.SpectateRequest, global::DareFightingICE.Grpc.Proto.SpectatorGameState>(
@@ -115,7 +117,7 @@ namespace DareFightingICE.Grpc.Proto {
     public abstract partial class ServiceBase
     {
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Google.Protobuf.WellKnownTypes.Empty> RunGame(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::DareFightingICE.Grpc.Proto.RunGameResponse> RunGame(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -174,22 +176,22 @@ namespace DareFightingICE.Grpc.Proto {
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Google.Protobuf.WellKnownTypes.Empty RunGame(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::DareFightingICE.Grpc.Proto.RunGameResponse RunGame(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return RunGame(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Google.Protobuf.WellKnownTypes.Empty RunGame(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::CallOptions options)
+      public virtual global::DareFightingICE.Grpc.Proto.RunGameResponse RunGame(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_RunGame, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Google.Protobuf.WellKnownTypes.Empty> RunGameAsync(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::DareFightingICE.Grpc.Proto.RunGameResponse> RunGameAsync(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return RunGameAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Google.Protobuf.WellKnownTypes.Empty> RunGameAsync(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::DareFightingICE.Grpc.Proto.RunGameResponse> RunGameAsync(global::DareFightingICE.Grpc.Proto.RunGameRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_RunGame, null, options, request);
       }
@@ -281,7 +283,7 @@ namespace DareFightingICE.Grpc.Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     public static void BindService(grpc::ServiceBinderBase serviceBinder, ServiceBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_RunGame, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::DareFightingICE.Grpc.Proto.RunGameRequest, global::Google.Protobuf.WellKnownTypes.Empty>(serviceImpl.RunGame));
+      serviceBinder.AddMethod(__Method_RunGame, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::DareFightingICE.Grpc.Proto.RunGameRequest, global::DareFightingICE.Grpc.Proto.RunGameResponse>(serviceImpl.RunGame));
       serviceBinder.AddMethod(__Method_Spectate, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::DareFightingICE.Grpc.Proto.SpectateRequest, global::DareFightingICE.Grpc.Proto.SpectatorGameState>(serviceImpl.Spectate));
       serviceBinder.AddMethod(__Method_Initialize, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::DareFightingICE.Grpc.Proto.InitializeRequest, global::DareFightingICE.Grpc.Proto.InitializeResponse>(serviceImpl.Initialize));
       serviceBinder.AddMethod(__Method_Participate, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::DareFightingICE.Grpc.Proto.ParticipateRequest, global::DareFightingICE.Grpc.Proto.PlayerGameState>(serviceImpl.Participate));

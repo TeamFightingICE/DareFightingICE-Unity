@@ -62,8 +62,6 @@ public class GrpcPlayer : IAIInterface
                 
             }
         });
-
-        this.Close();
     }
     
     public void OnInput(PlayerInput request)
@@ -150,14 +148,10 @@ public class GrpcPlayer : IAIInterface
             RoundResult = roundResult.ToProto()
         };
         await this.responseStream.WriteAsync(newState);
-
-        if (isGameEnd)
-        {
-            this.notifyCompleted = true;
-        }
     }
     public void Close()
     {
+        this.notifyCompleted = true;
         this.IsCancelled = true;
         this.responseStream = null;
         this.serverCallContext = null;
