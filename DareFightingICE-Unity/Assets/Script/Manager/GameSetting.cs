@@ -24,9 +24,16 @@ public class GameSetting : Singleton<GameSetting>
     public int RoundLimit { get; set; } = 3;
     public int FrameLimit { get; set; } = 3600;
     public int GameRepeatCount { get; set; } = 1;
+    public string P1AIName { get; set; }
+    public string P2AIName { get; set; }
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
     public bool IsRunWithGrpcAuto { get; set; }
+
+    public string GetAIName(bool isPlayerOne)
+    {
+        return isPlayerOne ? P1AIName : P2AIName;
+    }
 
     public ControlType GetControlType(bool isPlayerOne)
     {
@@ -41,19 +48,21 @@ public class GameSetting : Singleton<GameSetting>
         this.FrameLimit = frameLimit;
     }
 
-    public void SetCharacterData(ControlType p1ControlType, ControlType p2ControlType)
+    public void SetAIName(string p1AIName, string p2AIName)
+    {
+        this.P1AIName = p1AIName;
+        this.P2AIName = p2AIName;
+    }
+
+    public void SetCharacterControlType(ControlType p1ControlType, ControlType p2ControlType)
     {
         this.P1ControlType = p1ControlType;
         this.P2ControlType = p2ControlType;
     }
+
     public void SetRunWithGrpcAuto(bool isRunWithGrpcAuto)
     {
         this.IsRunWithGrpcAuto = isRunWithGrpcAuto;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void ResetData()

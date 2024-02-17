@@ -78,7 +78,8 @@ public class StartController : MonoBehaviour
     {
         GameData _gameData = new GameData();
         GameDataManager.Instance.SetGameData(_gameData);
-        GameSetting.Instance.SetCharacterData(p1CurrentControl, p2CurrentControl);
+        GameSetting.Instance.SetAIName("MctsAi23i", "MctsAi23i");
+        GameSetting.Instance.SetCharacterControlType(p1CurrentControl, p2CurrentControl);
         SceneManager.LoadScene("StartingGamePlay");
     }
 

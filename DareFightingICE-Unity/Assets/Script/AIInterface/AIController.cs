@@ -8,11 +8,7 @@ public class AIController : MonoBehaviour
 {
     public ZenCharacterController characterController;
     private IAIInterface ai;
-    private GrpcPlayer grpcPlayer;
     private LinkedList<FrameData> frameDatas;
-    private AudioData audioData;
-    private ScreenData screenData;
-    private bool isPlayerOne;
     
     public void Awake()
     {
@@ -21,21 +17,12 @@ public class AIController : MonoBehaviour
 
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
-        this.isPlayerOne = isPlayerOne;
-
-        switch (GameSetting.Instance.GetControlType(isPlayerOne))
+        this.ai = GameSetting.Instance.GetControlType(isPlayerOne) switch
         {
-            case ControlType.AI:
-                this.ai = new SampleAI();
-                break;
-            case ControlType.GRPC:
-                this.ai = GrpcServer.Instance.GetPlayer(isPlayerOne);
-                break;
-            default:
-                this.ai = new SampleAI();
-                break;
-        }
-
+            ControlType.AI => LocalAIUtil.GetAIInterface(GameSetting.Instance.GetAIName(isPlayerOne)),
+            ControlType.GRPC => GrpcServer.Instance.GetPlayer(isPlayerOne),
+            _ => new Sandbox(),
+        };
         this.ai?.Initialize(gameData, isPlayerOne);
     }
     public void InitRound() {
@@ -52,13 +39,11 @@ public class AIController : MonoBehaviour
 
     public void SetAudioData(AudioData audioData)
     {
-        this.audioData = audioData;
         this.ai?.GetAudioData(audioData);
     }
 
     public void SetScreenData(ScreenData screenData)
     {
-        this.screenData = screenData;
         this.ai?.GetScreenData(screenData);
     }
     
@@ -109,11 +94,5 @@ public class AIController : MonoBehaviour
         SetScreenData(new ScreenData());
         Processing();
     }
-
     
-    void ApplyInputToCharacter(Key input)
-    {
-        // Convert AI input into character actions
-        // This is where you'll control the character based on AI decisions
-    }
 }
