@@ -15,19 +15,19 @@ public class StartController : MonoBehaviour
     public Button playBtn;
     private int[] _repeatCount = new[] { 1, 3, 5, 10, 30, 50, 100 };
 
-    // Current control types for each player
     private ControlType p1CurrentControl;
     private ControlType p2CurrentControl;
 
     public Button p1ControlBtn;
     public Button p2ControlBtn;
 
-    private int CurrentRepeatCountIdx = 0;
+    private int CurrentRepeatCountIdx;
 
     void Start()
     {
         p1CurrentControl = ControlType.KEYBOARD;
         p2CurrentControl = ControlType.KEYBOARD;
+        CurrentRepeatCountIdx = 0;
     }
 
     void Update()
@@ -49,7 +49,6 @@ public class StartController : MonoBehaviour
         return true;
     }
     
-    // Called to cycle through control types for each player
     public void SelectControl(int player, int offset)
     {
         if (player == 1)
@@ -71,7 +70,6 @@ public class StartController : MonoBehaviour
         int n_repeatCount = _repeatCount.Length;
         CurrentRepeatCountIdx = (CurrentRepeatCountIdx + offset + n_repeatCount) % n_repeatCount;
         RepeatCountText.text = _repeatCount[CurrentRepeatCountIdx].ToString();
-        GameSetting.Instance.GameRepeatCount = _repeatCount[CurrentRepeatCountIdx];
     }
 
     public void StartGame()
@@ -80,6 +78,7 @@ public class StartController : MonoBehaviour
         GameDataManager.Instance.SetGameData(_gameData);
         GameSetting.Instance.SetAIName("MctsAi23i", "MctsAi23i");
         GameSetting.Instance.SetCharacterControlType(p1CurrentControl, p2CurrentControl);
+        GameSetting.Instance.GameRepeatCount = _repeatCount[CurrentRepeatCountIdx];
         SceneManager.LoadScene("StartingGamePlay");
     }
 

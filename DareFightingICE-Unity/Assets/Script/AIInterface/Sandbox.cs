@@ -5,9 +5,20 @@ using UnityEngine;
 public class Sandbox : IAIInterface
 {
     private Key input;
+
+    public bool IsBlind()
+    {
+        return false;
+    }
+
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         input = new Key();
+    }
+
+    public void GetNonDelayFrameData(FrameData frameData)
+    {
+        
     }
 
     public void GetInformation(FrameData frameData)

@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using UnityEngine.AI;
 
 public class AIController : MonoBehaviour
 {
     public ZenCharacterController characterController;
+    private bool isPlayerOne;
     private IAIInterface ai;
     private LinkedList<FrameData> frameDatas;
     
@@ -17,34 +18,40 @@ public class AIController : MonoBehaviour
 
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
+        this.isPlayerOne = isPlayerOne;
         this.ai = GameSetting.Instance.GetControlType(isPlayerOne) switch
         {
             ControlType.AI => LocalAIUtil.GetAIInterface(GameSetting.Instance.GetAIName(isPlayerOne)),
             ControlType.GRPC => GrpcServer.Instance.GetPlayer(isPlayerOne),
             _ => new Sandbox(),
         };
-        this.ai?.Initialize(gameData, isPlayerOne);
+        this.ai.Initialize(gameData, isPlayerOne);
     }
     public void InitRound() {
         this.Clear();
     }
 
     public void SetFrameData(FrameData frameData) {
-        this.frameDatas.AddLast(frameData ?? new FrameData());
+        var newFrameData = frameData ?? new FrameData();
+        this.frameDatas.AddLast(newFrameData);
 
         while (frameDatas.Count > GameSetting.Instance.FrameDelay) {
             frameDatas.RemoveFirst();
+        }
+
+        if (GameSetting.Instance.IsNonDelay(isPlayerOne)) {
+            this.ai.GetNonDelayFrameData(newFrameData);
         }
     }
 
     public void SetAudioData(AudioData audioData)
     {
-        this.ai?.GetAudioData(audioData);
+        this.ai.GetAudioData(audioData);
     }
 
     public void SetScreenData(ScreenData screenData)
     {
-        this.ai?.GetScreenData(screenData);
+        this.ai.GetScreenData(screenData);
     }
     
     public void Processing()
@@ -57,13 +64,17 @@ public class AIController : MonoBehaviour
             frameData = new FrameData();
         }
 
-        this.ai?.GetInformation(frameData);
-        this.ai?.Processing();
+        if (GameSetting.Instance.IsBlind(isPlayerOne) || this.ai.IsBlind()) {
+            frameData.RemoveVisualData();
+        }
+
+        this.ai.GetInformation(frameData);
+        this.ai.Processing();
     }
 
     public Key Input()
     {
-        return this.ai?.Input();
+        return this.ai.Input();
     }
 
     public void Clear() {
@@ -79,12 +90,12 @@ public class AIController : MonoBehaviour
 
     public void Close()
     {
-        this.ai?.Close();
+        this.ai.Close();
     }
 
     public void RoundEnd(RoundResult roundResult)
     {
-        this.ai?.RoundEnd(roundResult);
+        this.ai.RoundEnd(roundResult);
     }
     
     void Update()

@@ -3,6 +3,7 @@ using Grpc.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -16,7 +17,7 @@ public class GrpcPlayer : IAIInterface
     public bool IsCancelled { get; set; }
     public bool PlayerNumber { get; set; }
     private string PlayerName { get; set; }
-    private bool IsBlind { get; set; }
+    private bool blind;
 
     private bool isControl;
     private FrameData frameData;
@@ -40,12 +41,14 @@ public class GrpcPlayer : IAIInterface
         this.isControl = false;
         this.input = new Key();
     }
+
     public void InitializeRPC(InitializeRequest request)
     {
         this.PlayerName = request.PlayerName;
-        this.IsBlind = request.IsBlind;
+        this.blind = request.IsBlind;
         this.IsCancelled = false;
     }
+
     public async Task ParticipateRPC(IServerStreamWriter<PlayerGameState> responseStream, ServerCallContext context) {
         context.CancellationToken.Register(() => { this.Close(); }, false);
 
@@ -79,6 +82,11 @@ public class GrpcPlayer : IAIInterface
         }
     }
 
+    public bool IsBlind()
+    {
+        return blind;
+    }
+
     public async void Initialize(GameData gameData, bool playerNumber)
     {
         if (this.IsCancelled) return;
@@ -89,6 +97,11 @@ public class GrpcPlayer : IAIInterface
             GameData = gameData.ToProto()
         };
         await this.responseStream.WriteAsync(newState);
+    }
+
+    public void GetNonDelayFrameData(FrameData frameData)
+    {
+
     }
 
     public void GetInformation(FrameData frameData)
@@ -110,10 +123,6 @@ public class GrpcPlayer : IAIInterface
     {
         if (!this.IsGameStarted || this.IsCancelled) return;
 
-        if (!this.IsBlind)
-        {
-            frameData.RemoveVisualData();
-        }
         var newState = new PlayerGameState
         {
             StateFlag = GrpcFlag.Processing,

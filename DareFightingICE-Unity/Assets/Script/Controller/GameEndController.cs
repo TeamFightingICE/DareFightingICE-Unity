@@ -55,14 +55,17 @@ public class GameEndController : MonoBehaviour
         
         yield return new WaitForSeconds(4f);
 
+        DataManager.Instance.CurrentRound = 1;
+        DataManager.Instance.RoundResults.Clear();
+        Debug.Log("CurrentGame: " + DataManager.Instance.CurrentGame + " / " + GameSetting.Instance.GameRepeatCount);
         if (DataManager.Instance.CurrentGame >= GameSetting.Instance.GameRepeatCount) 
         {
+            DataManager.Instance.CurrentGame = 1;
             SceneManager.LoadScene("Launch");
         }
         else 
         {
             DataManager.Instance.CurrentGame++;
-            DataManager.Instance.CurrentRound = 1;
             SceneManager.LoadScene("StartingGameplay");
         }
     }

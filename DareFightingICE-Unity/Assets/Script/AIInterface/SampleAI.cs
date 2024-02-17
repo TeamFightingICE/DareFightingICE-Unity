@@ -4,13 +4,28 @@ using UnityEngine;
 
 public class SampleAI : IAIInterface
 {
+    private bool isPlayerOne;
     private FrameData frameData;
     private AudioData audioData;
     private ScreenData screenData;
-    private Key input;
+    private Key key;
+    private CommandCenter commandCenter;
+
+    public bool IsBlind()
+    {
+        return false;
+    }
+
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
-        input = new Key();
+        this.isPlayerOne = isPlayerOne;
+        this.key = new Key();
+        this.commandCenter = new CommandCenter();
+    }
+
+    public void GetNonDelayFrameData(FrameData frameData)
+    {
+        
     }
 
     public void GetInformation(FrameData frameData)
@@ -35,12 +50,22 @@ public class SampleAI : IAIInterface
             return;
         }
 
-        input.B = !input.B; // perform kick
+        if (commandCenter.GetSkillFlag())
+        {
+            key = commandCenter.GetSkillKey();
+        }
+        else
+        {
+            key.Empty();
+            commandCenter.SkillCancel();
+
+            commandCenter.CommandCall("B");
+        }
     }
 
     public Key Input()
     {
-        return input;
+        return key;
     }
 
     public void RoundEnd(RoundResult result)

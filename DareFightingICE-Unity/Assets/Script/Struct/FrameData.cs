@@ -19,12 +19,6 @@ public class FrameData
     public bool EmptyFlag { get; set; }
 
     public bool[] Front { get; set; }
-    public int RemainingFrameNumber {
-        get
-        {
-            return GameSetting.Instance.FrameLimit - this.CurrentFrameNumber;
-        }
-    }
 
     public FrameData()
     {
@@ -51,6 +45,19 @@ public class FrameData
         }
         this.EmptyFlag = other.EmptyFlag;
         this.Front = new bool[2] { other.Front[0], other.Front[1] };
+    }
+
+
+    public int RemainingFrameNumber {
+        get
+        {
+            return GameSetting.Instance.FrameLimit - this.CurrentFrameNumber;
+        }
+    }
+
+    public bool IsFront(bool playerNumber)
+    {
+        return this.Front[playerNumber ? 0 : 1];
     }
 
     public void RemoveVisualData()

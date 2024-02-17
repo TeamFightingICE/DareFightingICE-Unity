@@ -22,13 +22,15 @@ public class GameSetting : Singleton<GameSetting>
     public int P1HP { get; set; } = 400;
     public int P2HP { get; set; } = 400;
     public int RoundLimit { get; set; } = 3;
-    public int FrameLimit { get; set; } = 3600;
+    public int FrameLimit { get; set; } = 120;
     public int GameRepeatCount { get; set; } = 1;
     public string P1AIName { get; set; }
     public string P2AIName { get; set; }
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
     public bool IsRunWithGrpcAuto { get; set; }
+    private readonly bool[] blind = new bool[2] { false, false };
+    private readonly bool[] nonDelay = new bool[2] { false, false };
 
     public string GetAIName(bool isPlayerOne)
     {
@@ -38,6 +40,26 @@ public class GameSetting : Singleton<GameSetting>
     public ControlType GetControlType(bool isPlayerOne)
     {
         return isPlayerOne ? P1ControlType : P2ControlType;
+    }
+
+    public bool IsBlind(bool isPlayerOne)
+    {
+        return this.blind[isPlayerOne ? 0 : 1];
+    }
+
+    public void SetBlind(int player, bool blind)
+    {
+        this.blind[player] = blind;
+    }
+
+    public bool IsNonDelay(bool isPlayerOne)
+    {
+        return this.nonDelay[isPlayerOne ? 0 : 1];
+    }
+
+    public void SetNonDelay(int player, bool nonDelay)
+    {
+        this.nonDelay[player] = nonDelay;
     }
 
     public void SetData(int p1Hp, int p2Hp, int roundLimit, int frameLimit)

@@ -4,18 +4,34 @@ using UnityEngine;
 
 public class MctsAi23i : IAIInterface
 {
+    private bool isPlayerOne;
     private FrameData frameData;
     private AudioData audioData;
     private ScreenData screenData;
-    private Key input;
+    private Key key;
+    private CommandCenter commandCenter;
+
+    public bool IsBlind()
+    {
+        return false;
+    }
+
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
-        input = new Key();
+        this.isPlayerOne = isPlayerOne;
+        this.key = new Key();
+        this.commandCenter = new CommandCenter();
+    }
+
+    public void GetNonDelayFrameData(FrameData frameData)
+    {
+        
     }
 
     public void GetInformation(FrameData frameData)
     {
         this.frameData = frameData;
+        this.commandCenter.SetFrameData(frameData, this.isPlayerOne);
     }
 
     public void GetAudioData(AudioData audioData)
@@ -36,12 +52,22 @@ public class MctsAi23i : IAIInterface
         }
 
         // implement Mcts logic here
-        input.A = !input.A; // perform punch
+        if (commandCenter.GetSkillFlag())
+        {
+            key = commandCenter.GetSkillKey();
+        }
+        else
+        {
+            key.Empty();
+            commandCenter.SkillCancel();
+
+            commandCenter.CommandCall("STAND_A");
+        }
     }
 
     public Key Input()
     {
-        return input;
+        return key;
     }
 
     public void RoundEnd(RoundResult result)

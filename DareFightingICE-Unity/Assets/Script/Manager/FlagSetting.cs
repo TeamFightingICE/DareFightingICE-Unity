@@ -108,7 +108,7 @@ public class FlagSetting : Singleton<FlagSetting>
             switch (args[i].ToLower())
             {
                 case "--limithp":
-                    FlagSetting.Instance.limitHpFlag = true;
+                    limitHpFlag = true;
                     GameSetting.Instance.P1HP = int.Parse(args[++i]);
                     GameSetting.Instance.P2HP = int.Parse(args[++i]);
                     break;
@@ -119,8 +119,26 @@ public class FlagSetting : Singleton<FlagSetting>
                     GameSetting.Instance.FrameLimit = int.Parse(args[++i]);
                     break;
                 case "--grpc-auto":
-                    FlagSetting.Instance.grpcAuto = true;
+                    grpcAuto = true;
                     break;
+                case "--blind-player":
+                    int player = int.Parse(args[++i]);
+                    if (player == 2) {
+                        GameSetting.Instance.SetBlind(0, true); // player 1
+                        GameSetting.Instance.SetBlind(1, true); // player 2
+                    } else {
+                        GameSetting.Instance.SetBlind(player, true);
+                    }
+                    break;
+                case "--non-delay":
+                    player = int.Parse(args[++i]);
+                	if (player == 2) {
+                        GameSetting.Instance.SetNonDelay(0, true); // player 1
+                        GameSetting.Instance.SetNonDelay(1, true); // player 2
+                	} else {
+                        GameSetting.Instance.SetNonDelay(player, true);
+                	}
+                	break;
             }
         }
         loadArgs = true;

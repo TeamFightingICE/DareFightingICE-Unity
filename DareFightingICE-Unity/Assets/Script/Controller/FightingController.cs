@@ -22,8 +22,8 @@ public class FightingController : MonoBehaviour
     private bool isStart = false;
     private int currentRound;
     public List<GameObject> character;
-    private AIController[] _aiControllers = new AIController[2];
-    private ZenCharacterController[] _controllers = new ZenCharacterController[2];
+    private readonly AIController[] _aiControllers = new AIController[2];
+    private readonly ZenCharacterController[] _controllers = new ZenCharacterController[2];
     private int currentFrameNumber;
     public InterfaceDisplay _display;
     [SerializeField] private AudioSource P1HeartBeat;
@@ -32,7 +32,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private AudioSource P2EnergyIncrease;
     [SerializeField] private int P1EnergyLevel;
     [SerializeField] private int P2EnergyLevel;
-    
+
     void Start()
     {
         SetupScene();
@@ -176,7 +176,7 @@ public class FightingController : MonoBehaviour
     }
     void OnRoundEnd()
     {
-        Thread.Sleep(100);
+        Thread.Sleep(20);
 
         RoundResult result = new RoundResult
         {
@@ -196,9 +196,8 @@ public class FightingController : MonoBehaviour
        
         if (currentRound < GameSetting.Instance.RoundLimit)
         {
-            //ResetRound();
-            DataManager.Instance.CurrentRound += 1;
-            SceneManager.LoadScene("StartingGamePlay");
+            ResetRound();
+            DataManager.Instance.CurrentRound++;
         }
         else
         {
