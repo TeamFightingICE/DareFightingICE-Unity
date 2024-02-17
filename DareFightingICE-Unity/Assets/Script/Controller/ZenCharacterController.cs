@@ -747,6 +747,28 @@ public class ZenCharacterController : MonoBehaviour
             canJump = false;
         }
     }
+
+    //Added to prevent Player from getting stuck on top.
+     private void OnCollisionStay2D(Collision2D collision)
+        { 
+            if (LayerMask.LayerToName(collision.transform.gameObject.layer) == "Player")
+            {
+                if(!isGrounded) 
+                {
+                    if(IsFront) 
+                    {
+                        Vector2 movement = new Vector2(-1 * speed, rb.velocity.y);
+                        rb.velocity = movement;
+                    }
+                    else 
+                    {
+                        Vector2 movement = new Vector2(-1 * speed, rb.velocity.y);
+                        rb.velocity = movement;
+                    }
+                }
+            }
+        }
+
     
     private void PerformCrounch()
     {
