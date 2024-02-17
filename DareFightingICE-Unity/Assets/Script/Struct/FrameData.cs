@@ -92,4 +92,10 @@ public class FrameData
         }
         return frameData;
     }
+
+    public CharacterData getCharacter(Boolean character)
+    {
+        CharacterData temp = this.CharacterData[character ? 0 : 1];
+        return temp == null ? null : new CharacterData(temp);
+    }
 }
