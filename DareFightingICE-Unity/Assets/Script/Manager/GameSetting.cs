@@ -21,16 +21,11 @@ public class GameSetting : Singleton<GameSetting>
     public int P1HP { get; set; } = 400;
     public int P2HP { get; set; } = 400;
     public int RoundLimit { get; set; } = 3;
-    public int RoundNum {get; set;} = 1;
-    public int GameRepeatCount {get; set;} = 1;
-    public RoundResult Rount1Results {get; set;}
-    public RoundResult Rount2Results {get; set;}
-    public RoundResult Rount3Results {get; set;}
     public int FrameLimit { get; set; } = 3600;
+    public int GameRepeatCount { get; set; } = 1;
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
     public bool IsRunWithGrpcAuto { get; set; }
-    public int GameRepeatedCount {get; set;} = 0;
 
     public void SetData(int p1Hp, int p2Hp, int roundLimit, int frameLimit)
     {
