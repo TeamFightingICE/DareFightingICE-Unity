@@ -47,13 +47,7 @@ public class InterfaceDisplay : MonoBehaviour
         energy1.fillAmount = (float)player1.Energy / 300;
         energy2.fillAmount = (float)player2.Energy / 300;
         // timerText.text = "Frame Limit: " + currentFrame;
-        // if (Math.Floor(currentFrame / 60) != remainingSecond)
-        // {
-        //     remainingSecond = (int)Math.Floor(currentFrame / 60);
-        //     timerText.text = remainingSecond.ToString();
-        // }
-        remainingSecond = (int)Math.Floor(GetRemainingFrame() / 60.0);
-        timerText.text = remainingSecond.ToString();
+        timerText.text = string.Format("{0:0.000}", Math.Round(GetRemainingFrame() / 60.0, 3));
         p1Status.text = $"P1 HP: {player1.Hp} Energy: {player1.Energy}";
         p2Status.text = $"P2 HP: {player2.Hp} Energy: {player2.Energy}";
         SetEnergyColor();

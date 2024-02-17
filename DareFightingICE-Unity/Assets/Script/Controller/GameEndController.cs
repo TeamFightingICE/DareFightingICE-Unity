@@ -63,7 +63,7 @@ public class GameEndController : MonoBehaviour
         {
             DataManager.Instance.CurrentGame++;
             DataManager.Instance.CurrentRound = 1;
-            SceneManager.LoadScene("Gameplay");
+            SceneManager.LoadScene("StartingGameplay");
         }
     }
 }
