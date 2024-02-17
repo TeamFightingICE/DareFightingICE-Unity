@@ -24,8 +24,8 @@ public class GameSetting : Singleton<GameSetting>
     public int RoundLimit { get; set; } = 3;
     public int FrameLimit { get; set; } = 3600;
     public int GameRepeatCount { get; set; } = 1;
-    public string P1AIName { get; set; }
-    public string P2AIName { get; set; }
+    public string P1AIName { get; set; } = "SampleAI";
+    public string P2AIName { get; set; } = "SampleAI";
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
     private readonly bool[] blind = new bool[2] { false, false };

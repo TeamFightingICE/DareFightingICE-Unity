@@ -7,18 +7,18 @@ using UnityEngine;
 
 public class CharacterData
 {
-    public bool PlayerNumber;
+    public bool PlayerNumber { get; set; }
     public int Hp { get; set; }
-    public int Energy;
-    public float XPos;
-    public float YPos;
-    public float XVelo;
-    public float YVelo;
-    public State State;
-    public Action Action;
-    public bool IsFront;
-    public bool Control;
-    public int RemainingFrame;
+    public int Energy { get; set; }
+    public float XPos { get; set; }
+    public float YPos { get; set; }
+    public float XVelo { get; set; }
+    public float YVelo { get; set; }
+    public State State { get; set; }
+    public Action Action { get; set; }
+    public bool IsFront { get; set; }
+    public bool Control { get; set; }
+    public int RemainingFrame { get; set; }
 
     public CharacterData()
     {

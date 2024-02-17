@@ -44,9 +44,11 @@ public class MctsAi23i : IAIInterface
     {
         this.isPlayerOne = isPlayerOne;
         this.gameData = gameData;
+        this.simulator = new Simulator(gameData);
         this.key = new Key();
         this.frameData = new FrameData();
         this.commandCenter = new CommandCenter();
+        
         actionAir = new Action[] { Action.AIR_GUARD, Action.AIR_A, Action.AIR_B, Action.AIR_DA, Action.AIR_DB,
                 Action.AIR_FA, Action.AIR_FB, Action.AIR_UA, Action.AIR_UB, Action.AIR_D_DF_FA, Action.AIR_D_DF_FB,
                 Action.AIR_F_D_DFA, Action.AIR_F_D_DFB, Action.AIR_D_DB_BA, Action.AIR_D_DB_BB };
@@ -59,6 +61,8 @@ public class MctsAi23i : IAIInterface
 
         this.myMotion = this.gameData.GetMotionData(this.isPlayerOne);
         this.oppMotion = this.gameData.GetMotionData(!this.isPlayerOne);
+        this.myActions = new LinkedList<Action>();
+        this.oppActions = new LinkedList<Action>();
     }
 
     public void GetNonDelayFrameData(FrameData frameData)
@@ -70,8 +74,8 @@ public class MctsAi23i : IAIInterface
     {
         this.frameData = frameData;
         this.commandCenter.SetFrameData(frameData, this.isPlayerOne);
-        this.myCharacter = frameData.getCharacter(this.isPlayerOne);
-        this.oppCharacter = frameData.getCharacter(!this.isPlayerOne);
+        this.myCharacter = frameData.GetCharacter(this.isPlayerOne);
+        this.oppCharacter = frameData.GetCharacter(!this.isPlayerOne);
     }
 
     public void GetAudioData(AudioData audioData)
@@ -106,7 +110,6 @@ public class MctsAi23i : IAIInterface
             rootNode.CreateNode();
             Action bestAction = rootNode.mcts();
             commandCenter.CommandCall(nameof(bestAction));
-            
         }
     }
 
@@ -129,8 +132,8 @@ public class MctsAi23i : IAIInterface
     {
         simulatorAheadFrameData = simulator.simulate(frameData, this.isPlayerOne, null, null, FRAME_AHEAD);
 
-        myCharacter = simulatorAheadFrameData.getCharacter(this.isPlayerOne);
-        oppCharacter = simulatorAheadFrameData.getCharacter(!this.isPlayerOne);
+        myCharacter = simulatorAheadFrameData.GetCharacter(this.isPlayerOne);
+        oppCharacter = simulatorAheadFrameData.GetCharacter(!this.isPlayerOne);
 
         setMyAction();
         setOppAction();
@@ -143,24 +146,22 @@ public class MctsAi23i : IAIInterface
         if (myCharacter.State == State.Air)
         {
             for(int i = 0; i < actionAir.Length; i++)
-            {
-                
-                if (Math.Abs(myMotion.ElementAt((int)Enum.Parse(typeof(Action), actionAir[i].ToString())).startAddEnergy) <= energy)
+            {   
+                if (Math.Abs(myMotion.ElementAt((int)actionAir[i]).startAddEnergy) <= energy)
                 {
                     myActions.AddLast(actionAir[i]);
                 }
-               
             }
         }
         else
         {
-            if (Math.Abs(myMotion.ElementAt((int)Enum.Parse(typeof(Action), spSkill.ToString())).startAddEnergy) <= energy)
+            if (Math.Abs(myMotion.ElementAt((int)spSkill).startAddEnergy) <= energy)
             {
                 myActions.AddLast(spSkill);
             }
             for (int i = 0; i < actionGround.Length; i++)
             {
-                if (Math.Abs(myMotion.ElementAt((int)Enum.Parse(typeof(Action), actionGround[i].ToString())).startAddEnergy) <= energy)
+                if (Math.Abs(myMotion.ElementAt((int)actionGround[i]).startAddEnergy) <= energy)
                 {
                     myActions.AddLast(actionGround[i]);
                 }
@@ -176,23 +177,21 @@ public class MctsAi23i : IAIInterface
         {
             for (int i = 0; i < actionAir.Length; i++)
             {
-
-                if (Math.Abs(oppMotion.ElementAt((int)Enum.Parse(typeof(Action), actionAir[i].ToString())).startAddEnergy) <= energy)
+                if (Math.Abs(oppMotion.ElementAt((int)actionAir[i]).startAddEnergy) <= energy)
                 {
                     oppActions.AddLast(actionAir[i]);
                 }
-
             }
         }
         else
         {
-            if (Math.Abs(oppMotion.ElementAt((int)Enum.Parse(typeof(Action), spSkill.ToString())).startAddEnergy) <= energy)
+            if (Math.Abs(oppMotion.ElementAt((int)spSkill).startAddEnergy) <= energy)
             {
                 oppActions.AddLast(spSkill);
             }
             for (int i = 0; i < actionGround.Length; i++)
             {
-                if (Math.Abs(oppMotion.ElementAt((int)Enum.Parse(typeof(Action), actionGround[i].ToString())).startAddEnergy) <= energy)
+                if (Math.Abs(oppMotion.ElementAt((int)actionGround[i]).startAddEnergy) <= energy)
                 {
                     oppActions.AddLast(actionGround[i]);
                 }
@@ -219,10 +218,10 @@ public class MctsAi23i : IAIInterface
         private Simulator simulator;
         private int oppOriginalHP, myOriginalHP;
         private FrameData frameData;
-        private Boolean playerNumber;
+        private bool playerNumber;
         private CommandCenter commandCenter;
         private GameData gameData;
-        private Boolean isCreateNode;
+        private bool isCreateNode;
         private LinkedList<Action> mAction, oppAction;
         public Node(FrameData frameData, Node parent, LinkedList<Action> myActions,
             LinkedList<Action> oppActions, GameData gameData, bool playerNumber,
@@ -243,8 +242,8 @@ public class MctsAi23i : IAIInterface
             this.mAction = new LinkedList<Action>();
             this.oppAction = new LinkedList<Action>();
 
-            CharacterData myCharacter = frameData.getCharacter(playerNumber);
-            CharacterData oppCharacter = frameData.getCharacter(!playerNumber);
+            CharacterData myCharacter = frameData.GetCharacter(playerNumber);
+            CharacterData oppCharacter = frameData.GetCharacter(!playerNumber);
             this.myOriginalHP = myCharacter.Hp;
             this.oppOriginalHP = oppCharacter.Hp;
 
@@ -400,9 +399,7 @@ public class MctsAi23i : IAIInterface
             }
 
             return this.myActions.ElementAt(selected);
-
         }
-
 
         public Action getBestScoreAction()
         {
@@ -420,19 +417,17 @@ public class MctsAi23i : IAIInterface
             }
 
             return this.myActions.ElementAt(selected);
-
         }
 
         public int getScore(FrameData fd)
         {
-            return (fd.getCharacter(playerNumber).Hp - myOriginalHP) - (fd.getCharacter(!playerNumber).Hp - oppOriginalHP);
+            return (fd.GetCharacter(playerNumber).Hp - myOriginalHP) - (fd.GetCharacter(!playerNumber).Hp - oppOriginalHP);
         }
 
         public double getUcb(double score, int n, int ni)
         {
             return score + UCB_C * Math.Sqrt((2 * Math.Log(n)) / ni);
         }
-
 
         private static long nanoTime()
         {

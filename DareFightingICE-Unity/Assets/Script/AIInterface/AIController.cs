@@ -25,7 +25,7 @@ public class AIController : MonoBehaviour
             ControlType.GRPC => GrpcServer.Instance.GetPlayer(isPlayerOne),
             _ => new Sandbox(),
         };
-        this.ai.Initialize(gameData, isPlayerOne);
+        this.ai.Initialize(new GameData(gameData), isPlayerOne);
     }
     public void InitRound() {
         this.Clear();
@@ -40,18 +40,18 @@ public class AIController : MonoBehaviour
         }
 
         if (GameSetting.Instance.IsNonDelay(isPlayerOne)) {
-            this.ai.GetNonDelayFrameData(newFrameData);
+            this.ai.GetNonDelayFrameData(new FrameData(newFrameData));
         }
     }
 
     public void SetAudioData(AudioData audioData)
     {
-        this.ai.GetAudioData(audioData);
+        this.ai.GetAudioData(new AudioData(audioData));
     }
 
     public void SetScreenData(ScreenData screenData)
     {
-        this.ai.GetScreenData(screenData);
+        this.ai.GetScreenData(new ScreenData(screenData));
     }
     
     public void Processing()
@@ -94,11 +94,11 @@ public class AIController : MonoBehaviour
             frameData = new FrameData();
         }
 
-        bool isControl = frameDatas.Last.Value.GetCharacterData(isPlayerOne).Control;
+        bool isControl = frameDatas.Last.Value.GetCharacter(isPlayerOne).Control;
         if (GameSetting.Instance.IsBlind(isPlayerOne) || this.ai.IsBlind()) {
             frameData.RemoveVisualData();
         }
-        this.ai.GetInformation(frameData, isControl);
+        this.ai.GetInformation(new FrameData(frameData), isControl);
 
         Processing();
     }

@@ -128,20 +128,20 @@ public class MotionManager : Singleton<MotionManager>
         }
 
         if (motionData != null && motionData.TryGetValue(motionName, out var attributes)) {
-            MotionAttribute motionAttributes = new MotionAttribute();
-
-            // Assign values to motionAttributes from attributes Dictionary
-            motionAttributes.hitDamage = GetAttributeValue<int>(attributes, "attack.HitDamage");
-            motionAttributes.guardDamage = GetAttributeValue<int>(attributes, "attack.GuardDamage");
-            motionAttributes.startAddEnergy = GetAttributeValue<int>(attributes, "attack.StartAddEnergy");
-            motionAttributes.hitAddEnergy = GetAttributeValue<int>(attributes, "attack.HitAddEnergy");
-            motionAttributes.guardAddEnergy = GetAttributeValue<int>(attributes, "attack.GuardAddEnergy");
-            motionAttributes.giveEnergy = GetAttributeValue<int>(attributes, "attack.GiveEnergy");
-            motionAttributes.impactX = GetAttributeValue<int>(attributes, "attack.ImpactX");
-            motionAttributes.impactY = GetAttributeValue<int>(attributes, "attack.ImpactY");
-            motionAttributes.attackType = GetAttackType(GetAttributeValue<int>(attributes, "attack.AttackType"));
-            motionAttributes.isDown = GetAttributeValue<bool>(attributes, "attack.DownProp");
-            motionAttributes.activeTime = GetAttributeValue<int>(attributes, "attack.Active");
+            MotionAttribute motionAttributes = new()
+            {
+                hitDamage = GetAttributeValue<int>(attributes, "attack.HitDamage"),
+                guardDamage = GetAttributeValue<int>(attributes, "attack.GuardDamage"),
+                startAddEnergy = GetAttributeValue<int>(attributes, "attack.StartAddEnergy"),
+                hitAddEnergy = GetAttributeValue<int>(attributes, "attack.HitAddEnergy"),
+                guardAddEnergy = GetAttributeValue<int>(attributes, "attack.GuardAddEnergy"),
+                giveEnergy = GetAttributeValue<int>(attributes, "attack.GiveEnergy"),
+                impactX = GetAttributeValue<int>(attributes, "attack.ImpactX"),
+                impactY = GetAttributeValue<int>(attributes, "attack.ImpactY"),
+                attackType = GetAttackType(GetAttributeValue<int>(attributes, "attack.AttackType")),
+                isDown = GetAttributeValue<bool>(attributes, "attack.DownProp"),
+                activeTime = GetAttributeValue<int>(attributes, "attack.Active")
+            };
             return motionAttributes;
         }
         return null;

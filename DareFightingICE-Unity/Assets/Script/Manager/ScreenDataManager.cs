@@ -5,7 +5,7 @@ public class ScreenDataManager : Singleton<ScreenDataManager>
 {
     public Texture2D CaptureScreen(int width, int height)
     {
-        Texture2D screenCapture = new Texture2D(width, height, TextureFormat.RGB24, false);
+        Texture2D screenCapture = new(width, height, TextureFormat.RGB24, false);
         screenCapture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         screenCapture.Apply();
 

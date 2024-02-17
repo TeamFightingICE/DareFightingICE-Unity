@@ -113,6 +113,12 @@ public class FlagSetting : Singleton<FlagSetting>
                     GameSetting.Instance.P1HP = int.Parse(args[++i]);
                     GameSetting.Instance.P2HP = int.Parse(args[++i]);
                     break;
+                case "--a1":
+                    GameSetting.Instance.P1AIName = args[++i];
+                    break;
+                case "--a2":
+                    GameSetting.Instance.P2AIName = args[++i];
+                    break;
                 case "-r":
                     GameSetting.Instance.RoundLimit = int.Parse(args[++i]);
                     break;

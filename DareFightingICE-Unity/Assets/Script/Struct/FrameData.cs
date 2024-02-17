@@ -55,7 +55,7 @@ public class FrameData
         }
     }
 
-    public CharacterData GetCharacterData(bool playerNumber)
+    public CharacterData GetCharacter(bool playerNumber)
     {
         return this.CharacterData[playerNumber ? 0 : 1];
     }
@@ -96,11 +96,5 @@ public class FrameData
             frameData.ProjectileData.Add(projectile.ToProto());
         }
         return frameData;
-    }
-
-    public CharacterData getCharacter(Boolean character)
-    {
-        CharacterData temp = this.CharacterData[character ? 0 : 1];
-        return temp == null ? null : new CharacterData(temp);
     }
 }

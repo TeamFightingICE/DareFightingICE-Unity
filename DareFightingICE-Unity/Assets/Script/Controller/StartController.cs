@@ -76,7 +76,6 @@ public class StartController : MonoBehaviour
     {
         GameData _gameData = new GameData();
         GameDataManager.Instance.SetGameData(_gameData);
-        GameSetting.Instance.SetAIName("MctsAi23i", "MctsAi23i");
         GameSetting.Instance.SetCharacterControlType(p1CurrentControl, p2CurrentControl);
         GameSetting.Instance.SetGameRepeatCount(_repeatCount[CurrentRepeatCountIdx]);
         SceneManager.LoadScene("StartingGamePlay");

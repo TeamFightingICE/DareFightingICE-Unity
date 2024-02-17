@@ -8,7 +8,7 @@ public class GameData
     public int StageHeight { get; private set; }
     public int[] MaxHPs { get; private set; }
     public int[] MaxEnergies { get; private set; }
-    public List<List<MotionAttribute>> CharacterMotions { get; private set; }
+    public List<MotionAttribute>[] CharacterMotions { get; private set; }
     public string[] CharacterNames { get; private set; }
     public string[] AiNames { get; private set; }
     public int RepeatCount { get; private set; }
@@ -18,16 +18,37 @@ public class GameData
     {
         MaxHPs = new int[2];
         MaxEnergies = new int[2];
-        CharacterMotions = new List<List<MotionAttribute>>(2);
+        CharacterMotions = new List<MotionAttribute>[2];
 
         // Use provided values or default ones if null
         StageWidth = stageWidth ?? 960;
         StageHeight = stageHeight ?? 640;
         CharacterNames = characterNames ?? new string[] { "Zen", "Zen" }; // Default names
-        AiNames = aiNames ?? new string[] { "AI1", "AI2" }; // Default AI names
+        AiNames = aiNames ?? new string[] { "SampleAI", "SampleAI" }; // Default AI names
         RepeatCount = repeatCount ?? 1; // Default repeat count
 
         InitializeGameData();
+    }
+
+    public GameData(GameData other)
+    {
+        StageWidth = other.StageWidth;
+        StageHeight = other.StageHeight;
+        MaxHPs = new int[2] { other.MaxHPs[0], other.MaxHPs[1] };
+        MaxEnergies = new int[2] { other.MaxEnergies[0], other.MaxEnergies[1] };
+        CharacterMotions = new List<MotionAttribute>[2];
+        for (int i = 0; i < 2; i++)
+        {
+            List<MotionAttribute> motionDataList = new();
+            foreach (var motion in other.CharacterMotions[i])
+            {
+                motionDataList.Add(new MotionAttribute(motion));
+            }
+            CharacterMotions[i] = motionDataList;
+        }
+        CharacterNames = new string[2] { other.CharacterNames[0], other.CharacterNames[1] };
+        AiNames = new string[2] { other.AiNames[0], other.AiNames[1] };
+        RepeatCount = other.RepeatCount;
     }
 
     private void InitializeGameData()
@@ -43,7 +64,7 @@ public class GameData
         {
             List<MotionAttribute> motionDataList = new List<MotionAttribute>();
             // Populate motionDataList with character-specific motions
-            CharacterMotions.Add(motionDataList);
+            CharacterMotions[i] = motionDataList;
         }
     }
 
@@ -56,7 +77,7 @@ public class GameData
 
     public GrpcGameData ToProto()
     {
-        GrpcGameData gameData = new GrpcGameData
+        GrpcGameData gameData = new()
         {
             MaxHps = { MaxHPs },
             MaxEnergies = { MaxEnergies },
