@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IAIInterface
 {
-    public bool IsBlind();
+    bool IsBlind();
     void Initialize(GameData gameData, bool isPlayerOne);
     void GetNonDelayFrameData(FrameData frameData);
     void GetInformation(FrameData frameData);
