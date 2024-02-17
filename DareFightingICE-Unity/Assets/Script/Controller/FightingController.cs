@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,20 +26,21 @@ public class FightingController : MonoBehaviour
     private ZenCharacterController[] _controllers = new ZenCharacterController[2];
     private float framelimit;
     public InterfaceDisplay _display;
-
     [SerializeField] private AudioSource P1HeartBeat;
     [SerializeField] private AudioSource P2HeartBeat;
-    [SerializeField] private AudioSource P1EnegryIncrease;
-    [SerializeField] private AudioSource P2EnegryIncrease;
+    [SerializeField] private AudioSource P1EnergyIncrease;
+    [SerializeField] private AudioSource P2EnergyIncrease;
     [SerializeField] private int P1EnergyLevel;
     [SerializeField] private int P2EnergyLevel;
     
     void Start()
     {
-        SetupScene();
-        _aiControllers[0].Initialize(GameDataManager.Instance.GameData, true);
-        _aiControllers[1].Initialize(GameDataManager.Instance.GameData, false);
+        if (DataManager.Instance.CurrentRound == 1) {
+            _aiControllers[0]?.Initialize(GameDataManager.Instance.GameData, true);
+            _aiControllers[1]?.Initialize(GameDataManager.Instance.GameData, false);
+        }
 
+        SetupScene();
         Thread.Sleep(1000); // wait for 1 second to let the AI initialize
     }
 
@@ -46,7 +48,7 @@ public class FightingController : MonoBehaviour
     {
         ClearList();
         framelimit = GameSetting.Instance.FrameLimit;
-        currentRound = GameSetting.Instance.RoundNum;
+        currentRound = DataManager.Instance.CurrentRound;
         GameObject zen1 = Instantiate(zen, spawnP1.transform.position, spawnP1.transform.rotation);
         zen1.tag = "Player1";
 
@@ -135,7 +137,7 @@ public class FightingController : MonoBehaviour
             if (_controllers[0].Energy >= P1EnergyLevel + 50)
             {
                 P1EnergyLevel += 50;
-                P1EnegryIncrease.Play();
+                P1EnergyIncrease.Play();
             }
         }
         //Energy Increase for PLayer2
@@ -144,7 +146,7 @@ public class FightingController : MonoBehaviour
             if (_controllers[1].Energy >= P2EnergyLevel + 50)
             {
                 P2EnergyLevel += 50;
-                P2EnegryIncrease.Play();
+                P2EnergyIncrease.Play();
             }
         }
         if (framelimit <= 0 || CheckField())
@@ -177,21 +179,22 @@ public class FightingController : MonoBehaviour
         {
             CurrentRound = currentRound,
             ElaspedFrame = _display.GetElaspedFrame(),
-            RemainingHPs = new int[]{ _controllers[0].Hp, _controllers[1].Hp }
+            RemainingHPs = new int[]{
+                Math.Max(0, _controllers[0].Hp),
+                Math.Max(0, _controllers[1].Hp)
+            }
         };
 
         isStart = false;
-        _aiControllers[0].RoundEnd(result);
-        _aiControllers[1].RoundEnd(result);
-        if(currentRound == 1)  GameSetting.Instance.Rount1Results = result;
-        if(currentRound == 2)  GameSetting.Instance.Rount2Results = result;
-        if(currentRound == 3)  GameSetting.Instance.Rount3Results = result;
-       
+        _aiControllers[0]?.RoundEnd(result);
+        _aiControllers[1]?.RoundEnd(result);
 
+        DataManager.Instance.RoundResults.Add(result);
+       
         if (currentRound < GameSetting.Instance.RoundLimit)
         {
             //ResetRound();
-            GameSetting.Instance.RoundNum+=1;
+            DataManager.Instance.CurrentRound += 1;
             SceneManager.LoadScene("StartingGamePlay");
         }
         else

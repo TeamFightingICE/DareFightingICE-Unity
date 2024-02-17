@@ -1853,8 +1853,8 @@ MonoBehaviour:
   _display: {fileID: 1195152250}
   P1HeartBeat: {fileID: 1693541857}
   P2HeartBeat: {fileID: 1701492685}
-  P1EnegryIncrease: {fileID: 167229578}
-  P2EnegryIncrease: {fileID: 1079946994}
+  P1EnergyIncrease: {fileID: 167229578}
+  P2EnergyIncrease: {fileID: 1079946994}
   P1EnergyLevel: 0
   P2EnergyLevel: 0
 --- !u!1 &1366124182

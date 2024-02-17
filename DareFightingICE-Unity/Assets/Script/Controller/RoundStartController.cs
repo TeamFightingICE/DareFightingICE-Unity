@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class RoundStartManager : MonoBehaviour
+public class RoundStartController : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -14,7 +14,6 @@ public class RoundStartManager : MonoBehaviour
     IEnumerator roundStart() 
     {
         yield return new WaitForSeconds(0.1f);
-        SceneManager.LoadScene ("Gameplay");
-
+        SceneManager.LoadScene("Gameplay");
     }
 }

@@ -13,7 +13,7 @@ public class StartController : MonoBehaviour
     public TMP_Text p2Control;
     public TMP_Text RepeatCountText;
     public Button playBtn;
-    private int[] _repeatCount = new[] { 1, 3, 5, 10, 100, 500, 1000 };
+    private int[] _repeatCount = new[] { 1, 3, 5, 10, 30, 50, 100 };
 
     // Current control types for each player
     private ControlType p1CurrentControl;
@@ -22,7 +22,7 @@ public class StartController : MonoBehaviour
     public Button p1ControlBtn;
     public Button p2ControlBtn;
 
-    private int Repeatcountidx = 0;
+    private int CurrentRepeatCountIdx = 0;
 
     void Start()
     {
@@ -67,44 +67,12 @@ public class StartController : MonoBehaviour
         UpdateControlTexts();
     }
     
-    public void SelectRepeatCount(int a) 
+    public void SelectRepeatCount(int offset) 
     {
-        if (a == 1) 
-        {
-            Repeatcountidx++;
-            if(Repeatcountidx >= _repeatCount.Length) 
-            {
-                Repeatcountidx = 0;
-                RepeatCountText.text = _repeatCount[Repeatcountidx].ToString();
-                GameSetting.Instance.GameRepeatCount = _repeatCount[Repeatcountidx];
-            }
-            else 
-            {
-                RepeatCountText.text = _repeatCount[Repeatcountidx].ToString();
-                GameSetting.Instance.GameRepeatCount = _repeatCount[Repeatcountidx];
-            }
-        }
-         if (a == 2) 
-        {
-            Repeatcountidx--; 
-            if (Repeatcountidx < 0) 
-            {
-                Repeatcountidx = 0;
-                RepeatCountText.text = _repeatCount[Repeatcountidx].ToString();
-                GameSetting.Instance.GameRepeatCount = _repeatCount[Repeatcountidx];
-            }
-            else if(Repeatcountidx >= _repeatCount.Length) 
-            {
-                Repeatcountidx = 0;
-                RepeatCountText.text = _repeatCount[Repeatcountidx].ToString();
-                GameSetting.Instance.GameRepeatCount = _repeatCount[Repeatcountidx];
-            }
-            else 
-            {
-                RepeatCountText.text = _repeatCount[Repeatcountidx].ToString();
-                GameSetting.Instance.GameRepeatCount = _repeatCount[Repeatcountidx];
-            }
-        }
+        int n_repeatCount = _repeatCount.Length;
+        CurrentRepeatCountIdx = (CurrentRepeatCountIdx + offset + n_repeatCount) % n_repeatCount;
+        RepeatCountText.text = _repeatCount[CurrentRepeatCountIdx].ToString();
+        GameSetting.Instance.GameRepeatCount = _repeatCount[CurrentRepeatCountIdx];
     }
 
     public void StartGame()
