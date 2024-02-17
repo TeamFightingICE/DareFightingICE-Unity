@@ -18,6 +18,7 @@ public enum Action
 /// </summary>
 public class GameSetting : Singleton<GameSetting>
 {
+    public int FrameDelay { get; set; } = 15;
     public int P1HP { get; set; } = 400;
     public int P2HP { get; set; } = 400;
     public int RoundLimit { get; set; } = 3;

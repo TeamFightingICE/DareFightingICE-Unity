@@ -18,22 +18,22 @@ public class CharacterData
     public Action Action;
     public bool IsFront;
     public bool Control;
-    public float RemainingFrame;
+    public int RemainingFrame;
 
-    public CharacterData(bool playerNumber, int hp, int energy, float xPos, float yPos, float xVelo, float yVelo, State state, Action action, bool isFront, bool control, float remainingFrame)
+    public CharacterData()
     {
-        PlayerNumber = playerNumber;
-        Hp = hp;
-        Energy = energy;
-        XPos = xPos;
-        YPos = yPos;
-        XVelo = xVelo;
-        YVelo = yVelo;
-        State = state;
-        Action = action;
-        IsFront = isFront;
-        Control = control;
-        RemainingFrame = remainingFrame;
+        PlayerNumber = false;
+        Hp = 0;
+        Energy = 0;
+        XPos = 0;
+        YPos = 0;
+        XVelo = 0;
+        YVelo = 0;
+        State = State.Stand;
+        Action = Action.STAND;
+        IsFront = false;
+        Control = false;
+        RemainingFrame = 0;
     }
 
     public CharacterData(CharacterData other)
@@ -67,7 +67,7 @@ public class CharacterData
             Action = (GrpcAction) Action,
             Front = IsFront,
             Control = Control,
-            RemainingFrame = (int) RemainingFrame,
+            RemainingFrame = RemainingFrame,
         };
     }
 }

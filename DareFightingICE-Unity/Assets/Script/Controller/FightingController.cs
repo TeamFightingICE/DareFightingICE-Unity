@@ -24,7 +24,7 @@ public class FightingController : MonoBehaviour
     public List<GameObject> character;
     private AIController[] _aiControllers = new AIController[2];
     private ZenCharacterController[] _controllers = new ZenCharacterController[2];
-    private float framelimit;
+    private int currentFrameNumber;
     public InterfaceDisplay _display;
     [SerializeField] private AudioSource P1HeartBeat;
     [SerializeField] private AudioSource P2HeartBeat;
@@ -35,19 +35,22 @@ public class FightingController : MonoBehaviour
     
     void Start()
     {
-        if (DataManager.Instance.CurrentRound == 1) {
-            _aiControllers[0]?.Initialize(GameDataManager.Instance.GameData, true);
-            _aiControllers[1]?.Initialize(GameDataManager.Instance.GameData, false);
-        }
-
         SetupScene();
+
+        if (DataManager.Instance.CurrentRound == 1) {
+            _aiControllers[0].Initialize(GameDataManager.Instance.GameData, true);
+            _aiControllers[1].Initialize(GameDataManager.Instance.GameData, false);
+        }
+        _aiControllers[0].InitRound();
+        _aiControllers[1].InitRound();
+
         Thread.Sleep(1000); // wait for 1 second to let the AI initialize
     }
 
     private void SetupScene()
     {
         ClearList();
-        framelimit = GameSetting.Instance.FrameLimit;
+        currentFrameNumber = 0;
         currentRound = DataManager.Instance.CurrentRound;
         GameObject zen1 = Instantiate(zen, spawnP1.transform.position, spawnP1.transform.rotation);
         zen1.tag = "Player1";
@@ -84,7 +87,7 @@ public class FightingController : MonoBehaviour
         _display.SetPlayerController(_controllers[0], _controllers[1]);
         _display.currentRound = currentRound;
 
-        FrameDataManager.Instance.SetupFrameData(character[0],character[1],_display);
+        FrameDataManager.Instance.SetupFrameData(character[0], character[1], _display);
         AudioDataManager.Instance.Initialize();
 
         isStart = true;
@@ -112,7 +115,7 @@ public class FightingController : MonoBehaviour
         scaleP2.x = Mathf.Abs(scaleP2.x) * (_controllers[1].IsFront ? 1 : -1);
         character[1].transform.localScale = scaleP2;
 
-        framelimit = GameSetting.Instance.FrameLimit;
+        currentFrameNumber = 0;
         currentRound++;
         _display.currentRound = currentRound;
         isStart = true;
@@ -149,16 +152,16 @@ public class FightingController : MonoBehaviour
                 P2EnergyIncrease.Play();
             }
         }
-        if (framelimit <= 0 || CheckField())
+
+        if (currentFrameNumber >= GameSetting.Instance.FrameLimit || CheckField())
         {
             OnRoundEnd();
         }
         else if (isStart)
         {
+            _display.currentFrame = currentFrameNumber++;
             FrameDataManager.Instance.ProcessFrameData();
             AudioDataManager.Instance.ProcessAudioData();
-            framelimit -= 1;
-            _display.currentFrame = framelimit;
             HandlePositionOverlap();
         }
     }
@@ -178,7 +181,7 @@ public class FightingController : MonoBehaviour
         RoundResult result = new RoundResult
         {
             CurrentRound = currentRound,
-            ElaspedFrame = _display.GetElaspedFrame(),
+            ElaspedFrame = currentFrameNumber,
             RemainingHPs = new int[]{
                 Math.Max(0, _controllers[0].Hp),
                 Math.Max(0, _controllers[1].Hp)
@@ -186,8 +189,8 @@ public class FightingController : MonoBehaviour
         };
 
         isStart = false;
-        _aiControllers[0]?.RoundEnd(result);
-        _aiControllers[1]?.RoundEnd(result);
+        _aiControllers[0].RoundEnd(result);
+        _aiControllers[1].RoundEnd(result);
 
         DataManager.Instance.RoundResults.Add(result);
        

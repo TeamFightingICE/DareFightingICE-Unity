@@ -10,7 +10,7 @@ public class InterfaceDisplay : MonoBehaviour
     /// </summary>
     public ZenCharacterController player1; // Reference to player 1's controller
     public ZenCharacterController player2; // Reference to player 2's controller
-    public float currentFrame;
+    public int currentFrame;
     public int remainingSecond;
     public int currentRound;
 
@@ -52,11 +52,16 @@ public class InterfaceDisplay : MonoBehaviour
         //     remainingSecond = (int)Math.Floor(currentFrame / 60);
         //     timerText.text = remainingSecond.ToString();
         // }
-        remainingSecond = (int)Math.Floor(currentFrame / 60);
+        remainingSecond = (int)Math.Floor(GetRemainingFrame() / 60.0);
         timerText.text = remainingSecond.ToString();
         p1Status.text = $"P1 HP: {player1.Hp} Energy: {player1.Energy}";
         p2Status.text = $"P2 HP: {player2.Hp} Energy: {player2.Energy}";
         SetEnergyColor();
+    }
+
+    private int GetRemainingFrame()
+    {
+        return GameSetting.Instance.FrameLimit - currentFrame;
     }
 
     private void SetEnergyColor()
@@ -86,13 +91,6 @@ public class InterfaceDisplay : MonoBehaviour
         {
             energy2.color = Color.red;
         }
-    }
-
-    public int GetElaspedFrame()
-    {
-        float _temp = GameSetting.Instance.FrameLimit - currentFrame;
-        int result = Mathf.RoundToInt(_temp);
-        return result;
     }
     // void OnGUI()
     // {

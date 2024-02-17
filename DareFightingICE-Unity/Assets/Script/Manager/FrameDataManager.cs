@@ -11,7 +11,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
     
     public CharacterData[] characterData = new CharacterData[2];
 
-    public float currentFrameNumber;
+    public int currentFrameNumber;
 
     public int currentRound;
     
@@ -22,8 +22,13 @@ public class FrameDataManager : Singleton<FrameDataManager>
     public bool[] front = new bool[2];
 
     private Action action = new Action();
+
+    private int GetRemainingFrame()
+    {
+        return GameSetting.Instance.FrameLimit - currentFrameNumber;
+    }
     
-    public void SetupFrameData(GameObject character1,GameObject character2,InterfaceDisplay frameInfo)
+    public void SetupFrameData(GameObject character1, GameObject character2, InterfaceDisplay frameInfo)
     {
         character[0] = character1;
         character[1] = character2;
@@ -32,16 +37,46 @@ public class FrameDataManager : Singleton<FrameDataManager>
         _controllers[0] = character1.GetComponent<ZenCharacterController>();
         _controllers[1] = character2.GetComponent<ZenCharacterController>();
         _interfaceDisplay = frameInfo;
+        currentFrameNumber = 0;
+        currentRound = DataManager.Instance.CurrentRound;
     }
     
     public void UpdateCharacterData()
     {
-        CharacterData _data1 = new CharacterData(_controllers[0].PlayerNumber, _controllers[0].Hp, _controllers[0].Energy,character[0].transform.position.x,character[0].transform.position.y,rb[0].velocity.x,rb[0].velocity.y,_controllers[0].state,action,_controllers[0].IsFront,true,0);
-        characterData[0] = _data1;
+        int remainingFrame = GetRemainingFrame();
+
+        characterData[0] = new CharacterData
+        {
+            PlayerNumber = _controllers[0].PlayerNumber,
+            Hp = _controllers[0].Hp,
+            Energy = _controllers[0].Energy,
+            XPos = character[0].transform.position.x,
+            YPos = character[0].transform.position.y,
+            XVelo = rb[0].velocity.x,
+            YVelo = rb[0].velocity.y,
+            State = _controllers[0].state,
+            Action = action,
+            IsFront = _controllers[0].IsFront,
+            Control = true,
+            RemainingFrame = remainingFrame
+        };
         front[0] = _controllers[0].IsFront;
-        
-        CharacterData _data2 = new CharacterData(_controllers[1].PlayerNumber, _controllers[1].Hp, _controllers[1].Energy,character[1].transform.position.x,character[1].transform.position.y,rb[1].velocity.x,rb[1].velocity.y,_controllers[1].state,action,_controllers[1].IsFront,true,0);
-        characterData[1] = _data2;
+
+        characterData[1] = new CharacterData
+        {
+            PlayerNumber = _controllers[1].PlayerNumber,
+            Hp = _controllers[1].Hp,
+            Energy = _controllers[1].Energy,
+            XPos = character[1].transform.position.x,
+            YPos = character[1].transform.position.y,
+            XVelo = rb[1].velocity.x,
+            YVelo = rb[1].velocity.y,
+            State = _controllers[1].state,
+            Action = action,
+            IsFront = _controllers[1].IsFront,
+            Control = true,
+            RemainingFrame = remainingFrame
+        };
         front[1] = _controllers[1].IsFront;
     }
     
@@ -49,8 +84,6 @@ public class FrameDataManager : Singleton<FrameDataManager>
     {
         UpdateCharacterData();
         currentFrameNumber = _interfaceDisplay.currentFrame;
-        currentRound = 0;
-        
     }
 
     public FrameData GetFrameData()

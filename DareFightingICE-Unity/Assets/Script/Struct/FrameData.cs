@@ -10,7 +10,7 @@ public class FrameData
 {
     public CharacterData[] CharacterData { get; set; }
 
-    public float CurrentFrameNumber { get; set; }
+    public int CurrentFrameNumber { get; set; }
 
     public int CurrentRound { get; set; }
 
@@ -19,6 +19,12 @@ public class FrameData
     public bool EmptyFlag { get; set; }
 
     public bool[] Front { get; set; }
+    public int RemainingFrameNumber {
+        get
+        {
+            return GameSetting.Instance.FrameLimit - this.CurrentFrameNumber;
+        }
+    }
 
     public FrameData()
     {
@@ -32,7 +38,10 @@ public class FrameData
 
     public FrameData(FrameData other)
     {
-        this.CharacterData = new CharacterData[2] { new CharacterData(other.CharacterData[0]), new CharacterData(other.CharacterData[1]) };
+        this.CharacterData = new CharacterData[2] {
+            other.CharacterData[0] != null ? new CharacterData(other.CharacterData[0]) : null,
+            other.CharacterData[1] != null ? new CharacterData(other.CharacterData[1]) : null
+        };
         this.CurrentFrameNumber = other.CurrentFrameNumber;
         this.CurrentRound = other.CurrentRound;
         this.ProjectileData = new List<AttackData>();
@@ -53,9 +62,9 @@ public class FrameData
 
     public GrpcFrameData ToProto()
     {
-        GrpcFrameData frameData = new GrpcFrameData
+        GrpcFrameData frameData = new()
         {
-            CurrentFrameNumber = (int) CurrentFrameNumber,
+            CurrentFrameNumber = CurrentFrameNumber,
             CurrentRound = CurrentRound,
             EmptyFlag = EmptyFlag,
             Front = { Front },
