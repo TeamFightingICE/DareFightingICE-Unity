@@ -102,7 +102,7 @@ public class UIKeyboardControl : MonoBehaviour
             }
             else if(EventSystem.current.currentSelectedGameObject == startController.RepeatCountText.gameObject)
             {
-                startController.SelectRepeatCount(2);
+                startController.SelectRepeatCount(-1);
             }
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) && startController != null)

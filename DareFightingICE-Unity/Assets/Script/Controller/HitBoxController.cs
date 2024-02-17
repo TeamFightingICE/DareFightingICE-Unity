@@ -53,12 +53,12 @@ public class HitBoxController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.LogWarning("Hit");
+        Debug.Log("Hit");
         if (isActive && other.gameObject.CompareTag(target))
         {
             //Call hit effect when character gets hit.
             int tempDamage = damage;
-            print(zenCharacterController.currentCombo);
+            Debug.Log(zenCharacterController.currentCombo);
             if (zenCharacterController.currentCombo > 3)
             {
                 tempDamage += (int)(5 * (4f / zenCharacterController.currentCombo));
@@ -75,11 +75,13 @@ public class HitBoxController : MonoBehaviour
                     zenCharacterController.AttackDeque.Remove(this.gameObject);
                     Destroy(this.gameObject);
                 }
-            }else if (isThrow)
-            {
-                zenCharacterController.TakeThorw(zenCharacterController,giveEnergy,tempDamage,getEnergy);
             }
-        }else if (other.gameObject.name == "Border" && isProjectile)
+            else if (isThrow)
+            {
+                zenCharacterController.TakeThrow(zenCharacterController,giveEnergy,tempDamage,getEnergy);
+            }
+        }
+        else if (other.gameObject.name == "Border" && isProjectile)
         {
             Destroy(this.gameObject);
         }

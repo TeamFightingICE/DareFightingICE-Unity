@@ -902,7 +902,7 @@ public class ZenCharacterController : MonoBehaviour
         
     }
 
-    public void TakeThorw(ZenCharacterController attacker,int giveEnergy,int damage,int getEnegy)
+    public void TakeThrow(ZenCharacterController attacker,int giveEnergy,int damage,int getEnegy)
     {
         if (isGrounded)
         {
