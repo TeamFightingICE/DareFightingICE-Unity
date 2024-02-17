@@ -10,21 +10,20 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class GrpcPlayer
+public class GrpcPlayer : IAIInterface
 {
     public UniqueId PlayerUUID {  get; set; }
     public bool IsCancelled { get; set; }
-    public PlayerGameState CurrentState { get; set; }
-
     public bool PlayerNumber { get; set; }
-    private string playerName;
-    private bool isBlind;
+    private string PlayerName { get; set; }
+    private bool IsBlind { get; set; }
 
     private bool isControl;
     private FrameData frameData;
     private AudioData audioData;
     private ScreenData screenData;
     // private FrameData nonDelayFrameData;
+    private Key input;
 
     private bool notifyCompleted;
     private IServerStreamWriter<PlayerGameState> responseStream;
@@ -39,15 +38,16 @@ public class GrpcPlayer
         this.notifyCompleted = false;
 
         this.isControl = false;
+        this.input = new Key();
     }
     public void InitializeRPC(InitializeRequest request)
     {
-        this.playerName = request.PlayerName;
-        this.isBlind = request.IsBlind;
+        this.PlayerName = request.PlayerName;
+        this.IsBlind = request.IsBlind;
         this.IsCancelled = false;
     }
     public async Task ParticipateRPC(IServerStreamWriter<PlayerGameState> responseStream, ServerCallContext context) {
-        context.CancellationToken.Register(() => { this.OnCancel(); }, false);
+        context.CancellationToken.Register(() => { this.Close(); }, false);
 
         this.notifyCompleted = false;
         this.responseStream = responseStream;
@@ -60,14 +60,17 @@ public class GrpcPlayer
             }
         });
 
-        this.OnCancel();
+        this.Close();
     }
-    public void OnCancel()
+    
+    public void OnInput(PlayerInput request)
     {
-        this.IsCancelled = true;
-        this.responseStream = null;
-        this.serverCallContext = null;
+        if (this.IsGameStarted)
+        {
+            this.input = GrpcUtil.FromGrpcKey(request.InputKey);
+        }
     }
+
     public bool IsGameStarted
     {
         get
@@ -75,41 +78,43 @@ public class GrpcPlayer
             return this.frameData != null && !this.frameData.EmptyFlag && this.frameData.CurrentFrameNumber > 0;
         }
     }
-    public void OnInput(PlayerInput request)
-    {
-        if (this.IsGameStarted)
-        {
-            Key key = GrpcUtil.FromGrpcKey(request.InputKey);
-            InputManager.Instance.SetInput(PlayerNumber, key);
-        }
-    }
-    public void SetInformation(bool isControl, FrameData frameData, AudioData audioData, ScreenData screenData)
-    {
-        this.isControl = isControl;
-        this.frameData = new FrameData(frameData);
-        this.audioData = new AudioData(audioData);
-        this.screenData = new ScreenData(screenData);
-    }
-    public async void OnInitialize(GameData gameData)
+
+    public async void Initialize(GameData gameData, bool playerNumber)
     {
         if (this.IsCancelled) return;
 
-        this.CurrentState = new PlayerGameState
+        var newState = new PlayerGameState
         {
             StateFlag = GrpcFlag.Initialize,
             GameData = gameData.ToProto()
         };
-        await this.responseStream.WriteAsync(this.CurrentState);
+        await this.responseStream.WriteAsync(newState);
     }
-    public async void OnGameUpdate()
+
+    public void GetInformation(FrameData frameData)
+    {
+        this.frameData = frameData;
+    }
+
+    public void GetScreenData(ScreenData screenData)
+    {
+        this.screenData = screenData;
+    }
+
+    public void GetAudioData(AudioData audioData)
+    {
+        this.audioData = audioData;
+    }
+
+    public async void Processing()
     {
         if (!this.IsGameStarted || this.IsCancelled) return;
 
-        if (!isBlind)
+        if (!this.IsBlind)
         {
             frameData.RemoveVisualData();
         }
-        this.CurrentState = new PlayerGameState
+        var newState = new PlayerGameState
         {
             StateFlag = GrpcFlag.Processing,
             IsControl = isControl,
@@ -117,23 +122,35 @@ public class GrpcPlayer
             AudioData = audioData.ToProto(),
             ScreenData = screenData.ToProto()
         };
-        await this.responseStream.WriteAsync(this.CurrentState);
+        await this.responseStream.WriteAsync(newState);
     }
-    public async void OnRoundEnd(RoundResult roundResult)
+
+    public Key Input()
+    {
+        return this.input;
+    }
+
+    public async void RoundEnd(RoundResult roundResult)
     {
         if (this.IsCancelled) return;
 
         bool isGameEnd = roundResult.CurrentRound >= GameSetting.Instance.RoundLimit;
-        this.CurrentState = new PlayerGameState
+        var newState = new PlayerGameState
         {
             StateFlag = isGameEnd ? GrpcFlag.GameEnd : GrpcFlag.RoundEnd,
             RoundResult = roundResult.ToProto()
         };
-        await this.responseStream.WriteAsync(this.CurrentState);
+        await this.responseStream.WriteAsync(newState);
 
         if (isGameEnd)
         {
             this.notifyCompleted = true;
         }
+    }
+    public void Close()
+    {
+        this.IsCancelled = true;
+        this.responseStream = null;
+        this.serverCallContext = null;
     }
 }

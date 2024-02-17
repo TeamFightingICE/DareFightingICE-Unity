@@ -28,6 +28,11 @@ public class GameSetting : Singleton<GameSetting>
     public ControlType P2ControlType { get; set; }
     public bool IsRunWithGrpcAuto { get; set; }
 
+    public ControlType GetControlType(bool isPlayerOne)
+    {
+        return isPlayerOne ? P1ControlType : P2ControlType;
+    }
+
     public void SetData(int p1Hp, int p2Hp, int roundLimit, int frameLimit)
     {
         this.P1HP = p1Hp;

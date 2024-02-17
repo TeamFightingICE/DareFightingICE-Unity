@@ -26,9 +26,8 @@ public class StartController : MonoBehaviour
 
     void Start()
     {
-        ControlType defaultControlType = GrpcServer.Instance.IsOpen ? ControlType.GRPC : ControlType.KEYBOARD;
-        p1CurrentControl = defaultControlType;
-        p2CurrentControl = defaultControlType;
+        p1CurrentControl = ControlType.KEYBOARD;
+        p2CurrentControl = ControlType.KEYBOARD;
     }
 
     void Update()
@@ -39,11 +38,11 @@ public class StartController : MonoBehaviour
 
     public bool CheckCondition()
     {
-        if (p1CurrentControl != ControlType.KEYBOARD && GrpcServer.Instance.GetPlayer(true).IsCancelled)
+        if (p1CurrentControl == ControlType.GRPC && GrpcServer.Instance.GetPlayer(true).IsCancelled)
         {
             return false;
         }
-        else if (p2CurrentControl != ControlType.KEYBOARD && GrpcServer.Instance.GetPlayer(false).IsCancelled)
+        else if (p2CurrentControl == ControlType.GRPC && GrpcServer.Instance.GetPlayer(false).IsCancelled)
         {
             return false;
         }

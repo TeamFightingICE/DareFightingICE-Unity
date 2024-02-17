@@ -22,8 +22,20 @@ public class AIController : MonoBehaviour
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         this.isPlayerOne = isPlayerOne;
-        this.grpcPlayer = GrpcServer.Instance.GetPlayer(isPlayerOne);
-        this.grpcPlayer?.OnInitialize(gameData);
+
+        switch (GameSetting.Instance.GetControlType(isPlayerOne))
+        {
+            case ControlType.AI:
+                this.ai = new SampleAI();
+                break;
+            case ControlType.GRPC:
+                this.ai = GrpcServer.Instance.GetPlayer(isPlayerOne);
+                break;
+            default:
+                this.ai = new SampleAI();
+                break;
+        }
+
         this.ai?.Initialize(gameData, isPlayerOne);
     }
     public void InitRound() {
@@ -60,19 +72,13 @@ public class AIController : MonoBehaviour
             frameData = new FrameData();
         }
 
-        this.grpcPlayer?.SetInformation(true, frameData, audioData, screenData);
-        this.grpcPlayer?.OnGameUpdate();
-
         this.ai?.GetInformation(frameData);
         this.ai?.Processing();
     }
 
     public Key Input()
     {
-        if (ai != null) {
-            return this.ai.Input();
-        }
-        return InputManager.Instance.GetInput(isPlayerOne);
+        return this.ai?.Input();
     }
 
     public void Clear() {
@@ -93,7 +99,6 @@ public class AIController : MonoBehaviour
 
     public void RoundEnd(RoundResult roundResult)
     {
-        this.grpcPlayer?.OnRoundEnd(roundResult);
         this.ai?.RoundEnd(roundResult);
     }
     
