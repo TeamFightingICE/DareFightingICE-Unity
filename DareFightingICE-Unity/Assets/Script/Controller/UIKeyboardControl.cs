@@ -100,6 +100,10 @@ public class UIKeyboardControl : MonoBehaviour
             {
                 startController.SelectControl(2, -1);
             }
+            else if(EventSystem.current.currentSelectedGameObject == startController.RepeatCountText.gameObject)
+            {
+                startController.SelectRepeatCount(2);
+            }
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) && startController != null)
         {
@@ -110,6 +114,10 @@ public class UIKeyboardControl : MonoBehaviour
             else if (EventSystem.current.currentSelectedGameObject == startController.p2ControlBtn.gameObject)
             {
                 startController.SelectControl(2, 1);
+            }
+             else if(EventSystem.current.currentSelectedGameObject == startController.RepeatCountText.gameObject)
+            {
+                startController.SelectRepeatCount(1);
             }
         }
     }

@@ -19,7 +19,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private GameObject RightBorder;
     [SerializeField] private float flipThreshold = 1.0f;
     private bool isStart = false;
-    private int currentRound = 1;
+    private int currentRound;
     public List<GameObject> character;
     private AIController[] _aiControllers = new AIController[2];
     private ZenCharacterController[] _controllers = new ZenCharacterController[2];
@@ -46,7 +46,7 @@ public class FightingController : MonoBehaviour
     {
         ClearList();
         framelimit = GameSetting.Instance.FrameLimit;
-
+        currentRound = GameSetting.Instance.RoundNum;
         GameObject zen1 = Instantiate(zen, spawnP1.transform.position, spawnP1.transform.rotation);
         zen1.tag = "Player1";
 
@@ -183,10 +183,16 @@ public class FightingController : MonoBehaviour
         isStart = false;
         _aiControllers[0].RoundEnd(result);
         _aiControllers[1].RoundEnd(result);
+        if(currentRound == 1)  GameSetting.Instance.Rount1Results = result;
+        if(currentRound == 2)  GameSetting.Instance.Rount2Results = result;
+        if(currentRound == 3)  GameSetting.Instance.Rount3Results = result;
+       
 
         if (currentRound < GameSetting.Instance.RoundLimit)
         {
-            ResetRound();
+            //ResetRound();
+            GameSetting.Instance.RoundNum+=1;
+            SceneManager.LoadScene("StartingGamePlay");
         }
         else
         {
@@ -195,7 +201,7 @@ public class FightingController : MonoBehaviour
     }
 
     void OnGameEnd() {
-        SceneManager.LoadScene("Result");
+        SceneManager.LoadScene("GameEnd");
     }
 
     bool CheckField()
