@@ -53,16 +53,13 @@ public class HitBoxController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Hit");
         if (isActive && other.gameObject.CompareTag(target))
         {
             //Call hit effect when character gets hit.
             int tempDamage = damage;
-            Debug.Log(zenCharacterController.currentCombo);
             if (zenCharacterController.currentCombo > 3)
             {
                 tempDamage += (int)(5 * (4f / zenCharacterController.currentCombo));
-                print(tempDamage);
             }
             ComboChecker(zenCharacterController.currentCombo);
 
