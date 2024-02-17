@@ -8,7 +8,7 @@ using UnityEngine;
 public class CharacterData
 {
     public bool PlayerNumber;
-    public int Hp;
+    public int Hp { get; set; }
     public int Energy;
     public float XPos;
     public float YPos;
