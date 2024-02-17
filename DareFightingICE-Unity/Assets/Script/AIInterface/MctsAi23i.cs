@@ -28,7 +28,7 @@ public class MctsAi23i : IAIInterface
         
     }
 
-    public void GetInformation(FrameData frameData)
+    public void GetInformation(FrameData frameData, bool isControl)
     {
         this.frameData = frameData;
         this.commandCenter.SetFrameData(frameData, this.isPlayerOne);

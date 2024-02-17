@@ -21,7 +21,7 @@ public class Sandbox : IAIInterface
         
     }
 
-    public void GetInformation(FrameData frameData)
+    public void GetInformation(FrameData frameData, bool isControl)
     {
 
     }

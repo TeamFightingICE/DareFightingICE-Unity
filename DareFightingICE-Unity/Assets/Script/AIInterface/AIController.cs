@@ -56,19 +56,6 @@ public class AIController : MonoBehaviour
     
     public void Processing()
     {
-        FrameData frameData;
-        if (frameDatas.Count > 0) {
-            frameData = frameDatas.First.Value;
-            frameDatas.RemoveFirst();
-        } else {
-            frameData = new FrameData();
-        }
-
-        if (GameSetting.Instance.IsBlind(isPlayerOne) || this.ai.IsBlind()) {
-            frameData.RemoveVisualData();
-        }
-
-        this.ai.GetInformation(frameData);
         this.ai.Processing();
     }
 
@@ -98,6 +85,21 @@ public class AIController : MonoBehaviour
         SetFrameData(FrameDataManager.Instance.GetFrameData());
         SetAudioData(AudioDataManager.Instance.GetAudioData());
         SetScreenData(new ScreenData());
+
+        FrameData frameData;
+        if (frameDatas.Count > 0) {
+            frameData = frameDatas.First.Value;
+            frameDatas.RemoveFirst();
+        } else {
+            frameData = new FrameData();
+        }
+
+        bool isControl = frameDatas.Last.Value.GetCharacterData(isPlayerOne).Control;
+        if (GameSetting.Instance.IsBlind(isPlayerOne) || this.ai.IsBlind()) {
+            frameData.RemoveVisualData();
+        }
+        this.ai.GetInformation(frameData, isControl);
+
         Processing();
     }
 

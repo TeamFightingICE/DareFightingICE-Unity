@@ -7,7 +7,7 @@ public interface IAIInterface
     bool IsBlind();
     void Initialize(GameData gameData, bool isPlayerOne);
     void GetNonDelayFrameData(FrameData frameData);
-    void GetInformation(FrameData frameData);
+    void GetInformation(FrameData frameData, bool isControl);
     void GetAudioData(AudioData audioData);
     void GetScreenData(ScreenData screenData);
     void Processing();

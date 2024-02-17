@@ -55,6 +55,11 @@ public class FrameData
         }
     }
 
+    public CharacterData GetCharacterData(bool playerNumber)
+    {
+        return this.CharacterData[playerNumber ? 0 : 1];
+    }
+
     public bool IsFront(bool playerNumber)
     {
         return this.Front[playerNumber ? 0 : 1];

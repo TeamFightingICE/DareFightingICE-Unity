@@ -23,7 +23,7 @@ public class GrpcPlayer : IAIInterface
     private FrameData frameData;
     private AudioData audioData;
     private ScreenData screenData;
-    // private FrameData nonDelayFrameData;
+    private FrameData nonDelayFrameData;
     private Key input;
 
     private bool notifyCompleted;
@@ -39,6 +39,10 @@ public class GrpcPlayer : IAIInterface
         this.notifyCompleted = false;
 
         this.isControl = false;
+        this.frameData = new FrameData();
+        this.audioData = new AudioData();
+        this.screenData = new ScreenData();
+        this.nonDelayFrameData = new FrameData();
         this.input = new Key();
     }
 
@@ -74,10 +78,7 @@ public class GrpcPlayer : IAIInterface
 
     public bool IsGameStarted
     {
-        get
-        {
-            return this.frameData != null && !this.frameData.EmptyFlag && this.frameData.CurrentFrameNumber > 0;
-        }
+        get => this.frameData != null && !this.frameData.EmptyFlag && this.frameData.CurrentFrameNumber >= 0;
     }
 
     public bool IsBlind()
@@ -85,7 +86,7 @@ public class GrpcPlayer : IAIInterface
         return blind;
     }
 
-    public async void Initialize(GameData gameData, bool playerNumber)
+    public void Initialize(GameData gameData, bool playerNumber)
     {
         if (this.IsCancelled) return;
 
@@ -94,17 +95,18 @@ public class GrpcPlayer : IAIInterface
             StateFlag = GrpcFlag.Initialize,
             GameData = gameData.ToProto()
         };
-        await this.responseStream.WriteAsync(newState);
+        this.responseStream.WriteAsync(newState).Wait();
     }
 
     public void GetNonDelayFrameData(FrameData frameData)
     {
-
+        this.nonDelayFrameData = frameData;
     }
 
-    public void GetInformation(FrameData frameData)
+    public void GetInformation(FrameData frameData, bool isControl)
     {
         this.frameData = frameData;
+        this.isControl = isControl;
     }
 
     public void GetScreenData(ScreenData screenData)
@@ -117,7 +119,7 @@ public class GrpcPlayer : IAIInterface
         this.audioData = audioData;
     }
 
-    public async void Processing()
+    public void Processing()
     {
         if (!this.IsGameStarted || this.IsCancelled) return;
 
@@ -127,9 +129,10 @@ public class GrpcPlayer : IAIInterface
             IsControl = isControl,
             FrameData = frameData.ToProto(),
             AudioData = audioData.ToProto(),
-            ScreenData = screenData.ToProto()
+            ScreenData = screenData.ToProto(),
+            NonDelayFrameData = nonDelayFrameData.ToProto(),
         };
-        await this.responseStream.WriteAsync(newState);
+        this.responseStream.WriteAsync(newState).Wait();
     }
 
     public Key Input()
@@ -137,7 +140,7 @@ public class GrpcPlayer : IAIInterface
         return this.input;
     }
 
-    public async void RoundEnd(RoundResult roundResult)
+    public void RoundEnd(RoundResult roundResult)
     {
         if (this.IsCancelled) return;
 
@@ -145,9 +148,9 @@ public class GrpcPlayer : IAIInterface
         var newState = new PlayerGameState
         {
             StateFlag = isGameEnd ? GrpcFlag.GameEnd : GrpcFlag.RoundEnd,
-            RoundResult = roundResult.ToProto()
+            RoundResult = roundResult.ToProto(),
         };
-        await this.responseStream.WriteAsync(newState);
+        this.responseStream.WriteAsync(newState).Wait();
     }
     public void Close()
     {
