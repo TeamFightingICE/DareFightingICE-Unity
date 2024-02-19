@@ -16,7 +16,7 @@ public class ZenCharacterController : MonoBehaviour
     /// </summary>
     
     // zenCharacter Info
-    public bool PlayerNumber{ get; set; }
+    public bool PlayerNumber { get; set; }
     public bool IsFront { get; set; }
     public int Hp { get; set; }
     public int Energy { get; set; }
@@ -87,8 +87,13 @@ public class ZenCharacterController : MonoBehaviour
     // SoundControl
     [SerializeField] private GameObject counchSound;
     public AIController aiController;
+    private GameSetting gameSetting;
+    private InputManager inputManager;
     void Start()
     {
+        gameSetting = GameSetting.Instance;
+        inputManager = InputManager.Instance;
+
         rb = GetComponent<Rigidbody2D>();
         
         combos.Add("F_D_DFA", new List<string> {"F","D","D","F","A"});
@@ -115,19 +120,20 @@ public class ZenCharacterController : MonoBehaviour
     void Update()
     {
         CheckState();
-        if (GameSetting.Instance.P1ControlType != ControlType.KEYBOARD || GameSetting.Instance.P2ControlType != ControlType.KEYBOARD)
+        if (gameSetting.P1ControlType != ControlType.KEYBOARD || gameSetting.P2ControlType != ControlType.KEYBOARD)
         {
             UpdateAI();
         }
-        
-        if (GameSetting.Instance.P1ControlType == ControlType.KEYBOARD && PlayerNumber)
+
+        if (gameSetting.P1ControlType == ControlType.KEYBOARD && PlayerNumber)
         {
             HandleInputP1();
         }
-        if (GameSetting.Instance.P2ControlType == ControlType.KEYBOARD && !PlayerNumber)
+        else if (gameSetting.P2ControlType == ControlType.KEYBOARD && !PlayerNumber)
         {
             HandleInputP2();
         }
+
         CheckCombo();
         ResetBuffer();
         UpdateComboTimer();
@@ -136,7 +142,8 @@ public class ZenCharacterController : MonoBehaviour
     {
         // Assuming aiController.Input() returns an object similar to the Key class in your Java example
         Key aiInput = aiController.Input();
-        HandleAIInput(aiInput);
+        inputManager.SetInput(PlayerNumber, aiInput);
+        HandleAIInput();
     }
     private void HandleInputP1()
     {
@@ -1005,9 +1012,10 @@ public class ZenCharacterController : MonoBehaviour
         AttackDeque.Add(leftHand.SpawnSmallProjectile(fireballDirection,fireballForce));
     }
 
-    public void HandleAIInput(Key key)
+    public void HandleAIInput()
     {
         float currentTime = Time.time;
+        Key key = inputManager.GetInput(PlayerNumber);
         if (key.D)
         {
             if (currentTime - lastCrouchInputTime > CrouchInputDelay && !isCrouching)
@@ -1019,27 +1027,28 @@ public class ZenCharacterController : MonoBehaviour
             {
                 PerformCrounch();
             }
-        }else
+        }
+        else
         {
             isCrouching = false;
-            _animator.SetBool("CROUCH",false);
+            _animator.SetBool("CROUCH", false);
         }
         // Movement input
         if (IsFront)
         {
-            if (key.IsKeyPressed("R"))
+            if (inputManager.IsKeyPressed(PlayerNumber, "R"))
             {
                 if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
                 {
                     canWalk = false;
-                    PerformFrontDash(new Vector2(1,0));
+                    PerformFrontDash(new Vector2(1, 0));
                 }
                 else
                 {
                     lastForwardDashTime = currentTime;
                 }
             }
-            else if (key.IsKeyHeld("R"))
+            else if (inputManager.IsKeyHeld(PlayerNumber, "R"))
             {
                 if (currentTime - lastDirectionalInputTime > directionalInputDelay)
                 {
@@ -1052,14 +1061,12 @@ public class ZenCharacterController : MonoBehaviour
                     canWalk = false;
                     PerformWalk(1);
                 }
-                
-                
             }
-            else if (key.IsKeyPressed("L"))
+            else if (inputManager.IsKeyPressed(PlayerNumber, "L"))
             {
                 keyPressTime = currentTime;
             }
-            else if (key.IsKeyHeld("L") && canBlock)
+            else if (inputManager.IsKeyHeld(PlayerNumber, "L") && canBlock)
             { 
                 if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
                 {
@@ -1075,7 +1082,7 @@ public class ZenCharacterController : MonoBehaviour
                     PerformBlock();
                 }
             }
-            else if (key.IsKeyRelease("L"))
+            else if (inputManager.IsKeyRelease(PlayerNumber, "L"))
             {
                 if (currentTime - keyPressTime <= tapThreshold && canDash)
                 {
@@ -1096,19 +1103,19 @@ public class ZenCharacterController : MonoBehaviour
         }
         else
         {
-            if (key.IsKeyPressed("L"))
+            if (inputManager.IsKeyPressed(PlayerNumber, "L"))
             {
                 if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
                 {
                     canWalk = false;
-                    PerformFrontDash(new Vector2(-1,0));
+                    PerformFrontDash(new Vector2(-1, 0));
                 }
                 else
                 {
                     lastForwardDashTime = currentTime;
                 }
             }
-            else if (key.IsKeyHeld("L") && canWalk)
+            else if (inputManager.IsKeyHeld(PlayerNumber, "L") && canWalk)
             {
                 if (currentTime - lastDirectionalInputTime > directionalInputDelay)
                 {
@@ -1122,13 +1129,13 @@ public class ZenCharacterController : MonoBehaviour
                 }
                 
             }
-            else if (key.IsKeyPressed("R"))
+            else if (inputManager.IsKeyPressed(PlayerNumber, "R"))
             {
                 keyPressTime = currentTime;
             }
-            else if (key.IsKeyHeld("R") && canBlock)
+            else if (inputManager.IsKeyHeld(PlayerNumber, "R") && canBlock)
             { 
-                if (key.IsKeyPressed("U") && isGrounded)
+                if (inputManager.IsKeyPressed(PlayerNumber, "U") && isGrounded)
                 {
                     PerformBackwardJump(1);
                 }
@@ -1142,7 +1149,7 @@ public class ZenCharacterController : MonoBehaviour
                     PerformBlock();
                 }
             }
-            else if (key.IsKeyRelease("R"))
+            else if (inputManager.IsKeyRelease(PlayerNumber, "R"))
             {
                 if (currentTime - keyPressTime <= tapThreshold && canDash)
                 {
@@ -1162,7 +1169,7 @@ public class ZenCharacterController : MonoBehaviour
             }
         }
 
-        if (key.IsKeyPressed("U"))
+        if (inputManager.IsKeyPressed(PlayerNumber, "U"))
         {
             if (Mathf.Abs(rb.velocity.x) > 0 && isGrounded)
             {
@@ -1176,10 +1183,8 @@ public class ZenCharacterController : MonoBehaviour
             }
         }
         
-        if (key.IsKeyPressed("A") && canAttack) { AddInput("A"); }
-        if (key.IsKeyPressed("B") && canAttack) { AddInput("B"); }
-        if (key.IsKeyPressed("C") && canAttack) { AddInput("C"); }
-
-        InputManager.Instance.UpdateKey(PlayerNumber);
+        if (inputManager.IsKeyPressed(PlayerNumber, "A") && canAttack) { AddInput("A"); }
+        if (inputManager.IsKeyPressed(PlayerNumber, "B") && canAttack) { AddInput("B"); }
+        if (inputManager.IsKeyPressed(PlayerNumber, "C") && canAttack) { AddInput("C"); }
     }
 }

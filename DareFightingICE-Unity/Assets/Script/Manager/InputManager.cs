@@ -4,48 +4,86 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class InputManager
+public class InputManager : Singleton<InputManager>
 {
-    private static InputManager instance;
-    public static InputManager Instance { 
-        get { 
-            if (instance == null)
-                instance = new InputManager();
-            return instance;
-        }
-    }
-    private Key p1Key;
-    private Key p2Key;
+    private readonly LinkedList<Key> p1Keys = new();
+    private readonly LinkedList<Key> p2Keys = new();
     public InputManager()
-    {         
-        this.p1Key = new Key();
-        this.p2Key = new Key();
-    }
-    public void SetInput(bool playerNumber, Key key)
     {
-        if (playerNumber)
+        for (int i = 0; i < 2; i++)
         {
-            this.p1Key = key;
-        }
-        else
-        {
-            this.p2Key = key; 
+            p1Keys.AddLast(new Key());
+            p2Keys.AddLast(new Key());
         }
     }
-    public Key GetInput(bool playerNumber)
+    private LinkedList<Key> GetKeys(bool player)
     {
-        return (playerNumber) ? p1Key : p2Key;
+        return player ? p1Keys : p2Keys;
     }
+    public void SetInput(bool player, Key key)
+    {
+        var keys = this.GetKeys(player);
+        keys.AddLast(key);
 
-    public void UpdateKey(bool playerNumber)
+        while (keys.Count > 2)
+        {
+            keys.RemoveFirst();
+        }
+    }
+    public Key GetInput(bool player)
     {
-        if (playerNumber)
+        return this.GetKeys(player).Last.Value;
+    }
+    public bool IsKeyPressed(bool player, string key)
+    {
+        var keys = this.GetKeys(player);
+        var current = keys.Last.Value;
+        var previous = keys.First.Value;
+        return key switch
         {
-            this.p1Key.UpdatePreviousState();
-        }
-        else
+            "R" => current.R && !previous.R,
+            "L" => current.L && !previous.L,
+            "U" => current.U && !previous.U,
+            "D" => current.D && !previous.D,
+            "A" => current.A && !previous.A,
+            "B" => current.B && !previous.B,
+            "C" => current.C && !previous.C,
+            _ => false,
+        };
+    }
+    // Method to check if a key is being held
+    public bool IsKeyHeld(bool player, string key)
+    {
+        var keys = this.GetKeys(player);
+        var current = keys.Last.Value;
+        var previous = keys.First.Value;
+        return key switch
         {
-            this.p2Key.UpdatePreviousState(); 
-        }
+            "R" => current.R && previous.R,
+            "L" => current.L && previous.L,
+            "U" => current.U && previous.U,
+            "D" => current.D && previous.D,
+            "A" => current.A && !previous.A,
+            "B" => current.B && !previous.B,
+            "C" => current.C && !previous.C,
+            _ => false,
+        };
+    }
+    public bool IsKeyRelease(bool player, string key)
+    {
+        var keys = this.GetKeys(player);
+        var current = keys.Last.Value;
+        var previous = keys.First.Value;
+        return key switch
+        {
+            "R" => !current.R && previous.R,
+            "L" => !current.L && previous.L,
+            "U" => !current.U && previous.U,
+            "D" => !current.D && previous.D,
+            "A" => current.A && !previous.A,
+            "B" => current.B && !previous.B,
+            "C" => current.C && !previous.C,
+            _ => false,
+        };
     }
 }
