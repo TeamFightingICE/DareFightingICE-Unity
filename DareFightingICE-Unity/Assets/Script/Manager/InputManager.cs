@@ -10,11 +10,7 @@ public class InputManager : Singleton<InputManager>
     private readonly LinkedList<Key> p2Keys = new();
     public InputManager()
     {
-        for (int i = 0; i < 2; i++)
-        {
-            p1Keys.AddLast(new Key());
-            p2Keys.AddLast(new Key());
-        }
+        ClearInput();
     }
     private LinkedList<Key> GetKeys(bool player)
     {
@@ -34,6 +30,17 @@ public class InputManager : Singleton<InputManager>
     {
         return this.GetKeys(player).Last.Value;
     }
+    public void ClearInput()
+    {
+        p1Keys.Clear();
+        p2Keys.Clear();
+
+        for (int i = 0; i < 2; i++)
+        {
+            p1Keys.AddLast(new Key());
+            p2Keys.AddLast(new Key());
+        }
+    }
     public bool IsKeyPressed(bool player, string key)
     {
         var keys = this.GetKeys(player);
@@ -51,7 +58,6 @@ public class InputManager : Singleton<InputManager>
             _ => false,
         };
     }
-    // Method to check if a key is being held
     public bool IsKeyHeld(bool player, string key)
     {
         var keys = this.GetKeys(player);

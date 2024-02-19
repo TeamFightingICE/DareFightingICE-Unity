@@ -19,22 +19,24 @@ public class FightingController : MonoBehaviour
     [SerializeField] private GameObject LeftBorder;
     [SerializeField] private GameObject RightBorder;
     [SerializeField] private float flipThreshold = 1.0f;
-    private bool isStart = false;
-    private int currentRound;
-    public List<GameObject> character;
-    private readonly AIController[] _aiControllers = new AIController[2];
-    private readonly ZenCharacterController[] _controllers = new ZenCharacterController[2];
-    private int currentFrameNumber;
-    public InterfaceDisplay _display;
     [SerializeField] private AudioSource P1HeartBeat;
     [SerializeField] private AudioSource P2HeartBeat;
     [SerializeField] private AudioSource P1EnergyIncrease;
     [SerializeField] private AudioSource P2EnergyIncrease;
     [SerializeField] private int P1EnergyLevel;
     [SerializeField] private int P2EnergyLevel;
+    public List<GameObject> character;
+    private readonly AIController[] _aiControllers = new AIController[2];
+    private readonly ZenCharacterController[] _controllers = new ZenCharacterController[2];
+    public InterfaceDisplay _display;
+    private bool isStart = false;
+    private int currentFrameNumber;
+    private int currentRound;
+    private InputManager inputManager;
 
     void Start()
     {
+        inputManager = InputManager.Instance;
         SetupScene();
 
         if (DataManager.Instance.CurrentRound == 1) {
@@ -95,6 +97,8 @@ public class FightingController : MonoBehaviour
 
     public void ResetRound()
     {
+        inputManager.ClearInput();
+
         _controllers[0].IsFront = true;
         _controllers[0].Hp = GameSetting.Instance.P1HP;
         _controllers[0].Energy = 0;
@@ -225,7 +229,6 @@ public class FightingController : MonoBehaviour
         {
             return false;
         }
-        
     }
     private void HandlePositionOverlap()
     {
@@ -270,24 +273,4 @@ public class FightingController : MonoBehaviour
         scale.x *= -1;
         character.transform.localScale = scale;
     }
-    
-    // private void FlipCharacter(GameObject character)
-    // {
-    //     SpriteRenderer spriteRenderer = character.GetComponent<SpriteRenderer>();
-    //     if (spriteRenderer != null)
-    //     {
-    //         spriteRenderer.flipX = !spriteRenderer.flipX;
-    //
-    //         // Optionally, adjust facing direction property if you have one
-    //         ZenCharacterController charController = character.GetComponent<ZenCharacterController>();
-    //         if (charController != null)
-    //         {
-    //             charController.IsFront = !charController.IsFront;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         //Debug.LogError("SpriteRenderer not found on " + character.name);
-    //     }
-    // }
 }
