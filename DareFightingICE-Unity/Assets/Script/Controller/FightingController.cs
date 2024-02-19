@@ -97,8 +97,6 @@ public class FightingController : MonoBehaviour
 
     public void ResetRound()
     {
-        inputManager.ClearInput();
-
         _controllers[0].IsFront = true;
         _controllers[0].Hp = GameSetting.Instance.P1HP;
         _controllers[0].Energy = 0;
@@ -193,6 +191,8 @@ public class FightingController : MonoBehaviour
         };
 
         isStart = false;
+        inputManager.ClearInput();
+
         _aiControllers[0].RoundEnd(result);
         _aiControllers[1].RoundEnd(result);
 
