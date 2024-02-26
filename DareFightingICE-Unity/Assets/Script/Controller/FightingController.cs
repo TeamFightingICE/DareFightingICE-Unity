@@ -1,3 +1,4 @@
+using Google.Protobuf.WellKnownTypes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class FightingController : MonoBehaviour
 {
@@ -25,11 +27,14 @@ public class FightingController : MonoBehaviour
     [SerializeField] private AudioSource P2EnergyIncrease;
     [SerializeField] private int P1EnergyLevel;
     [SerializeField] private int P2EnergyLevel;
+    [SerializeField] private Image endScreen;
+
     public List<GameObject> character;
     private readonly AIController[] _aiControllers = new AIController[2];
     private readonly ZenCharacterController[] _controllers = new ZenCharacterController[2];
     public InterfaceDisplay _display;
     private bool isStart = false;
+    private bool isFading = false;
     private int currentFrameNumber;
     private int currentRound;
     private InputManager inputManager;
@@ -81,7 +86,7 @@ public class FightingController : MonoBehaviour
         _controllers[1].SetTarget("Player1");
 
         character.Add(zen1);
-        character.Add(zen2);
+        character.Add(zen2);  
 
         P1EnergyLevel = 0;
         P2EnergyLevel = 0;
@@ -95,6 +100,7 @@ public class FightingController : MonoBehaviour
         isStart = true;
     }
 
+     
     public void ResetRound()
     {
         _controllers[0].IsFront = true;
@@ -120,7 +126,6 @@ public class FightingController : MonoBehaviour
         currentFrameNumber = 0;
         currentRound++;
         _display.currentRound = currentRound;
-        isStart = true;
     }
     // Update is called once per frame
     void Update()
@@ -155,7 +160,7 @@ public class FightingController : MonoBehaviour
             }
         }
 
-        if (currentFrameNumber >= GameSetting.Instance.FrameLimit || CheckField())
+        if (!isFading && currentFrameNumber >= GameSetting.Instance.FrameLimit || CheckField())
         {
             OnRoundEnd();
         }
@@ -200,7 +205,8 @@ public class FightingController : MonoBehaviour
        
         if (currentRound < GameSetting.Instance.RoundLimit)
         {
-            ResetRound();
+            StartCoroutine(GameFadeClose());
+            //ResetRound();
             DataManager.Instance.CurrentRound++;
         }
         else
@@ -272,5 +278,33 @@ public class FightingController : MonoBehaviour
         Vector3 scale = character.transform.localScale;
         scale.x *= -1;
         character.transform.localScale = scale;
+    }
+
+    IEnumerator GameFadeClose()
+    {
+        if (isFading)
+        {
+            yield break;
+        }
+
+        isFading = true;
+        float elapsed = 0f;
+
+        Color startColor = endScreen.color;
+        Color endColor = new Color(startColor.r, startColor.g, startColor.b, 1f);
+
+        while (elapsed < 0.1f)
+        {
+            elapsed += Time.deltaTime;
+            float normalizedTime = Mathf.Clamp01(elapsed / 0.1f);
+            endScreen.color = Color.Lerp(startColor, endColor, normalizedTime);
+            yield return null;
+        }
+        endScreen.color = endColor;
+        yield return new WaitForSeconds(1);
+        ResetRound();
+        endScreen.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
+        isStart = true;
+        isFading = true;
     }
 }
