@@ -10,7 +10,7 @@ public class AudioData
     
     public byte[] RawDataAsBytes { get; set; }
 
-    public float[][] FftData { get; set; }
+    public float[][][] FftData { get; set; }
    
     public float[][][] SpectrogramData { get; set; }
    
@@ -19,7 +19,7 @@ public class AudioData
     public AudioData() {
         this.RawData = new float[0][];
         this.RawDataAsBytes = new byte[0];
-        this.FftData = new float[0][];
+        this.FftData = new float[0][][];
         this.SpectrogramData = new float[0][][];
         this.SpectrogramDataAsBytes = new byte[0];
     }

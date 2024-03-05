@@ -9,12 +9,17 @@ using UnityEngine.XR;
 
 public class AudioDataManager : Singleton<AudioDataManager>
 {
-    public float[][] rawData ;
-    public float[][] fftData ;
+    public float[][] rawData;
+
+    private float[][] rawDataClone;
+
+    public float[][][] fftData;
+
+    public byte[] fftDataAsByte;
 
     public byte[] rawDataAsBytes;
 
-    public float[][][] spectrogramData ;
+    public float[][][] spectrogramData;
 
     public byte[] spectrogramDataAsBytes;
 
@@ -28,14 +33,18 @@ public class AudioDataManager : Singleton<AudioDataManager>
         {
             new float[1024],
             new float[1024],
-    };
-        fftData = new float[2][]
+        };
+        rawDataClone = new float[2][]
         {
             new float[1024],
             new float[1024],
         };
+        // fftData = new float[2][2][]
+        // {
+        //     new float[1024],
+        //     new float[1024],
+        // };
         spectrogramData = new float[2][][];
-     
     }
 
     public void ProcessAudioData()
@@ -47,12 +56,34 @@ public class AudioDataManager : Singleton<AudioDataManager>
     {
         AudioListener.GetOutputData(rawData[0], 0);
         AudioListener.GetOutputData(rawData[1], 1);
-        AudioListener.GetSpectrumData(fftData[0],0,FFTWindow.BlackmanHarris);
-        AudioListener.GetSpectrumData(fftData[1], 1, FFTWindow.BlackmanHarris);
+        Array.Copy(rawData[0], rawDataClone[0], 1024);
+        Array.Copy(rawData[1], rawDataClone[1], 1024);
+        fftData = new float[2][][]
+        {
+            new float[2][]
+            {
+                new float[1024],
+                new float[1024],
+            },
+            new float[2][]
+            {
+                new float[1024],
+                new float[1024],
+            },
+        };
+
+        fft.process(rawDataClone[0]);
+        fftData[0][0] = fft.getReal();
+        fftData[0][1] = fft.getImag();
+        fft.process(rawDataClone[1]);
+        fftData[1][0] = fft.getReal();
+        fftData[1][1] = fft.getImag();
+
         spectrogramData[0] = mfcc.melSpectrogram(rawData[0]);
         spectrogramData[1] = mfcc.melSpectrogram(rawData[1]);
         rawDataAsBytes = ConvertToByteArray1(rawData);
         spectrogramDataAsBytes = ConvertToByteArray2(spectrogramData);
+        fftDataAsByte = ConvertToByteArray2(fftData);
     }
 
     byte[] ConvertToByteArray1(float[][] samples)
@@ -69,7 +100,8 @@ public class AudioDataManager : Singleton<AudioDataManager>
             for (int channel = 0; channel < channels; channel++)
             {
                 int index = i * channels + channel;
-                Buffer.BlockCopy(BitConverter.GetBytes(samples[channel][i]), 0, byteArray, index * sizeof(float), sizeof(float));
+                Buffer.BlockCopy(BitConverter.GetBytes(samples[channel][i]), 0, byteArray, index * sizeof(float),
+                    sizeof(float));
             }
         }
 
@@ -93,7 +125,8 @@ public class AudioDataManager : Singleton<AudioDataManager>
                 for (int sample = 0; sample < sampleCount; sample++)
                 {
                     int index = (frame * channels * sampleCount) + (channel * sampleCount) + sample;
-                    Buffer.BlockCopy(BitConverter.GetBytes(samples[channel][frame][sample]), 0, byteArray, index * sizeof(float), sizeof(float));
+                    Buffer.BlockCopy(BitConverter.GetBytes(samples[channel][frame][sample]), 0, byteArray,
+                        index * sizeof(float), sizeof(float));
                 }
             }
         }
