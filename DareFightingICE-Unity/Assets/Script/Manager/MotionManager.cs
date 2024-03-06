@@ -9,6 +9,7 @@ public class MotionManager : Singleton<MotionManager>
     public TextAsset garnetMotion;
     public TextAsset ludMotion;
 
+    public bool isLoad = false;
     private Dictionary<string, Dictionary<string, object>> _zenMotionData = new Dictionary<string, Dictionary<string, object>>();
     private Dictionary<string, Dictionary<string, object>> _garnetMotionData = new Dictionary<string, Dictionary<string, object>>();
     private Dictionary<string, Dictionary<string, object>> _ludMotionData = new Dictionary<string, Dictionary<string, object>>();

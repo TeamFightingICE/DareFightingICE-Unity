@@ -169,6 +169,7 @@ public class FightingController : MonoBehaviour
             _display.currentFrame = currentFrameNumber++;
             FrameDataManager.Instance.ProcessFrameData();
             AudioDataManager.Instance.ProcessAudioData();
+            //Add ScreenData Processing Here if you have one 
             HandlePositionOverlap();
         }
     }

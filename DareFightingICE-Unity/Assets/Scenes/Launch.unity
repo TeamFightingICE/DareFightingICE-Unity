@@ -1929,6 +1929,7 @@ GameObject:
   - component: {fileID: 671561680}
   - component: {fileID: 671561679}
   - component: {fileID: 671561681}
+  - component: {fileID: 671561682}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -1987,6 +1988,21 @@ MonoBehaviour:
   frameFlag: {fileID: 314261522}
   muteFlag: {fileID: 380911230}
   grpcAutoBtn: {fileID: 1868392121}
+--- !u!114 &671561682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671561678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aba6617e26c17e04cbaf890e86dfd4c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  zenMotion: {fileID: 4900000, guid: ea1ea85c918833a4bba7bed6a1bd61ee, type: 3}
+  garnetMotion: {fileID: 4900000, guid: f8e8677656bee944c935b8f56d00f3c4, type: 3}
+  ludMotion: {fileID: 4900000, guid: 902419475a138b94293937f2f65f2435, type: 3}
 --- !u!1 &809799223
 GameObject:
   m_ObjectHideFlags: 0
