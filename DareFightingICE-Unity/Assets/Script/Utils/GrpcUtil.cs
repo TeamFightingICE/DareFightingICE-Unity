@@ -25,13 +25,11 @@ public class GrpcUtil
 
     public static byte[] CompressBytes(byte[] data)
     {
-        using (var memoryStream = new MemoryStream())
+        using var memoryStream = new MemoryStream();
+        using (var gzip = new GZipStream(memoryStream, CompressionMode.Compress, true))
         {
-            using (var gzip = new GZipStream(memoryStream, CompressionMode.Compress, true))
-            {
-                gzip.Write(data, 0, data.Length);
-            }
-            return memoryStream.ToArray();
+            gzip.Write(data, 0, data.Length);
         }
+        return memoryStream.ToArray();
     }
 }

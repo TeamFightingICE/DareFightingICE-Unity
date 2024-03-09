@@ -20,6 +20,7 @@ public class InterfaceDisplay : MonoBehaviour
     [SerializeField] private Image energy2;
     [SerializeField] private TMP_Text fpsText;
     [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text roundText;
     [SerializeField] private TMP_Text p1Status;
     [SerializeField] private TMP_Text p2Status;
     
@@ -40,8 +41,8 @@ public class InterfaceDisplay : MonoBehaviour
         float msec = deltaTime * 1000.0f;
         float fps = 1.0f / deltaTime;
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-        // fpsText.text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
-        fpsText.text = $"Round: {currentRound}";
+        fpsText.text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+        roundText.text = $"Round: {currentRound}";
         hp1.fillAmount = (float)player1.Hp / GameSetting.Instance.P1HP;
         hp2.fillAmount = (float)player2.Hp / GameSetting.Instance.P2HP;
         energy1.fillAmount = (float)player1.Energy / 300;

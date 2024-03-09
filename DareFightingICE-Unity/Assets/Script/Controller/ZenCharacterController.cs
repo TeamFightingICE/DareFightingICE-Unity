@@ -693,7 +693,6 @@ public class ZenCharacterController : MonoBehaviour
             {
                 Debug.LogWarning("Not Enough Energy");
                 inputBuffer.Clear();
-                return;
             }
         }
     }
