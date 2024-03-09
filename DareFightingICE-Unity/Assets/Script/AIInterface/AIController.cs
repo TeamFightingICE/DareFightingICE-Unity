@@ -84,7 +84,7 @@ public class AIController : MonoBehaviour
     {
         SetFrameData(FrameDataManager.Instance.GetFrameData());
         SetAudioData(AudioDataManager.Instance.GetAudioData());
-        SetScreenData(new ScreenData());  // <<<<<<<< Add ScreenDataHere  AudioDataManager.Instance.GetScreenData()
+        SetScreenData(ScreenDataManager.Instance.GetScreenData());  // <<<<<<<< Add ScreenDataHere  AudioDataManager.Instance.GetScreenData()
 
         FrameData frameData;
         if (frameDatas.Count > 0) {

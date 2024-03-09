@@ -28,6 +28,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private int P1EnergyLevel;
     [SerializeField] private int P2EnergyLevel;
     [SerializeField] private Image endScreen;
+    [SerializeField] private RenderTexture ScreenDataRT;
 
     public List<GameObject> character;
     private readonly AIController[] _aiControllers = new AIController[2];
@@ -38,6 +39,7 @@ public class FightingController : MonoBehaviour
     private int currentFrameNumber;
     private int currentRound;
     private InputManager inputManager;
+    private Texture2D ScreenDataTexture;
 
     void Start()
     {
@@ -96,6 +98,7 @@ public class FightingController : MonoBehaviour
 
         FrameDataManager.Instance.SetupFrameData(character[0], character[1], _display);
         AudioDataManager.Instance.Initialize();
+        ScreenDataTexture = new Texture2D(ScreenDataRT.width, ScreenDataRT.height, TextureFormat.RGB24, false);
 
         isStart = true;
     }
@@ -169,7 +172,7 @@ public class FightingController : MonoBehaviour
             _display.currentFrame = currentFrameNumber++;
             FrameDataManager.Instance.ProcessFrameData();
             AudioDataManager.Instance.ProcessAudioData();
-            //Add ScreenData Processing Here if you have one 
+            ScreenDataManager.Instance.ProcessScreenData(ScreenDataRT,ScreenDataTexture);
             HandlePositionOverlap();
         }
     }
