@@ -26,6 +26,10 @@ public class MainController : MonoBehaviour
         {
             GrpcServer.Instance.StartGrpcServer();
         }
+        else
+        {
+            Debug.LogWarning("GrpcServer is not supported on this platform");
+        }
         
         string[] args = Environment.GetCommandLineArgs();
         FlagSetting.Instance.LoadArgs(args);
