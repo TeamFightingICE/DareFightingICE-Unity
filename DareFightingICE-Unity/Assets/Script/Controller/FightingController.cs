@@ -30,6 +30,8 @@ public class FightingController : MonoBehaviour
     [SerializeField] private Image endScreen;
     [SerializeField] private RenderTexture ScreenDataRT;
 
+    [SerializeField] private SimFightingController SimFighitng;
+
     public List<GameObject> character;
     private readonly AIController[] _aiControllers = new AIController[2];
     private readonly ZenCharacterController[] _controllers = new ZenCharacterController[2];
@@ -129,6 +131,7 @@ public class FightingController : MonoBehaviour
         currentFrameNumber = 0;
         currentRound++;
         _display.currentRound = currentRound;
+        SimFighitng.ResetRound();
     }
     // Update is called once per frame
     void Update()

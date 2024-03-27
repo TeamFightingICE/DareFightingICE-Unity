@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 6402525926967409723}
   - component: {fileID: 5382587737693356431}
   - component: {fileID: 8610170289996938674}
-  - component: {fileID: 2821801996554069094}
+  - component: {fileID: 5496090420791222108}
   m_Layer: 8
   m_Name: RightHand
   m_TagString: Untagged
@@ -387,7 +387,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &2821801996554069094
+--- !u!114 &5496090420791222108
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -396,17 +396,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1214147990157504670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 1939275742589084cbd3752a8818531a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
   target: 
-  hitEffect1: {fileID: 8661219560971955374, guid: 41271d9b73fba034690299258ceb7f40, type: 3}
-  hitEffect2: {fileID: 8058527749564740004, guid: e21814eec4439ac43b3dcc1c52fbe866, type: 3}
-  hitEffect3: {fileID: 6513078127744245549, guid: d0f549edcbfc34f4e8ffb10d6fb8f5ca, type: 3}
-  hitEffect4: {fileID: 8354731913380125649, guid: 828ce3c553d309e49867baca66538e15, type: 3}
   isProjectile: 0
-  smallFireball: {fileID: 7028443251016671101, guid: e648f8dfe68d3aa42b3d632686c3d906, type: 3}
+  smallFireball: {fileID: 7028443251016671101, guid: e1cc4cbbff560504797744e99bbccd0b, type: 3}
   largeFireball: {fileID: 5510204355422871354, guid: 62486cabfe432d247a045ee9c0381432, type: 3}
 --- !u!1 &1649894811423558217
 GameObject:
@@ -547,7 +543,7 @@ GameObject:
   - component: {fileID: 371968556272558101}
   - component: {fileID: 7291492707649560226}
   - component: {fileID: 2292695023707320093}
-  - component: {fileID: 4159632758813826161}
+  - component: {fileID: 1440566231155825798}
   m_Layer: 8
   m_Name: LeftLeg
   m_TagString: Untagged
@@ -667,7 +663,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4159632758813826161
+--- !u!114 &1440566231155825798
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -676,17 +672,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1712011482188508838}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 1939275742589084cbd3752a8818531a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
   target: 
-  hitEffect1: {fileID: 8661219560971955374, guid: 41271d9b73fba034690299258ceb7f40, type: 3}
-  hitEffect2: {fileID: 8058527749564740004, guid: e21814eec4439ac43b3dcc1c52fbe866, type: 3}
-  hitEffect3: {fileID: 6513078127744245549, guid: d0f549edcbfc34f4e8ffb10d6fb8f5ca, type: 3}
-  hitEffect4: {fileID: 8354731913380125649, guid: 828ce3c553d309e49867baca66538e15, type: 3}
   isProjectile: 0
-  smallFireball: {fileID: 7028443251016671101, guid: e648f8dfe68d3aa42b3d632686c3d906, type: 3}
+  smallFireball: {fileID: 7028443251016671101, guid: e1cc4cbbff560504797744e99bbccd0b, type: 3}
   largeFireball: {fileID: 5510204355422871354, guid: 62486cabfe432d247a045ee9c0381432, type: 3}
 --- !u!1 &1852177334383753548
 GameObject:
@@ -2308,7 +2300,7 @@ GameObject:
   - component: {fileID: 93542276660954118}
   - component: {fileID: 5883183560445567533}
   - component: {fileID: 8215179880936048652}
-  - component: {fileID: 5974496076977753948}
+  - component: {fileID: 856319145885287562}
   m_Layer: 8
   m_Name: LeftHand
   m_TagString: Untagged
@@ -2428,7 +2420,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &5974496076977753948
+--- !u!114 &856319145885287562
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2437,17 +2429,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4777495813175521804}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 1939275742589084cbd3752a8818531a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
   target: 
-  hitEffect1: {fileID: 8661219560971955374, guid: 41271d9b73fba034690299258ceb7f40, type: 3}
-  hitEffect2: {fileID: 8058527749564740004, guid: e21814eec4439ac43b3dcc1c52fbe866, type: 3}
-  hitEffect3: {fileID: 6513078127744245549, guid: d0f549edcbfc34f4e8ffb10d6fb8f5ca, type: 3}
-  hitEffect4: {fileID: 8354731913380125649, guid: 828ce3c553d309e49867baca66538e15, type: 3}
   isProjectile: 0
-  smallFireball: {fileID: 7028443251016671101, guid: e648f8dfe68d3aa42b3d632686c3d906, type: 3}
+  smallFireball: {fileID: 7028443251016671101, guid: e1cc4cbbff560504797744e99bbccd0b, type: 3}
   largeFireball: {fileID: 5510204355422871354, guid: 62486cabfe432d247a045ee9c0381432, type: 3}
 --- !u!1 &5185717809364880662
 GameObject:
@@ -4381,12 +4369,11 @@ GameObject:
   - component: {fileID: 7039224079183461659}
   - component: {fileID: 3752630490052007620}
   - component: {fileID: 523177385617962265}
-  - component: {fileID: 7271878502447391511}
   - component: {fileID: 6981872168070382828}
   - component: {fileID: 7294415594422771734}
-  - component: {fileID: 5804501619965292335}
+  - component: {fileID: -2638948697424541046}
   m_Layer: 7
-  m_Name: ZEN
+  m_Name: SimZEN
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4475,7 +4462,7 @@ Animator:
   m_GameObject: {fileID: 6707692294084070560}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 959d3f54c277779489f4ecc3b9c66be6, type: 2}
+  m_Controller: {fileID: 9100000, guid: f8e762cbb3bca6f489be72888365b350, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4531,47 +4518,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.2650808, y: 0.9941999}
   m_EdgeRadius: 0
---- !u!114 &7271878502447391511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6707692294084070560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8591c8c7af0b3fa40bb5b45d4bd49d9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AttackDeque: []
-  csvFile: {fileID: 4900000, guid: ea1ea85c918833a4bba7bed6a1bd61ee, type: 3}
-  canWalk: 1
-  canBlock: 1
-  canAttack: 1
-  canDash: 1
-  isGuard: 0
-  canJump: 1
-  currentCombo: 0
-  speed: 6
-  jumpForce: 32
-  groundCheck: {fileID: 4610859399305943773}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  groundCheckRadius: 0.05
-  isGrounded: 1
-  isCrouching: 0
-  state: 0
-  Action: 0
-  _animator: {fileID: 3752630490052007620}
-  jumpDelay: 0.1
-  dashforce: 10
-  leftHand: {fileID: 5974496076977753948}
-  rightHand: {fileID: 2821801996554069094}
-  leftFoot: {fileID: 4159632758813826161}
-  rightFoot: {fileID: 1687300829348452}
-  counchSound: {fileID: 3559360832115976531}
-  aiController: {fileID: 5804501619965292335}
 --- !u!50 &6981872168070382828
 Rigidbody2D:
   serializedVersion: 4
@@ -4584,7 +4530,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 5
+  m_Mass: 4
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 10
@@ -4634,7 +4580,7 @@ CapsuleCollider2D:
   m_Offset: {x: -0.08669428, y: -0.24452722}
   m_Size: {x: 0.2364105, y: 0.9523591}
   m_Direction: 0
---- !u!114 &5804501619965292335
+--- !u!114 &-2638948697424541046
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4643,10 +4589,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 6707692294084070560}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8a8c35bb577cf444bccd3208a41b9bc, type: 3}
+  m_Script: {fileID: 11500000, guid: b13b7f3cf537c1c4aa8eb01633ee5bfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 7271878502447391511}
+  AttackDeque: []
+  csvFile: {fileID: 4900000, guid: ea1ea85c918833a4bba7bed6a1bd61ee, type: 3}
+  canWalk: 1
+  canBlock: 1
+  canAttack: 1
+  canDash: 1
+  isGuard: 0
+  canJump: 1
+  currentCombo: 0
+  speed: 4
+  jumpForce: 32
+  groundCheck: {fileID: 4610859399305943773}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckRadius: 0.05
+  isGrounded: 1
+  isCrouching: 0
+  state: 0
+  Action: 0
+  _animator: {fileID: 3752630490052007620}
+  jumpDelay: 0
+  dashforce: 10
+  leftHand: {fileID: 856319145885287562}
+  rightHand: {fileID: 5496090420791222108}
+  leftFoot: {fileID: 1440566231155825798}
+  rightFoot: {fileID: 6468982687574983004}
 --- !u!1 &6761308839968659522
 GameObject:
   m_ObjectHideFlags: 0
@@ -4998,7 +4970,7 @@ GameObject:
   - component: {fileID: 502635911099629733}
   - component: {fileID: 7874194338783571134}
   - component: {fileID: 7845618916997246471}
-  - component: {fileID: 1687300829348452}
+  - component: {fileID: 6468982687574983004}
   m_Layer: 8
   m_Name: RightLeg
   m_TagString: Untagged
@@ -5118,7 +5090,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1687300829348452
+--- !u!114 &6468982687574983004
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5127,17 +5099,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7216923133517058551}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04cd7cd2fe5703846af2b89c3fa016ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 1939275742589084cbd3752a8818531a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
   target: 
-  hitEffect1: {fileID: 8661219560971955374, guid: 41271d9b73fba034690299258ceb7f40, type: 3}
-  hitEffect2: {fileID: 8058527749564740004, guid: e21814eec4439ac43b3dcc1c52fbe866, type: 3}
-  hitEffect3: {fileID: 6513078127744245549, guid: d0f549edcbfc34f4e8ffb10d6fb8f5ca, type: 3}
-  hitEffect4: {fileID: 8354731913380125649, guid: 828ce3c553d309e49867baca66538e15, type: 3}
   isProjectile: 0
-  smallFireball: {fileID: 7028443251016671101, guid: e648f8dfe68d3aa42b3d632686c3d906, type: 3}
+  smallFireball: {fileID: 7028443251016671101, guid: e1cc4cbbff560504797744e99bbccd0b, type: 3}
   largeFireball: {fileID: 5510204355422871354, guid: 62486cabfe432d247a045ee9c0381432, type: 3}
 --- !u!1 &7235656671368651350
 GameObject:
