@@ -128,8 +128,8 @@ public class SimFightingController : MonoBehaviour
     {
         currentFrameNumber = frameData.CurrentFrameNumber;
         currentRound = frameData.CurrentRound;
-        UpdateCharacterDataPLayer1(frameData.CharacterData[0]);
-        UpdateCharacterDataPLayer2(frameData.CharacterData[1]);
+        UpdateCharacterDataPlayer1(frameData.CharacterData[0]);
+        UpdateCharacterDataPlayer2(frameData.CharacterData[1]);
         if(playerNumber) 
         {
             P1Commands = myAct.ToArray() ;
@@ -171,7 +171,7 @@ public class SimFightingController : MonoBehaviour
         character.Clear();
     }
 
-    private void UpdateCharacterDataPLayer1(CharacterData data) 
+    private void UpdateCharacterDataPlayer1(CharacterData data) 
     {
         _controllers[0].PlayerNumber = data.PlayerNumber;
         _controllers[0].Hp = data.Hp;
@@ -183,7 +183,7 @@ public class SimFightingController : MonoBehaviour
         _controllers[0].IsFront = data.IsFront;
     }
 
-    private void UpdateCharacterDataPLayer2(CharacterData data) 
+    private void UpdateCharacterDataPlayer2(CharacterData data) 
     {
         _controllers[1].PlayerNumber = data.PlayerNumber;
         _controllers[1].Hp = data.Hp;
