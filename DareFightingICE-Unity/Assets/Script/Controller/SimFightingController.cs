@@ -25,8 +25,8 @@ public class SimFightingController : MonoBehaviour
 
     [SerializeField] private int P1EnergyLevel;
     [SerializeField] private int P2EnergyLevel;
-    [SerializeField] private Key[]  P1Keys;
-    [SerializeField] private Key[]  P2Keys;
+    [SerializeField] private List<Key> P1Keys;
+    [SerializeField] private List<Key> P2Keys;
     [SerializeField] private Action[] P1Commands;
     [SerializeField] private Action[] P2Commands;
     [SerializeField] private Action[] DummyActionsList = {Action.FORWARD_WALK,Action.FORWARD_WALK,Action.FORWARD_WALK,Action.FORWARD_WALK};
@@ -85,13 +85,7 @@ public class SimFightingController : MonoBehaviour
         P2EnergyLevel = 0;
         commandCenter = new CommandCenter();
 
-    
-
-       SimFrameDataManager.Instance.SetupFrameData(character[0], character[1], 0);
-       
-
-
-
+        SimFrameDataManager.Instance.SetupFrameData(character[0], character[1], 0);
     }
     void Update() 
     {
@@ -100,7 +94,6 @@ public class SimFightingController : MonoBehaviour
             Debug.Log("Simulator called");
             SimFrameDataManager.Instance.ProcessFrameData(currentFrameNumber);
             Simulate(SimFrameDataManager.Instance.GetFrameData(),true,DummyActions,DummyActions,60);
-
         }
     }
 
@@ -147,25 +140,20 @@ public class SimFightingController : MonoBehaviour
             P2Commands = myAct.ToArray() ;
             P1Commands = oppAct.ToArray();
         }
-        P1Keys = new Key[P1Commands.Length];
-        P2Keys = new Key[P2Commands.Length];
+        P1Keys = new List<Key>();
+        P2Keys = new List<Key>();
 
-        ProcessingActions(true,P1Commands, P1Keys);
-        ProcessingActions(false,P2Commands , P2Keys);
+        ProcessingActions(P1Commands, P1Keys);
+        ProcessingActions(P2Commands, P2Keys);
 
-        int p1k = 0;
-        int p2k = 0;
-        for(int i = 0; i <= simulatorLimit; i++) 
+        for(int i = 0; i < simulatorLimit; i++) 
         {
-            if(p1k < P1Keys.Length)
-                _controllers[0].HandleAIInput(P1Keys[0]);
-            if(p2k < P1Keys.Length)
-                _controllers[1].HandleAIInput(P2Keys[0]);
-           // Debug.Log("P1 Action: " + p1Keys[i] + " P2 Action: " + p2Keys[i] + " Total Length " + P1Keys.Count);
-            p1k++;
-            p2k++;
+            if(i < P1Keys.Count)
+                _controllers[0].HandleAIInput(P1Keys[i]);
+            if(i < P2Keys.Count)
+                _controllers[1].HandleAIInput(P2Keys[i]);
             currentFrameNumber++;
-            i++;
+           // Debug.Log("P1 Action: " + p1Keys[i] + " P2 Action: " + p2Keys[i] + " Total Length " + P1Keys.Count);
             //Debug.Log("1 Frame complete");
         }
         SimFrameDataManager.Instance.ProcessFrameData(currentFrameNumber);
@@ -183,38 +171,37 @@ public class SimFightingController : MonoBehaviour
         character.Clear();
     }
 
-      private void UpdateCharacterDataPLayer1(CharacterData data) 
+    private void UpdateCharacterDataPLayer1(CharacterData data) 
     {
         _controllers[0].PlayerNumber = data.PlayerNumber;
-            _controllers[0].Hp = data.Hp;
-            _controllers[0].Energy = data.Energy;
-            character[0].transform.position = new Vector3(data.XPos,  data.YPos, character[0].transform.position.z) ;
-            character[0].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.XVelo,data.YVelo);
-            _controllers[0].state = data.State;
-            _controllers[0].Action = data.Action;
-            _controllers[0].IsFront = data.IsFront;
+        _controllers[0].Hp = data.Hp;
+        _controllers[0].Energy = data.Energy;
+        character[0].transform.position = new Vector3(data.XPos,  data.YPos, character[0].transform.position.z) ;
+        character[0].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.XVelo,data.YVelo);
+        _controllers[0].state = data.State;
+        _controllers[0].Action = data.Action;
+        _controllers[0].IsFront = data.IsFront;
     }
 
     private void UpdateCharacterDataPLayer2(CharacterData data) 
     {
         _controllers[1].PlayerNumber = data.PlayerNumber;
-            _controllers[1].Hp = data.Hp;
-            _controllers[1].Energy = data.Energy;
-            character[1].transform.position = new Vector3(data.XPos,  data.YPos, character[1].transform.position.z) ;
-            character[1].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.XVelo,data.YVelo);
-            _controllers[1].state = data.State;
-            _controllers[1].Action = data.Action;
-            _controllers[1].IsFront = data.IsFront;
+        _controllers[1].Hp = data.Hp;
+        _controllers[1].Energy = data.Energy;
+        character[1].transform.position = new Vector3(data.XPos,  data.YPos, character[1].transform.position.z) ;
+        character[1].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.XVelo,data.YVelo);
+        _controllers[1].state = data.State;
+        _controllers[1].Action = data.Action;
+        _controllers[1].IsFront = data.IsFront;
     }
-    private void ProcessingActions(bool playerNumber,Action[] myAct,Key[] Keys) 
+    private void ProcessingActions(Action[] myAct, List<Key> keys) 
     {
-        for(int a = 0; a < myAct.Length; a++) 
+        for(int i = 0; i < myAct.Length; i++) 
         {
-            commandCenter.CommandCall(myAct[a].ToString());
-            Keys[a] = commandCenter.GetSkillKey();
+            commandCenter.CommandCall(myAct[i].ToString());
+            while (commandCenter.GetSkillFlag()) {
+                keys.Add(commandCenter.GetSkillKey());
+            }
         }
-        
-
     }
-
 }
