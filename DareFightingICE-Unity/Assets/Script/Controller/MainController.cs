@@ -25,6 +25,7 @@ public class MainController : MonoBehaviour
         if (runningPlatform == Platform.Windows || runningPlatform == Platform.Linux)
         {
             GrpcServer.Instance.StartGrpcServer();
+            //SocketServer.Instance.StartServer();
         }
         else
         {

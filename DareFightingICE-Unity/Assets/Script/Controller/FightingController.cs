@@ -131,7 +131,7 @@ public class FightingController : MonoBehaviour
         currentFrameNumber = 0;
         currentRound++;
         _display.currentRound = currentRound;
-        SimFighitng.ResetRound();
+        //SimFighitng.ResetRound();
     }
     // Update is called once per frame
     void Update()

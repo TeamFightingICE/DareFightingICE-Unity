@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -159,7 +160,8 @@ public class ZenCharacterController : MonoBehaviour
             {
                 PerformCrounch();
             }
-        }else
+        }
+        else
         {
             isCrouching = false;
             _animator.SetBool("CROUCH",false);
@@ -677,12 +679,12 @@ public class ZenCharacterController : MonoBehaviour
     
     private void PerformActtack(string actionname)
     {
-        int requireEnergy = MotionManager.Instance.GetStartGiveEnergyForMotion("zen",actionname);
+        int requireEnergy = MotionManager.Instance.GetStartGiveEnergyForMotion("zen", actionname);
         if (canAttack && !isGuard)
         {
             if (Energy >= Mathf.Abs(requireEnergy) && requireEnergy != 1)
             {
-                SetMotionData(MotionManager.Instance.GetMotionAttributes("zen",actionname));
+                SetMotionData(MotionManager.Instance.GetMotionAttributes("zen", actionname));
                 Energy += requireEnergy;
                 _animator.SetTrigger(actionname);
                 canDash = false;
@@ -699,13 +701,20 @@ public class ZenCharacterController : MonoBehaviour
     
     private void PerformWalk(float direction)
     {
-        rb.mass = 8;
-        Vector2 movement = new Vector2(direction * speed, rb.velocity.y);
-        rb.velocity = movement;
+        if (state == State.Crouch)
+        {
+            _animator.SetBool("CROUCH", false);
+        }
+        else if (state == State.Stand)
+        {
+            rb.mass = 8;
+            Vector2 movement = new(direction * speed, rb.velocity.y);
+            rb.velocity = movement;
 
-        // Trigger walking animation
-        _animator.SetBool("GUARD", false);
-        _animator.SetBool("FORWARD_WALK", true);
+            // Trigger walking animation
+            _animator.SetBool("GUARD", false);
+            _animator.SetBool("FORWARD_WALK", true);
+        }
     }
 
     private void PerformBackStep(Vector2 direction)
@@ -717,9 +726,12 @@ public class ZenCharacterController : MonoBehaviour
     
     private void PerformFrontDash(Vector2 direction)
     {
-        rb.velocity = direction * dashforce;
-        canBlock = false;
-        _animator.SetTrigger("DASH");
+        if (state == State.Stand)
+        {
+            rb.velocity = direction * dashforce;
+            canBlock = false;
+            _animator.SetTrigger("DASH");
+        }
     }
 
     public void ResetVelocity()
@@ -738,17 +750,22 @@ public class ZenCharacterController : MonoBehaviour
     private void PerformBlock()
     {
         // Blocking logic and animation trigger
+        _animator.SetBool("CROUCH", false);
         _animator.SetBool("FORWARD_WALK", false);
-        _animator.SetBool("GUARD",true);
+        _animator.SetBool("GUARD", true);
         // Set canBlock to false if the block animation should only be triggered once per key press
     }
 
     private void PerformJump()
     {
         // Jumping logic and animation trigger
-        if (canJump)
+        if (state == State.Crouch)
         {
-           _animator.SetTrigger("JUMP");
+            _animator.SetBool("CROUCH", false);
+        }
+        else if (canJump && state == State.Stand)
+        {
+            _animator.SetTrigger("JUMP");
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpTimer = jumpDelay;
             canJump = false;
@@ -784,7 +801,8 @@ public class ZenCharacterController : MonoBehaviour
             counchSound.SetActive(true);
         }
         isCrouching = true;
-        _animator.SetBool("CROUCH",true);
+        _animator.SetBool("FORWARD_WALK", false);
+        _animator.SetBool("CROUCH", true);
     }
 
     public void ResetCounch()
@@ -802,7 +820,6 @@ public class ZenCharacterController : MonoBehaviour
             jumpTimer = jumpDelay;
             canJump = false;
         }
-        
     }
     
     private void PerformBackwardJump(float direction)
@@ -815,8 +832,7 @@ public class ZenCharacterController : MonoBehaviour
             _animator.SetTrigger("FORWARD_JUMP");
             jumpTimer = jumpDelay;
             canJump = false;
-        }
-        
+        }   
     }
 
     public void GetThrow()
