@@ -12,14 +12,14 @@ public class ScreenDataManager : Singleton<ScreenDataManager>
         tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
         tex.Apply();
         screenDataAsBytes = tex.GetRawTextureData();
-        compressBytes = GrpcUtil.CompressBytes(screenDataAsBytes);
+        //compressBytes = GrpcUtil.CompressBytes(screenDataAsBytes);
     }
 
     public ScreenData GetScreenData()
     {
         ScreenData data = new()
         {
-            DisplayBytes = compressBytes
+            DisplayBytes = screenDataAsBytes
         };
         return data;
     }

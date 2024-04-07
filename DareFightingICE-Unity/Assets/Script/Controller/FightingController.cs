@@ -175,7 +175,7 @@ public class FightingController : MonoBehaviour
             _display.currentFrame = currentFrameNumber++;
             FrameDataManager.Instance.ProcessFrameData();
             AudioDataManager.Instance.ProcessAudioData();
-            ScreenDataManager.Instance.ProcessScreenData(ScreenDataRT,ScreenDataTexture);
+            ScreenDataManager.Instance.ProcessScreenData(ScreenDataRT, ScreenDataTexture);
             HandlePositionOverlap();
         }
     }
@@ -190,6 +190,7 @@ public class FightingController : MonoBehaviour
     }
     void OnRoundEnd()
     {
+        Debug.Log("OnRoundEnd");
         Thread.Sleep(20);
 
         RoundResult result = new RoundResult
@@ -312,6 +313,6 @@ public class FightingController : MonoBehaviour
         ResetRound();
         endScreen.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
         isStart = true;
-        isFading = true;
+        isFading = false;
     }
 }
