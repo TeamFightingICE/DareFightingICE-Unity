@@ -22,9 +22,7 @@ public class ZenCharacterController : MonoBehaviour
     public int Hp { get; set; }
     public int Energy { get; set; }
     public ZenCharacterController otherPlayer { get; set; }
-    
-    public List<GameObject> AttackDeque;
-
+    public FightingController fightingController;
     public TextAsset csvFile;
     
     // Action Flags
@@ -38,7 +36,7 @@ public class ZenCharacterController : MonoBehaviour
     // Combo System
     private List<string> inputBuffer = new List<string>();
     private Dictionary<string, List<string>> combos = new Dictionary<string, List<string>>();
-    private int MAX_BUFFER_SIZE = 7;
+    private int MAX_BUFFER_SIZE = 15;
     private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
     private string[] comboTriggers = {"STAND_F_D_DFA","STAND_F_D_DFB","STAND_D_DB_BA","STAND_D_DB_BB","STAND_D_DF_FA","STAND_D_DF_FB","STAND_D_DF_FC","AIR_D_DF_FB","AIR_F_D_DFA","AIR_F_D_DFB","AIR_D_DB_BA","AIR_D_DB_BB","AIR_D_DF_FA"};
     private float lastInputTime;
@@ -319,7 +317,7 @@ public class ZenCharacterController : MonoBehaviour
         }
         
         // TESTING
-         /*if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
+         if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
          if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
          if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
          if (Input.GetKeyDown(KeyCode.Q) && canAttack)
@@ -349,7 +347,7 @@ public class ZenCharacterController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.D) && canAttack)
         {
             ExecuteGivenCombo("D_DF_FC");
-        }*/
+        }
         
         // Combat input
         if (Input.GetKeyDown(KeyCode.Z) && canAttack) { AddInput("A"); }
@@ -850,13 +848,19 @@ public class ZenCharacterController : MonoBehaviour
         rb.velocity = forwardJumpVelocity;
     }
 
-    public void SetTarget(string target)
+    public void SetTarget(string target,FightingController fighting)
     {
         leftHand.zenCharacterController = this;
         rightHand.zenCharacterController = this;
         leftFoot.zenCharacterController = this;
         rightFoot.zenCharacterController = this;
         
+        leftHand.fightingController = fighting;
+        rightHand.fightingController = fighting;
+        leftFoot.fightingController = fighting;
+        rightFoot.fightingController = fighting;
+
+
         leftHand.target = target;
         rightHand.target = target;
         leftFoot.target = target;
@@ -1010,7 +1014,7 @@ public class ZenCharacterController : MonoBehaviour
             fireballDirection = new Vector2(0, 1);
         }
         float fireballForce = 10f;
-        AttackDeque.Add(leftHand.SpawnBigProjectile(fireballDirection,fireballForce));
+        fightingController.AddAttackDeque(leftHand.SpawnBigProjectile(fireballDirection,fireballForce));
     }
 
     public void SpawnSmallFireball()
@@ -1025,9 +1029,11 @@ public class ZenCharacterController : MonoBehaviour
             fireballDirection = new Vector2(0, 1);
         }
         float fireballForce = 10f;
-        AttackDeque.Add(leftHand.SpawnSmallProjectile(fireballDirection,fireballForce));
+        fightingController.AddAttackDeque(leftHand.SpawnSmallProjectile(fireballDirection,fireballForce));
     }
 
+    float uncrouchDelay = 0.1f;
+    float uncrouchTimer = 0;
     public void HandleAIInput()
     {
         float currentTime = Time.time;
@@ -1048,16 +1054,20 @@ public class ZenCharacterController : MonoBehaviour
         {
             isCrouching = false;
             _animator.SetBool("CROUCH", false);
+            uncrouchTimer = currentTime;
         }
         // Movement input
         if (IsFront)
         {
             if (inputManager.IsKeyPressed(PlayerNumber, "R"))
             {
-                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash && isGrounded)
                 {
-                    canWalk = false;
-                    PerformFrontDash(new Vector2(1, 0));
+                    if(!isCrouching && currentTime - uncrouchTimer > uncrouchDelay)
+                    {
+                        canWalk = false;
+                        PerformFrontDash(new Vector2(1, 0));
+                    }
                 }
                 else
                 {
@@ -1072,7 +1082,7 @@ public class ZenCharacterController : MonoBehaviour
                     AddInput("F");
                 }
 
-                if (canWalk)
+                if (canWalk && !isCrouching && currentTime - uncrouchTimer > uncrouchDelay && isGrounded) 
                 {
                     canWalk = false;
                     PerformWalk(1);
@@ -1098,7 +1108,7 @@ public class ZenCharacterController : MonoBehaviour
                     PerformBlock();
                 }
             }
-            else if (inputManager.IsKeyRelease(PlayerNumber, "L"))
+            else if (inputManager.IsKeyRelease(PlayerNumber, "L") && isGrounded)
             {
                 if (currentTime - keyPressTime <= tapThreshold && canDash)
                 {
@@ -1121,24 +1131,27 @@ public class ZenCharacterController : MonoBehaviour
         {
             if (inputManager.IsKeyPressed(PlayerNumber, "L"))
             {
-                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash)
+                if (currentTime - lastForwardDashTime < doubleTapInterval && canDash && isGrounded)
                 {
-                    canWalk = false;
-                    PerformFrontDash(new Vector2(-1, 0));
+                    if (!isCrouching && currentTime - uncrouchTimer > uncrouchDelay)
+                    {
+                        canWalk = false;
+                        PerformFrontDash(new Vector2(-1, 0));  
+                    }
                 }
                 else
                 {
                     lastForwardDashTime = currentTime;
                 }
             }
-            else if (inputManager.IsKeyHeld(PlayerNumber, "L") && canWalk)
+            else if (inputManager.IsKeyHeld(PlayerNumber, "L") && canWalk && isGrounded)
             {
                 if (currentTime - lastDirectionalInputTime > directionalInputDelay)
                 {
                     lastDirectionalInputTime = currentTime;
                     AddInput("F");
                 }
-                if (canWalk)
+                if (canWalk && !isCrouching && currentTime - uncrouchTimer > uncrouchDelay)
                 {
                     canWalk = false;
                     PerformWalk(-1);
@@ -1167,7 +1180,7 @@ public class ZenCharacterController : MonoBehaviour
             }
             else if (inputManager.IsKeyRelease(PlayerNumber, "R"))
             {
-                if (currentTime - keyPressTime <= tapThreshold && canDash)
+                if (currentTime - keyPressTime <= tapThreshold && canDash && isGrounded)
                 {
                     var direction = new Vector2(1, 0);
                     PerformBackStep(direction);

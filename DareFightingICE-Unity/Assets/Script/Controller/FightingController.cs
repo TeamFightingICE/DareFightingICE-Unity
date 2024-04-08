@@ -33,6 +33,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private SimFightingController SimFighitng;
 
     public List<GameObject> character;
+    public List<GameObject> attackDeque;
     private readonly AIController[] _aiControllers = new AIController[2];
     private readonly ZenCharacterController[] _controllers = new ZenCharacterController[2];
     public InterfaceDisplay _display;
@@ -75,19 +76,23 @@ public class FightingController : MonoBehaviour
         _controllers[0] = zen1.GetComponent<ZenCharacterController>();
         _controllers[1] = zen2.GetComponent<ZenCharacterController>();
 
+
         _controllers[0].PlayerNumber = true;
         _controllers[0].IsFront = true;
         _controllers[0].Hp = GameSetting.Instance.P1HP;
         _controllers[0].Energy = 0;
         _controllers[0].otherPlayer = _controllers[1];
-        _controllers[0].SetTarget("Player2");
+        _controllers[0].SetTarget("Player2",this);
+        _controllers[0].fightingController = this;
+
 
         _controllers[1].PlayerNumber = false;
         _controllers[1].IsFront = false;
         _controllers[1].Hp = GameSetting.Instance.P2HP;
         _controllers[1].Energy = 0;
         _controllers[1].otherPlayer = _controllers[0];
-        _controllers[1].SetTarget("Player1");
+        _controllers[1].SetTarget("Player1",this);
+        _controllers[1].fightingController = this;
 
         character.Add(zen1);
         character.Add(zen2);  
@@ -314,5 +319,10 @@ public class FightingController : MonoBehaviour
         endScreen.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
         isStart = true;
         isFading = false;
+    }
+
+    public void AddAttackDeque(GameObject gameobject)
+    {
+        attackDeque.Add(gameobject);
     }
 }

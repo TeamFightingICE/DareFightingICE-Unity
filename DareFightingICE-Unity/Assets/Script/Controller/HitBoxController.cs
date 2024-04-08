@@ -20,6 +20,7 @@ public enum AttackType
 public class HitBoxController : MonoBehaviour
 {
     [FormerlySerializedAs("_characterController")] public ZenCharacterController zenCharacterController;
+    public FightingController fightingController;
     private bool isActive = false;
     public string target = "";
     private bool isHit = false;
@@ -69,7 +70,7 @@ public class HitBoxController : MonoBehaviour
                 other.GetComponent<ZenCharacterController>().TakeHit(zenCharacterController,giveEnergy,tempDamage,getEnergy,guardDamage,guardEnergy,attackType,isDown);
                 if (isProjectile)
                 {
-                    zenCharacterController.AttackDeque.Remove(this.gameObject);
+                    fightingController.attackDeque.Remove(this.gameObject);
                     Destroy(this.gameObject);
                 }
             }
@@ -133,6 +134,7 @@ public class HitBoxController : MonoBehaviour
         isHit = true;
         target = parent.target;
         zenCharacterController = parent.zenCharacterController;
+        fightingController = parent.fightingController;
         isProjectile = true;
     }
     public void SetData(MotionAttribute motionAttribute)

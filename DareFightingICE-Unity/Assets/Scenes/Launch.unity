@@ -7172,7 +7172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8591c8c7af0b3fa40bb5b45d4bd49d9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackDeque: []
+  fightingController: {fileID: 0}
   csvFile: {fileID: 0}
   canWalk: 1
   canBlock: 1
@@ -8276,6 +8276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
+  fightingController: {fileID: 0}
   target: 
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
@@ -9641,6 +9642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
+  fightingController: {fileID: 0}
   target: 
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
@@ -10565,6 +10567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
+  fightingController: {fileID: 0}
   target: 
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
@@ -12244,6 +12247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zenCharacterController: {fileID: 0}
+  fightingController: {fileID: 0}
   target: 
   hitEffect1: {fileID: 0}
   hitEffect2: {fileID: 0}
