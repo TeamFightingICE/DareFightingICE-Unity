@@ -195,6 +195,7 @@ public class FightingController : MonoBehaviour
     }
     void OnRoundEnd()
     {
+        currentFrameNumber = GameSetting.Instance.FrameLimit;
         Debug.Log("OnRoundEnd");
         Thread.Sleep(20);
 

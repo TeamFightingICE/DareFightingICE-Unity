@@ -40,7 +40,7 @@ public class ZenCharacterController : MonoBehaviour
     private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
     private string[] comboTriggers = {"STAND_F_D_DFA","STAND_F_D_DFB","STAND_D_DB_BA","STAND_D_DB_BB","STAND_D_DF_FA","STAND_D_DF_FB","STAND_D_DF_FC","AIR_D_DF_FB","AIR_F_D_DFA","AIR_F_D_DFB","AIR_D_DB_BA","AIR_D_DB_BB","AIR_D_DF_FA"};
     private float lastInputTime;
-    private float bufferResetDelay = 0.1f;
+    private float bufferResetDelay = 0.3f;
     
     public int currentCombo = 0;
     private float timeSinceLastHit = 0f;
@@ -317,6 +317,7 @@ public class ZenCharacterController : MonoBehaviour
         }
         
         // TESTING
+        /*
          if (Input.GetKeyDown(KeyCode.M) && canAttack) { _animator.SetTrigger("GETHIT"); }
          if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
          if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
@@ -348,7 +349,7 @@ public class ZenCharacterController : MonoBehaviour
         {
             ExecuteGivenCombo("D_DF_FC");
         }
-        
+        */
         // Combat input
         if (Input.GetKeyDown(KeyCode.Z) && canAttack) { AddInput("A"); }
         if (Input.GetKeyDown(KeyCode.X) && canAttack) { AddInput("B"); }
