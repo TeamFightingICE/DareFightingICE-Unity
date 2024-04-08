@@ -39,6 +39,7 @@ public class FightingController : MonoBehaviour
     public InterfaceDisplay _display;
     private bool isStart = false;
     private bool isFading = false;
+    private bool isEnd = false;
     private int currentFrameNumber;
     private int currentRound;
     private InputManager inputManager;
@@ -171,7 +172,7 @@ public class FightingController : MonoBehaviour
             }
         }
 
-        if (!isFading && currentFrameNumber >= GameSetting.Instance.FrameLimit || CheckField())
+        if (!isEnd && !isFading && (currentFrameNumber >= GameSetting.Instance.FrameLimit || CheckField()))
         {
             OnRoundEnd();
         }
@@ -195,6 +196,9 @@ public class FightingController : MonoBehaviour
     }
     void OnRoundEnd()
     {
+        if (isEnd) return;
+
+        isEnd = true;
         currentFrameNumber = GameSetting.Instance.FrameLimit;
         Debug.Log("OnRoundEnd");
         Thread.Sleep(20);
@@ -222,6 +226,7 @@ public class FightingController : MonoBehaviour
             StartCoroutine(GameFadeClose());
             //ResetRound();
             DataManager.Instance.CurrentRound++;
+            isEnd = false;
         }
         else
         {
