@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -93,18 +94,18 @@ public class AudioDataManager : Singleton<AudioDataManager>
 
         // Create a byte array to hold the converted data
         byte[] byteArray = new byte[channels * sampleCount * sizeof(float)];
-
         // Copy the float array to the byte array, interleaving channels
         for (int i = 0; i < sampleCount; i++)
         {
             for (int channel = 0; channel < channels; channel++)
             {
-                int index = i * channels + channel;
-                Buffer.BlockCopy(BitConverter.GetBytes(samples[channel][i]), 0, byteArray, index * sizeof(float),
+                int index = sampleCount * channel + i;
+                byte[] temp = BitConverter.GetBytes(samples[channel][i]);
+                Buffer.BlockCopy(temp, 0, byteArray, index * sizeof(float),
                     sizeof(float));
             }
         }
-
+        
         return byteArray;
     }
 
@@ -118,15 +119,18 @@ public class AudioDataManager : Singleton<AudioDataManager>
         byte[] byteArray = new byte[channels * frameCount * sampleCount * sizeof(float)];
 
         // Copy the float array to the byte array, interleaving channels and frames
-        for (int frame = 0; frame < frameCount; frame++)
+        for (int i = 0; i < channels; i++)
         {
-            for (int channel = 0; channel < channels; channel++)
+            for (int j = 0; j < frameCount; j++)
             {
-                for (int sample = 0; sample < sampleCount; sample++)
+                for (int k = 0; k < sampleCount; k++)
                 {
-                    int index = (frame * channels * sampleCount) + (channel * sampleCount) + sample;
-                    Buffer.BlockCopy(BitConverter.GetBytes(samples[channel][frame][sample]), 0, byteArray,
+
+                    int index = (i * channels * frameCount) + (j * sampleCount) + k;
+                    byte [] temp = BitConverter.GetBytes(samples[i][j][k]);
+                    Buffer.BlockCopy(temp, 0, byteArray,
                         index * sizeof(float), sizeof(float));
+
                 }
             }
         }
