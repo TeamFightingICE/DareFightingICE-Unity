@@ -13,9 +13,7 @@ public class AudioDataManager : Singleton<AudioDataManager>
 
     private float[][] rawDataClone;
 
-    public float[][][] fftData;
-
-    public byte[] fftDataAsByte;
+    public FFTData[] fftData;
 
     public byte[] rawDataAsBytes;
 
@@ -23,9 +21,9 @@ public class AudioDataManager : Singleton<AudioDataManager>
 
     public byte[] spectrogramDataAsBytes;
 
-    public static FFT fft = new FFT();
+    public static FFT fft = new();
 
-    public static MFCC mfcc = new MFCC();
+    public static MFCC mfcc = new();
 
     public void Initialize()
     {
@@ -39,11 +37,11 @@ public class AudioDataManager : Singleton<AudioDataManager>
             new float[1024],
             new float[1024],
         };
-        // fftData = new float[2][2][]
-        // {
-        //     new float[1024],
-        //     new float[1024],
-        // };
+        fftData = new FFTData[2]
+        {
+            new(),
+            new(),
+        };
         spectrogramData = new float[2][][];
     }
 
@@ -58,35 +56,43 @@ public class AudioDataManager : Singleton<AudioDataManager>
         AudioListener.GetOutputData(rawData[1], 1);
         Array.Copy(rawData[0], rawDataClone[0], 1024);
         Array.Copy(rawData[1], rawDataClone[1], 1024);
-        fftData = new float[2][][]
-        {
-            new float[2][]
-            {
-                new float[1024],
-                new float[1024],
-            },
-            new float[2][]
-            {
-                new float[1024],
-                new float[1024],
-            },
-        };
+
+        rawDataAsBytes = Convert2DFloatArrayToByteArray(rawData);
 
         fft.process(rawDataClone[0]);
-        fftData[0][0] = fft.getReal();
-        fftData[0][1] = fft.getImag();
+        fftData[0].RealData = fft.getReal();
+        fftData[0].ImagData = fft.getImag();
+        fftData[0].RealDataAsBytes = Convert1DFloatArrayToByteArray(fftData[0].RealData);
+        fftData[0].ImagDataAsBytes = Convert1DFloatArrayToByteArray(fftData[0].ImagData);
+
         fft.process(rawDataClone[1]);
-        fftData[1][0] = fft.getReal();
-        fftData[1][1] = fft.getImag();
+        fftData[1].RealData = fft.getReal();
+        fftData[1].ImagData = fft.getImag();
+        fftData[1].RealDataAsBytes = Convert1DFloatArrayToByteArray(fftData[1].RealData);
+        fftData[1].ImagDataAsBytes = Convert1DFloatArrayToByteArray(fftData[1].ImagData);
 
         spectrogramData[0] = mfcc.melSpectrogram(rawData[0]);
         spectrogramData[1] = mfcc.melSpectrogram(rawData[1]);
-        rawDataAsBytes = ConvertToByteArray1(rawData);
-        spectrogramDataAsBytes = ConvertToByteArray2(spectrogramData);
-        fftDataAsByte = ConvertToByteArray2(fftData);
+        spectrogramDataAsBytes = Convert3DFloatArrayToByteArray(spectrogramData);
     }
 
-    byte[] ConvertToByteArray1(float[][] samples)
+    byte[] Convert1DFloatArrayToByteArray(float[] samples)
+    {
+        int sampleCount = samples.Length;
+
+        // Create a byte array to hold the converted data
+        byte[] byteArray = new byte[sampleCount * sizeof(float)];
+
+        // Copy the float array to the byte array
+        for (int i = 0; i < sampleCount; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(samples[i]), 0, byteArray, i * sizeof(float), sizeof(float));
+        }
+
+        return byteArray;
+    }
+
+    byte[] Convert2DFloatArrayToByteArray(float[][] samples)
     {
         int channels = samples.Length;
         int sampleCount = samples[0].Length;
@@ -108,7 +114,7 @@ public class AudioDataManager : Singleton<AudioDataManager>
         return byteArray;
     }
 
-    byte[] ConvertToByteArray2(float[][][] samples)
+    byte[] Convert3DFloatArrayToByteArray(float[][][] samples)
     {
         int channels = samples.Length;
         int frameCount = samples[0].Length;
