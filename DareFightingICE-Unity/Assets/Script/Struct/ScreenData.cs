@@ -10,7 +10,7 @@ public class ScreenData
 
     public ScreenData()
     {
-        this.DisplayBytes = new byte[96 * 64];
+        this.DisplayBytes = new byte[0];
     }
 
     public ScreenData(ScreenData other)
@@ -22,7 +22,7 @@ public class ScreenData
     {
         return new GrpcScreenData
         {
-            DisplayBytes = ByteString.CopyFrom(GrpcUtil.CompressBytes(DisplayBytes)),
+            DisplayBytes = ByteString.CopyFrom(DisplayBytes),
         };
     }
 }

@@ -9,12 +9,11 @@ public class FFT
 
     public float[] imag;
 
-    public void process(float[] signal)
+    public void Process(float[] signal)
     {
         int numPoints = signal.Length;
         this.real = signal;
         this.imag = new float[numPoints];
-        double pi = Math.PI;
         int numStages = (int)(Math.Log(numPoints) / Math.Log(2.0D));
         int halfNumPoints = numPoints >> 1;
         int j = halfNumPoints;

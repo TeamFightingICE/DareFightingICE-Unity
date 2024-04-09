@@ -5,21 +5,19 @@ using UnityEngine;
 
 public class MFCC
 {
-    private static  int n_mfcc = 20;
+    private int n_mfcc = 20;
+    private float fMin = 0.0F;
+    private int n_fft = 1024;
+    private int hop_Length = 480;
+    private int n_mels = 80;
+    private float sampleRate = 48000.0F;
+    private float fMax = 24000.0F;
+    private float f_min = 0.0F;
+    private float f_sp = 66.666664F;
+    private float min_log_hz = 1000.0F;
+    private float min_log_mel = 15.000001F;
 
-    private static  float fMin = 0.0F;
-
-    private static  int n_fft = 1024;
-
-    private static  int hop_Length = 480;
-
-    private static  int n_mels = 80;
-
-    private static  float sampleRate = 48000.0F;
-
-    private static  float fMax = 24000.0F;
-
-    FFT fft = new FFT();
+    readonly FFT fft = new();
 
     public float[] process(float[] floatInputBuffer)
     {
@@ -115,7 +113,7 @@ public class MFCC
     private float[] magSpectrogram(float[] frame)
     {
         float[] magSpec = new float[frame.Length];
-        this.fft.process(frame);
+        this.fft.Process(frame);
         for (int m = 0; m < frame.Length; m++)
             magSpec[m] = this.fft.real[m] * this.fft.real[m] + this.fft.imag[m] * this.fft.imag[m];
         return magSpec;
@@ -162,7 +160,7 @@ public class MFCC
                 float magnitude = Math.Abs(melS[i][j]);
                 if (magnitude > 1.0E-10D)
                 {
-                    log_spec[i][j] = (float)(10.0D * log10(magnitude));
+                    log_spec[i][j] = (float)(10.0D * Log10(magnitude));
                 }
                 else
                 {
@@ -283,29 +281,9 @@ public class MFCC
         return melToFreq(mels);
     }
 
-    private float[] melToFreqS(float[] mels)
-    {
-        float[] freqs = new float[mels.Length];
-        for (int i = 0; i < mels.Length; i++)
-            freqs[i] = (float)(700.0D * (Math.Pow(10.0D, mels[i] / 2595.0D) - 1.0D));
-        return freqs;
-    }
-
-    protected float[] freqToMelS(float[] freqs)
-    {
-        float[] mels = new float[freqs.Length];
-        for (int i = 0; i < freqs.Length; i++)
-            mels[i] = (float)(2595.0D * log10((float)(1.0D + freqs[i] / 700.0D)));
-        return mels;
-    }
-
     private float[] melToFreq(float[] mels)
     {
-        float f_min = 0.0F;
-        float f_sp = 66.666664F;
         float[] freqs = new float[mels.Length];
-        float min_log_hz = 1000.0F;
-        float min_log_mel = 15.000001F;
         float logstep = (float)(Math.Log(6.4D) / 27.0D);
         for (int i = 0; i < mels.Length; i++)
         {
@@ -323,11 +301,7 @@ public class MFCC
 
     protected float[] freqToMel(float[] freqs)
     {
-        float f_min = 0.0F;
-        float f_sp = 66.666664F;
         float[] mels = new float[freqs.Length];
-        float min_log_hz = 1000.0F;
-        float min_log_mel = 15.000001F;
         float logstep = (float)(Math.Log(6.4D) / 27.0D);
         for (int i = 0; i < freqs.Length; i++)
         {
@@ -343,7 +317,7 @@ public class MFCC
         return mels;
     }
 
-    private float log10(float value)
+    private float Log10(float value)
     {
         return (float)(Math.Log(value) / Math.Log(10.0D));
     }
