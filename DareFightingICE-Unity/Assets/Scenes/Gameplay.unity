@@ -275,7 +275,7 @@ Canvas:
   m_GameObject: {fileID: 158112922}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
@@ -2330,6 +2330,7 @@ MonoBehaviour:
   ScreenDataRT: {fileID: 8400000, guid: 10d7e8e50ee7ac8448fe12a9b1d807b6, type: 2}
   SimFighitng: {fileID: 0}
   character: []
+  attackDeque: []
   _display: {fileID: 1195152250}
 --- !u!1 &1226398103
 GameObject:

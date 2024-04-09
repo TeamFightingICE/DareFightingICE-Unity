@@ -106,7 +106,7 @@ public class FightingController : MonoBehaviour
 
         FrameDataManager.Instance.SetupFrameData(character[0], character[1], _display);
         AudioDataManager.Instance.Initialize();
-        ScreenDataTexture = new Texture2D(ScreenDataRT.width, ScreenDataRT.height, TextureFormat.RGB24, false);
+        ScreenDataTexture = new Texture2D(960, 640, TextureFormat.RGB24, false);
 
         isStart = true;
     }

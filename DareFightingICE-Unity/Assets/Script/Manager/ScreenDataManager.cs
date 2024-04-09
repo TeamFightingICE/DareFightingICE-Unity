@@ -11,27 +11,29 @@ public class ScreenDataManager : Singleton<ScreenDataManager>
         RenderTexture.active = rTex;
         tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
         tex.Apply();
-        //var correctedTexture = ApplyGammaCorrection(tex);
-        screenDataAsBytes = tex.GetRawTextureData();
+        Texture2D resizedScreenData = new(96, 64, TextureFormat.R8, false);
+        ResizeAndConvertToGrayscale(tex, resizedScreenData);
+        screenDataAsBytes = resizedScreenData.GetRawTextureData();
         compressBytes = GrpcUtil.CompressBytes(screenDataAsBytes);
     }
 
-    private Texture2D ApplyGammaCorrection(Texture2D source, float gamma = 2.2f)
+    void ResizeAndConvertToGrayscale(Texture2D originalTexture, Texture2D resizedTexture)
     {
-        Texture2D correctedTexture = new Texture2D(source.width, source.height, source.format, false);
-        Color[] pixels = source.GetPixels();
-
-        for (int i = 0; i < pixels.Length; i++)
+        for (int y = 0; y < resizedTexture.height; y++)
         {
-            pixels[i].r = Mathf.Pow(pixels[i].r, 1 / gamma);
-            pixels[i].g = Mathf.Pow(pixels[i].g, 1 / gamma);
-            pixels[i].b = Mathf.Pow(pixels[i].b, 1 / gamma);
+            for (int x = 0; x < resizedTexture.width; x++)
+            {
+                float origX = x * 1.0f / resizedTexture.width * originalTexture.width;
+                float origY = y * 1.0f / resizedTexture.height * originalTexture.height;
+
+                Color sampledColor = originalTexture.GetPixelBilinear(origX / originalTexture.width, origY / originalTexture.height);
+                float grayValue = sampledColor.grayscale;
+                
+                resizedTexture.SetPixel(x, y, new Color(grayValue, grayValue, grayValue));
+            }
         }
 
-        correctedTexture.SetPixels(pixels);
-        correctedTexture.Apply();
-
-        return correctedTexture;
+        resizedTexture.Apply();
     }
 
     public ScreenData GetScreenData()
