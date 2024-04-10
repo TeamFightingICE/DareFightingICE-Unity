@@ -12,7 +12,7 @@ public class ScreenDataManager : Singleton<ScreenDataManager>
 
         Texture2D resizedScreenData = new(96, 64, TextureFormat.R8, false);
         ResizeAndConvertToBlackWhite(tex, resizedScreenData);
-        screenDataAsBytes = tex.GetRawTextureData();
+        screenDataAsBytes = resizedScreenData.GetRawTextureData();
         compressBytes = GrpcUtil.CompressBytes(screenDataAsBytes);
     }
 
