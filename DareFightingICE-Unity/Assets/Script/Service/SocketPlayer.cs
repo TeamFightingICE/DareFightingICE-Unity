@@ -1,39 +1,14 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Xml;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-
-class Base64ByteArrayConverter : JsonConverter<byte[]>
-{
-    public override byte[] Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void Write(Utf8JsonWriter writer, byte[] value, JsonSerializerOptions options)
-    {
-        if (value == null)
-        {
-            writer.WriteNullValue();
-            return;
-        }
-
-        string base64String = Convert.ToBase64String(value);
-        writer.WriteStringValue(base64String);
-    }
-}
 
 public class SocketPlayer : IAIInterface
 {
@@ -68,7 +43,6 @@ public class SocketPlayer : IAIInterface
 
         this.serializerOptions = new()
         {
-            Converters = { new Base64ByteArrayConverter() },
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
         };
     }
