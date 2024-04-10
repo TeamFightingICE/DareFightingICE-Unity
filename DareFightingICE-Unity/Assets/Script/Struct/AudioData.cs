@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using DareFightingICE.Grpc.Proto;
 using Google.Protobuf;
 using UnityEngine;
@@ -38,6 +40,15 @@ public class AudioData
             RawDataAsBytes = ByteString.CopyFrom(RawDataAsBytes),
             FftData = { FftData[0].ToProto(), FftData[1].ToProto() },
             SpectrogramDataAsBytes = ByteString.CopyFrom(SpectrogramDataAsBytes)
+        };
+    }
+
+    public SocketAudioData ToSocket()
+    {
+        return new SocketAudioData {
+            RawDataBytestring = Convert.ToBase64String(RawDataAsBytes),
+            FftData = new List<SocketFFTData>{ FftData[0].ToSocket(), FftData[1].ToSocket() },
+            SpectrogramDataBytestring = Convert.ToBase64String(SpectrogramDataAsBytes)
         };
     }
 }

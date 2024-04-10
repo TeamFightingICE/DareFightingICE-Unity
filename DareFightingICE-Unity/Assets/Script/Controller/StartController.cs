@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -38,13 +39,27 @@ public class StartController : MonoBehaviour
 
     public bool CheckCondition()
     {
-        if (p1CurrentControl == ControlType.GRPC && GrpcServer.Instance.GetPlayer(true).IsCancelled)
+        if (p1CurrentControl == ControlType.GRPC)
         {
-            return false;
+            if (FlagSetting.Instance.grpc && GrpcServer.Instance.GetPlayer(true).IsCancelled)
+            {
+                return false;
+            }
+            else if (FlagSetting.Instance.socket && SocketServer.Instance.GetPlayer(true).IsCancelled)
+            {
+                return false;
+            }
         }
-        else if (p2CurrentControl == ControlType.GRPC && GrpcServer.Instance.GetPlayer(false).IsCancelled)
+        else if (p2CurrentControl == ControlType.GRPC)
         {
-            return false;
+            if (FlagSetting.Instance.grpc && GrpcServer.Instance.GetPlayer(false).IsCancelled)
+            {
+                return false;
+            }
+            else if (FlagSetting.Instance.socket && SocketServer.Instance.GetPlayer(false).IsCancelled)
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -81,12 +96,24 @@ public class StartController : MonoBehaviour
         SceneManager.LoadScene("StartingGamePlay");
     }
 
+    private bool IsGrpcOrSocketOpen() {
+        return FlagSetting.Instance.grpc && GrpcServer.Instance.IsOpen || FlagSetting.Instance.socket && SocketServer.Instance.IsOpen;
+    }
+
+    private bool IsCancelled(bool isPlayer1) {
+        if (FlagSetting.Instance.grpc && GrpcServer.Instance.IsOpen)
+            return isPlayer1 ? GrpcServer.Instance.GetPlayer(true).IsCancelled : GrpcServer.Instance.GetPlayer(false).IsCancelled;
+        else if (FlagSetting.Instance.socket && SocketServer.Instance.IsOpen)
+            return isPlayer1 ? SocketServer.Instance.GetPlayer(true).IsCancelled : SocketServer.Instance.GetPlayer(false).IsCancelled;
+        return true;
+    }
+
     // Utility method to get the next control type, cycling through the enum
     private ControlType GetNextControlType(ControlType currentType, int offset)
     {
         int n_controlType = Enum.GetValues(typeof(ControlType)).Length;
         int nextIndex = ((int)currentType + offset + n_controlType) % n_controlType;
-        if ((ControlType)nextIndex == ControlType.GRPC && !GrpcServer.Instance.IsOpen)
+        if ((ControlType)nextIndex == ControlType.GRPC && !IsGrpcOrSocketOpen())
         {
             return GetNextControlType((ControlType)nextIndex, offset);
         }
@@ -101,11 +128,11 @@ public class StartController : MonoBehaviour
 
         if (p1CurrentControl == ControlType.GRPC)
         {
-            p1Control.text += GrpcServer.Instance.GetPlayer(true).IsCancelled ? " (Disconnected)" : " (Connected)";
+            p1Control.text += IsCancelled(true) ? " (Disconnected)" : " (Connected)";
         }
         if (p2CurrentControl == ControlType.GRPC)
         {
-            p2Control.text += GrpcServer.Instance.GetPlayer(false).IsCancelled ? " (Disconnected)" : " (Connected)";
+            p2Control.text += IsCancelled(false) ? " (Disconnected)" : " (Connected)";
         }
     }
     public void Back() {

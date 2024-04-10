@@ -1,5 +1,6 @@
 using DareFightingICE.Grpc.Proto;
 using Google.Protobuf;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,14 @@ public class ScreenData
         return new GrpcScreenData
         {
             DisplayBytes = ByteString.CopyFrom(DisplayBytes),
+        };
+    }
+    
+    public SocketScreenData ToSocket()
+    {
+        return new SocketScreenData
+        {
+            DisplayBytestring = Convert.ToBase64String(DisplayBytes),
         };
     }
 }

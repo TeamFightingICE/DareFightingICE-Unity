@@ -78,7 +78,7 @@ public class FlagSetting : Singleton<FlagSetting>
     public bool grpc = false;
     public bool grpcAuto = false;
     public bool grpcAutoReady = false;
-
+    public bool socket = true;
     public bool loadArgs = false;
     
     public void ResetData()
@@ -122,7 +122,14 @@ public class FlagSetting : Singleton<FlagSetting>
                     GameSetting.Instance.FrameLimit = int.Parse(args[++i]);
                     break;
                 case "--grpc-auto":
+                    grpc = true;
                     grpcAuto = true;
+                    socket = false;
+                    break;
+                case "--use-socket":
+                    grpc = false;
+                    grpcAuto = false;
+                    socket = true;
                     break;
                 case "--blind-player":
                     int player = int.Parse(args[++i]);

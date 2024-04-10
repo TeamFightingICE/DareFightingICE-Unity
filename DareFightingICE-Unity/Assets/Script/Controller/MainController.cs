@@ -22,14 +22,15 @@ public class MainController : MonoBehaviour
         MotionManager.Instance.LoadMotionData();
         
         Platform runningPlatform = PlatformUtil.GetRunningPlatform();
-        if (runningPlatform == Platform.Windows || runningPlatform == Platform.Linux)
+        if (FlagSetting.Instance.grpc && (runningPlatform == Platform.Windows || runningPlatform == Platform.Linux))
         {
             GrpcServer.Instance.StartGrpcServer();
-            //SocketServer.Instance.StartServer();
         }
         else
         {
-            Debug.LogWarning("GrpcServer is not supported on this platform");
+            SocketServer.Instance.StartServer();
+            FlagSetting.Instance.grpc = false;
+            FlagSetting.Instance.socket = true;
         }
         
         string[] args = Environment.GetCommandLineArgs();

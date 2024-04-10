@@ -30,9 +30,9 @@ public class GrpcServer : Singleton<GrpcServer>
             try {
                 server.Start();
                 this.IsOpen = true;
-                Debug.Log("Server started, listening on " + port);
+                Debug.Log("gRPC server started, listening on " + port);
             } catch (Exception e) {
-                Debug.Log("Server failed to start: " + e.Message);
+                Debug.Log("gRPC server failed to start: " + e.Message);
             }
         }
     }
@@ -45,7 +45,7 @@ public class GrpcServer : Singleton<GrpcServer>
         if (this.IsOpen) {
             StopGrpcServer();
             this.IsOpen = false;
-            Debug.Log("Server stopped");
+            Debug.Log("gRPC server stopped");
         }
     }
     public GrpcPlayer GetPlayer(bool playerNumber)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DareFightingICE.Grpc.Proto;
@@ -23,6 +24,14 @@ public class FFTData
         return new GrpcFftData {
             RealDataAsBytes = ByteString.CopyFrom(RealDataAsBytes),
             ImaginaryDataAsBytes = ByteString.CopyFrom(ImagDataAsBytes)
+        };
+    }
+
+    public SocketFFTData ToSocket()
+    {
+        return new SocketFFTData {
+            RealDataBytestring = Convert.ToBase64String(RealDataAsBytes),
+            ImaginaryDataBytestring = Convert.ToBase64String(ImagDataAsBytes)
         };
     }
 }

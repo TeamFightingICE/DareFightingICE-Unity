@@ -41,7 +41,7 @@ public class GrpcAutoController : MonoBehaviour
         }
         else if (LocalAIUtil.IsAIExist(aiName))
         {
-            return ControlType.AI;
+            return ControlType.LOCAL_AI;
         }
         else
         {

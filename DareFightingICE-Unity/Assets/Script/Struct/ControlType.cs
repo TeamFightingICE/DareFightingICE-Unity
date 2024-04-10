@@ -1,7 +1,7 @@
 public enum ControlType
 {
     KEYBOARD,
-    AI,
+    LOCAL_AI,
     GRPC
 }
 
@@ -9,15 +9,12 @@ public class ControlTypeUtil
 {
     public static string GetString(ControlType controlType)
     {
-        switch (controlType)
+        return controlType switch
         {
-            case ControlType.KEYBOARD:
-                return "Keyboard";
-            case ControlType.AI:
-                return "AI";
-            case ControlType.GRPC:
-                return "gRPC";
-        }
-        return "Unknown";
+            ControlType.KEYBOARD => "Keyboard",
+            ControlType.LOCAL_AI => "AI",
+            ControlType.GRPC => "gRPC",
+            _ => "Unknown",
+        };
     }
 }

@@ -16,13 +16,29 @@ public class AIController : MonoBehaviour
         this.frameDatas = new LinkedList<FrameData>();
     }
 
+    private IAIInterface GetGrpcAI(bool isPlayerOne)
+    {
+        if (FlagSetting.Instance.grpc)
+        {
+            return GrpcServer.Instance.GetPlayer(isPlayerOne);
+        }
+        else if (FlagSetting.Instance.socket)
+        {
+            return SocketServer.Instance.GetPlayer(isPlayerOne);
+        }
+        else
+        {
+            return new Sandbox();
+        }
+    }
+
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         this.isPlayerOne = isPlayerOne;
         this.ai = GameSetting.Instance.GetControlType(isPlayerOne) switch
         {
-            ControlType.AI => LocalAIUtil.GetAIInterface(GameSetting.Instance.GetAIName(isPlayerOne)),
-            ControlType.GRPC => GrpcServer.Instance.GetPlayer(isPlayerOne),
+            ControlType.LOCAL_AI => LocalAIUtil.GetAIInterface(GameSetting.Instance.GetAIName(isPlayerOne)),
+            ControlType.GRPC => GetGrpcAI(isPlayerOne),
             _ => new Sandbox(),
         };
         this.ai.Initialize(new GameData(gameData), isPlayerOne);
@@ -51,7 +67,10 @@ public class AIController : MonoBehaviour
 
     public void SetScreenData(ScreenData screenData)
     {
-        this.ai.GetScreenData(new ScreenData(screenData));
+        if (GameSetting.Instance.IsBlind[isPlayerOne ? 0 : 1] || this.ai.IsBlind()) {
+            screenData = new ScreenData();
+        }
+        this.ai.GetScreenData(screenData);
     }
     
     public void Processing()
