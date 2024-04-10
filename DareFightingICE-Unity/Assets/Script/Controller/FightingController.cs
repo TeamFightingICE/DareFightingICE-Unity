@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -21,6 +22,7 @@ public class FightingController : MonoBehaviour
     [SerializeField] private GameObject LeftBorder;
     [SerializeField] private GameObject RightBorder;
     [SerializeField] private float flipThreshold = 1.0f;
+    [SerializeField] private AudioSource BackgroundMusic;
     [SerializeField] private AudioSource P1HeartBeat;
     [SerializeField] private AudioSource P2HeartBeat;
     [SerializeField] private AudioSource P1EnergyIncrease;
@@ -29,8 +31,6 @@ public class FightingController : MonoBehaviour
     [SerializeField] private int P2EnergyLevel;
     [SerializeField] private Image endScreen;
     [SerializeField] private RenderTexture ScreenDataRT;
-
-    [SerializeField] private SimFightingController SimFighitng;
 
     public List<GameObject> character;
     public List<GameObject> attackDeque;
@@ -44,6 +44,7 @@ public class FightingController : MonoBehaviour
     private int currentRound;
     private InputManager inputManager;
     private Texture2D ScreenDataTexture;
+    private bool[] heartBeatFlag = { false, false };
 
     void Start()
     {
@@ -106,7 +107,7 @@ public class FightingController : MonoBehaviour
 
         FrameDataManager.Instance.SetupFrameData(character[0], character[1], _display);
         AudioDataManager.Instance.Initialize();
-        ScreenDataTexture = new Texture2D(960, 640, TextureFormat.RGB24, false);
+        ScreenDataTexture = new Texture2D(ScreenDataRT.width, ScreenDataRT.height, TextureFormat.RGB24, false);
 
         isStart = true;
     }
@@ -119,12 +120,14 @@ public class FightingController : MonoBehaviour
         _controllers[0].Energy = 0;
         character[0].transform.position = spawnP1.transform.position;
         character[0].transform.rotation = spawnP1.transform.rotation;
+        heartBeatFlag[0] = false;
         
         _controllers[1].IsFront = true;
         _controllers[1].Hp = GameSetting.Instance.P2HP;
         _controllers[1].Energy = 0;
         character[1].transform.position = spawnP2.transform.position;
         character[1].transform.rotation = spawnP2.transform.rotation;
+        heartBeatFlag[1] = false;
 
         Vector3 scaleP1 = character[0].transform.localScale;
         scaleP1.x = Mathf.Abs(scaleP1.x) * (_controllers[0].IsFront ? 1 : -1);
@@ -142,18 +145,21 @@ public class FightingController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isFading) return;
         // Special Sound effects Part
         // heartbeat for player1
-        if (_controllers[0].Hp < 50)
+        if (_controllers[0].Hp < 50 && !heartBeatFlag[0])
         {
+            heartBeatFlag[0] = true;
             P1HeartBeat.Play();
         }
         // heartbeat for player2
-        if (_controllers[1].Hp < 50)
+        if (_controllers[1].Hp < 50 && !heartBeatFlag[1])
         {
+            heartBeatFlag[1] = true;
             P2HeartBeat.Play();
         }
-        //Energy Increase for PLayer1
+        //Energy Increase for player1
         if(_controllers[0].Energy >= 50)
         {
             if (_controllers[0].Energy >= P1EnergyLevel + 50)
@@ -162,7 +168,7 @@ public class FightingController : MonoBehaviour
                 P1EnergyIncrease.Play();
             }
         }
-        //Energy Increase for PLayer2
+        //Energy Increase for player2
         if (_controllers[1].Energy >= 50)
         {
             if (_controllers[1].Energy >= P2EnergyLevel + 50)
@@ -200,7 +206,6 @@ public class FightingController : MonoBehaviour
 
         isEnd = true;
         currentFrameNumber = GameSetting.Instance.FrameLimit;
-        Debug.Log("OnRoundEnd");
         Thread.Sleep(20);
 
         RoundResult result = new RoundResult
@@ -224,7 +229,6 @@ public class FightingController : MonoBehaviour
         if (currentRound < GameSetting.Instance.RoundLimit)
         {
             StartCoroutine(GameFadeClose());
-            //ResetRound();
             DataManager.Instance.CurrentRound++;
             isEnd = false;
         }
@@ -299,6 +303,12 @@ public class FightingController : MonoBehaviour
         character.transform.localScale = scale;
     }
 
+    void StopAudioSources() {
+        BackgroundMusic.Stop();
+        P1HeartBeat.Stop();
+        P2HeartBeat.Stop();
+    }
+
     IEnumerator GameFadeClose()
     {
         if (isFading)
@@ -307,6 +317,8 @@ public class FightingController : MonoBehaviour
         }
 
         isFading = true;
+        AudioListener.pause = true;
+        StopAudioSources();
         float elapsed = 0f;
 
         Color startColor = endScreen.color;
@@ -325,6 +337,8 @@ public class FightingController : MonoBehaviour
         endScreen.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
         isStart = true;
         isFading = false;
+        AudioListener.pause = false;
+        BackgroundMusic.Play();
     }
 
     public void AddAttackDeque(GameObject gameobject)

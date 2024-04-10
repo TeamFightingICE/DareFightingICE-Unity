@@ -275,7 +275,7 @@ Canvas:
   m_GameObject: {fileID: 158112922}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
@@ -2320,6 +2320,7 @@ MonoBehaviour:
   LeftBorder: {fileID: 1147963971}
   RightBorder: {fileID: 340325588}
   flipThreshold: 1
+  BackgroundMusic: {fileID: 1636582128}
   P1HeartBeat: {fileID: 1693541857}
   P2HeartBeat: {fileID: 1701492685}
   P1EnergyIncrease: {fileID: 167229578}
@@ -2328,7 +2329,6 @@ MonoBehaviour:
   P2EnergyLevel: 0
   endScreen: {fileID: 1226398105}
   ScreenDataRT: {fileID: 8400000, guid: 10d7e8e50ee7ac8448fe12a9b1d807b6, type: 2}
-  SimFighitng: {fileID: 0}
   character: []
   attackDeque: []
   _display: {fileID: 1195152250}
@@ -3071,7 +3071,7 @@ GameObject:
   - component: {fileID: 1636582129}
   - component: {fileID: 1636582128}
   m_Layer: 0
-  m_Name: Sound Manager
+  m_Name: BGM Sound Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3309,7 +3309,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3437,7 +3437,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
