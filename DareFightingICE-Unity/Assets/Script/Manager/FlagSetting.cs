@@ -76,7 +76,7 @@ public class FlagSetting : Singleton<FlagSetting>
      *  Enable gRPC
      */
     public bool grpc = false;
-    public bool grpcAuto = true;
+    public bool grpcAuto = false;
     public bool grpcAutoReady = false;
 
     public bool loadArgs = false;
