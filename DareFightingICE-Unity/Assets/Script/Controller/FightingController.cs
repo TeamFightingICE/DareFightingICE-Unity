@@ -122,7 +122,7 @@ public class FightingController : MonoBehaviour
         character[0].transform.rotation = spawnP1.transform.rotation;
         heartBeatFlag[0] = false;
         
-        _controllers[1].IsFront = true;
+        _controllers[1].IsFront = false;
         _controllers[1].Hp = GameSetting.Instance.P2HP;
         _controllers[1].Energy = 0;
         character[1].transform.position = spawnP2.transform.position;

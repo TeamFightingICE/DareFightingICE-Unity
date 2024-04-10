@@ -59,7 +59,7 @@ public class ZenCharacterController : MonoBehaviour
     public Action Action = Action.NEUTRAL;
     [SerializeField] private Animator _animator;
     private float jumpTimer = 0f;
-    [SerializeField]private float jumpDelay = 0.1f;
+    [SerializeField] private float jumpDelay = 0.1f;
     private float lastDirectionalInputTime = 0.5f;
     private float directionalInputDelay = 0f;
     

@@ -28,8 +28,9 @@ public class GameSetting : Singleton<GameSetting>
     public string P2AIName { get; set; } = "SampleAI";
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
-    private readonly bool[] blind = new bool[2] { false, false };
-    private readonly bool[] nonDelay = new bool[2] { false, false };
+    public readonly bool[] IsBlind = new bool[2] { false, false };
+    public readonly bool[] IsNonDelay = new bool[2] { false, false };
+    public readonly bool[] IsKeepConnection = new bool[2] { false, false };
 
     public void SetGameRepeatCount(int repeatCount)
     {
@@ -44,26 +45,6 @@ public class GameSetting : Singleton<GameSetting>
     public ControlType GetControlType(bool isPlayerOne)
     {
         return isPlayerOne ? P1ControlType : P2ControlType;
-    }
-
-    public bool IsBlind(bool isPlayerOne)
-    {
-        return this.blind[isPlayerOne ? 0 : 1];
-    }
-
-    public void SetBlind(int player, bool blind)
-    {
-        this.blind[player] = blind;
-    }
-
-    public bool IsNonDelay(bool isPlayerOne)
-    {
-        return this.nonDelay[isPlayerOne ? 0 : 1];
-    }
-
-    public void SetNonDelay(int player, bool nonDelay)
-    {
-        this.nonDelay[player] = nonDelay;
     }
 
     public void SetData(int p1Hp, int p2Hp, int roundLimit, int frameLimit)

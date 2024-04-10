@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -20,11 +21,6 @@ public class FlagSetting : Singleton<FlagSetting>
      * Open BG
      */
     public bool enableBackground = true;
-
-    /**
-     * Python AI
-     */
-    public bool py4j = false;
 
     /**
      * Count perform action
@@ -80,7 +76,7 @@ public class FlagSetting : Singleton<FlagSetting>
      *  Enable gRPC
      */
     public bool grpc = false;
-    public bool grpcAuto = false;
+    public bool grpcAuto = true;
     public bool grpcAutoReady = false;
 
     public bool loadArgs = false;
@@ -131,21 +127,30 @@ public class FlagSetting : Singleton<FlagSetting>
                 case "--blind-player":
                     int player = int.Parse(args[++i]);
                     if (player == 2) {
-                        GameSetting.Instance.SetBlind(0, true); // player 1
-                        GameSetting.Instance.SetBlind(1, true); // player 2
+                        GameSetting.Instance.IsBlind[0] = true; // player 1
+                        GameSetting.Instance.IsBlind[1] = true; // player 2
                     } else {
-                        GameSetting.Instance.SetBlind(player, true);
+                        GameSetting.Instance.IsBlind[player] = true;
                     }
                     break;
                 case "--non-delay":
                     player = int.Parse(args[++i]);
                 	if (player == 2) {
-                        GameSetting.Instance.SetNonDelay(0, true); // player 1
-                        GameSetting.Instance.SetNonDelay(1, true); // player 2
-                	} else {
-                        GameSetting.Instance.SetNonDelay(player, true);
-                	}
+                        GameSetting.Instance.IsNonDelay[0] = true; // player 1
+                        GameSetting.Instance.IsNonDelay[1] = true; // player 2
+                    } else {
+                        GameSetting.Instance.IsNonDelay[player] = true;
+                    }
                 	break;
+                case "--keep-connection":
+                    player = int.Parse(args[++i]);
+                    if (player == 2) {
+                        GameSetting.Instance.IsKeepConnection[0] = true; // player 1
+                        GameSetting.Instance.IsKeepConnection[1] = true; // player 2
+                    } else {
+                        GameSetting.Instance.IsKeepConnection[player] = true;
+                    }
+                    break;
             }
         }
         loadArgs = true;

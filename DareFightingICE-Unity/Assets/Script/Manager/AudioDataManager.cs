@@ -80,7 +80,7 @@ public class AudioDataManager : Singleton<AudioDataManager>
 
     public AudioData GetAudioData()
     {
-        AudioData data = new AudioData
+        AudioData data = new()
         {
             RawData = rawData,
             FftData = fftData,

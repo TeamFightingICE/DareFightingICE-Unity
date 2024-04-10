@@ -19,7 +19,7 @@ public class AudioData
     public AudioData() {
         this.RawData = new float[0][];
         this.RawDataAsBytes = new byte[0];
-        this.FftData = new FFTData[0];
+        this.FftData = new FFTData[2] { new(), new()};
         this.SpectrogramData = new float[0][][];
         this.SpectrogramDataAsBytes = new byte[0];
     }

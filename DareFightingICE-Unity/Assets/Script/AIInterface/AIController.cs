@@ -39,7 +39,7 @@ public class AIController : MonoBehaviour
             frameDatas.RemoveFirst();
         }
 
-        if (GameSetting.Instance.IsNonDelay(isPlayerOne)) {
+        if (GameSetting.Instance.IsNonDelay[isPlayerOne ? 0 : 1]) {
             this.ai.GetNonDelayFrameData(new FrameData(newFrameData));
         }
     }
@@ -95,7 +95,7 @@ public class AIController : MonoBehaviour
         }
 
         bool isControl = frameDatas.Last.Value.GetCharacter(isPlayerOne).Control;
-        if (GameSetting.Instance.IsBlind(isPlayerOne) || this.ai.IsBlind()) {
+        if (GameSetting.Instance.IsBlind[isPlayerOne ? 0 : 1] || this.ai.IsBlind()) {
             frameData.RemoveVisualData();
         }
         this.ai.GetInformation(new FrameData(frameData), isControl);
@@ -105,7 +105,9 @@ public class AIController : MonoBehaviour
 
     public void Close()
     {
-        this.ai.Close();
+        if (!GameSetting.Instance.IsKeepConnection[isPlayerOne ? 0 : 1]) {
+            this.ai.Close();
+        }
     }
     
 }
