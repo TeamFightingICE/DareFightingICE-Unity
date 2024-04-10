@@ -85,7 +85,7 @@ public class UIKeyboardControl : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(lastButton.gameObject);
             }
 
-            if (selectedButton != null)
+            if (selectedButton != null && selectedButton.interactable)
             {
                 selectedButton.onClick.Invoke();
             }

@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.IO;
-using System.IO.Compression;
 using UnityEngine.UI;
 public class ScreenDataManager : Singleton<ScreenDataManager>
 {
@@ -11,14 +9,16 @@ public class ScreenDataManager : Singleton<ScreenDataManager>
         RenderTexture.active = rTex;
         tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
         tex.Apply();
+
         Texture2D resizedScreenData = new(96, 64, TextureFormat.R8, false);
-        ResizeAndConvertToGrayscale(tex, resizedScreenData);
-        screenDataAsBytes = resizedScreenData.GetRawTextureData();
+        ResizeAndConvertToBlackWhite(tex, resizedScreenData);
+        screenDataAsBytes = tex.GetRawTextureData();
         compressBytes = GrpcUtil.CompressBytes(screenDataAsBytes);
     }
 
-    void ResizeAndConvertToGrayscale(Texture2D originalTexture, Texture2D resizedTexture)
+    void ResizeAndConvertToBlackWhite(Texture2D originalTexture, Texture2D resizedTexture)
     {
+        float gray = 184 / 255f;
         for (int y = 0; y < resizedTexture.height; y++)
         {
             for (int x = 0; x < resizedTexture.width; x++)
@@ -27,9 +27,8 @@ public class ScreenDataManager : Singleton<ScreenDataManager>
                 float origY = y * 1.0f / resizedTexture.height * originalTexture.height;
 
                 Color sampledColor = originalTexture.GetPixelBilinear(origX / originalTexture.width, origY / originalTexture.height);
-                float grayValue = sampledColor.grayscale;
-                
-                resizedTexture.SetPixel(x, y, new Color(grayValue, grayValue, grayValue));
+                bool isBlack = sampledColor.r == gray && sampledColor.g == gray && sampledColor.b == gray;
+                resizedTexture.SetPixel(x, y, isBlack ? Color.black : Color.white);
             }
         }
 
