@@ -8,14 +8,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.Text.Json;
+using System.Data;
 
 public class SocketServer : Singleton<SocketServer>
 {
     private Socket server;
     private SocketPlayer[] players;
     private Thread processingThread;
-    public string Host { get; set; } = "127.0.0.1";
-    public int Port { get; set; } = 11111;
     public bool IsOpen { get; set; }
     public SocketServer() {
         this.players = new SocketPlayer[] { new(true), new(false) };
@@ -24,15 +23,16 @@ public class SocketServer : Singleton<SocketServer>
     public void StartServer() {
         if (this.server == null)
         {
-            IPAddress ipAddr = IPAddress.Parse(Host);
-            IPEndPoint localEndPoint = new(ipAddr, Port);
+            IPAddress ipAddr = IPAddress.Parse("127.0.0.1");
+            int port = FlagSetting.Instance.port;
+            IPEndPoint localEndPoint = new(ipAddr, port);
             server = new(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             
             try {
                 server.Bind(localEndPoint);
                 server.Listen(10);
                 this.IsOpen = true;
-                Debug.Log("Socket server started, listening on " + Port);
+                Debug.Log("Socket server started, listening on " + port);
 
                 processingThread = new(MainProcess);
                 processingThread.Start();

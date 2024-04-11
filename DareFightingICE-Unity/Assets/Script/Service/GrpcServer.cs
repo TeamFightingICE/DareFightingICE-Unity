@@ -17,11 +17,11 @@ public class GrpcServer : Singleton<GrpcServer>
     public void StartGrpcServer()
     {
         if (this.server == null) {
-            int port = 50051;
+            int port = FlagSetting.Instance.port;
             server = new Server
             {
                 Services = { Service.BindService(new ServiceImpl()) },
-                Ports = { new ServerPort("localhost", port, ServerCredentials.Insecure) }
+                Ports = { new ServerPort("127.0.0.1", port, ServerCredentials.Insecure) }
             };
             
             try {

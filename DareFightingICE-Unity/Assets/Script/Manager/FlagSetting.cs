@@ -79,6 +79,7 @@ public class FlagSetting : Singleton<FlagSetting>
     public bool grpcAuto = false;
     public bool grpcAutoReady = false;
     public bool socket = false;
+    public int port = 50051;
     public bool loadArgs = false;
     
     public void ResetData()
@@ -120,6 +121,9 @@ public class FlagSetting : Singleton<FlagSetting>
                     break;
                 case "-f":
                     GameSetting.Instance.FrameLimit = int.Parse(args[++i]);
+                    break;
+                case "--port":
+                    port = int.Parse(args[++i]);
                     break;
                 case "--enable-auto":
                     grpcAuto = true;
