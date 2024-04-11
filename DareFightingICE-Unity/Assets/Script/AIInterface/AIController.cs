@@ -68,7 +68,7 @@ public class AIController : MonoBehaviour
     public void SetScreenData(ScreenData screenData)
     {
         if (GameSetting.Instance.IsBlind[isPlayerOne ? 0 : 1] || this.ai.IsBlind()) {
-            screenData = new ScreenData();
+            screenData = null;
         }
         this.ai.GetScreenData(screenData);
     }

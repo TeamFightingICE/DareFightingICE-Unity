@@ -32,10 +32,6 @@ public class SocketPlayer : IPlayer
         this.notifyCompleted = false;
 
         this.isControl = false;
-        this.frameData = new FrameData();
-        this.audioData = new AudioData();
-        this.screenData = new ScreenData();
-        this.nonDelayFrameData = new FrameData();
         this.input = new Key();
 
         this.serializerOptions = new()
@@ -48,6 +44,10 @@ public class SocketPlayer : IPlayer
     {
         this.socketClient = socket;
         this.IsCancelled = false;
+
+        byte[] blindData = new byte[1];
+        this.socketClient.Receive(blindData);
+        this.blind = blindData[0] == 1;
     }
 
     public bool IsGameStarted
@@ -105,16 +105,34 @@ public class SocketPlayer : IPlayer
     public void Processing()
     {
         if (!this.IsGameStarted || this.IsCancelled) return;
-        
-        string frameDataJsonStr = JsonSerializer.Serialize(frameData.ToProto(), serializerOptions);
-        string audioDataJsonStr = JsonSerializer.Serialize(audioData.ToSocket(), serializerOptions);
-        string screenDataJsonStr = JsonSerializer.Serialize(screenData.ToSocket(), serializerOptions);
 
         this.socketClient.Send(new byte[] { 2 });  // 2: Processing
         this.socketClient.Send(new byte[] { isControl ? (byte)1 : (byte)0 });  // isControl
+        
+        if (this.nonDelayFrameData != null)
+        {
+            string nonDelayFrameDataJsonStr = JsonSerializer.Serialize(this.nonDelayFrameData.ToProto(), serializerOptions);
+            SendDataToAI(nonDelayFrameDataJsonStr);
+        }
+        else
+        {
+            SendDataToAI(null);
+        }
+
+        string frameDataJsonStr = JsonSerializer.Serialize(frameData.ToProto(), serializerOptions);
+        string audioDataJsonStr = JsonSerializer.Serialize(audioData.ToSocket(), serializerOptions);
         SendDataToAI(frameDataJsonStr);
         SendDataToAI(audioDataJsonStr);
-        SendDataToAI(screenDataJsonStr);
+    
+        if (this.screenData != null)
+        {
+            string screenDataJsonStr = JsonSerializer.Serialize(screenData.ToSocket(), serializerOptions);
+            SendDataToAI(screenDataJsonStr);
+        }
+        else
+        {
+            SendDataToAI(null);
+        }
         
         WaitingForAIInput();
     }
@@ -123,6 +141,12 @@ public class SocketPlayer : IPlayer
     {
         try
         {
+            if (jsonString == null)
+            {
+                this.socketClient.Send(new byte[] { 0, 0, 0, 0 });  // Null Data
+                return;
+            }
+
             byte[] byteData = Encoding.UTF8.GetBytes(jsonString);
             int dataLength = byteData.Length;
             byte[] lengthAsBytes = BitConverter.GetBytes(dataLength);
@@ -134,7 +158,7 @@ public class SocketPlayer : IPlayer
         }
         catch (Exception e)
         {
-            UnityEngine.Debug.LogException(e);
+            Debug.LogException(e);
             this.IsCancelled = true;
         }
     }

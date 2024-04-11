@@ -108,7 +108,7 @@ public class GrpcPlayer : IPlayer
 
     public void GetScreenData(ScreenData screenData)
     {
-        this.screenData = screenData;
+        this.screenData = screenData ?? new ScreenData();
     }
 
     public void GetAudioData(AudioData audioData)

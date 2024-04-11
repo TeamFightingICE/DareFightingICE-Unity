@@ -74,12 +74,12 @@ public class SocketServer : Singleton<SocketServer>, IServer
             Socket client = server.Accept();
             byte[] data = new byte[1];
             client.Receive(data);
-            if (data[0] == 0)
+            if (data[0] == 1)
             {
                 players[0].SetSocketClient(client);
                 Debug.Log("Player 1 connected");
             }
-            else if (data[0] == 1)
+            else if (data[0] == 0)
             {
                 players[1].SetSocketClient(client);
                 Debug.Log("Player 2 connected");
