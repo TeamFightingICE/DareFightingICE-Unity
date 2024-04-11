@@ -121,14 +121,11 @@ public class FlagSetting : Singleton<FlagSetting>
                 case "-f":
                     GameSetting.Instance.FrameLimit = int.Parse(args[++i]);
                     break;
-                case "--grpc-auto":
-                    grpc = true;
+                case "--enable-auto":
                     grpcAuto = true;
-                    socket = false;
                     break;
                 case "--use-socket":
                     grpc = false;
-                    grpcAuto = false;
                     socket = true;
                     break;
                 case "--blind-player":

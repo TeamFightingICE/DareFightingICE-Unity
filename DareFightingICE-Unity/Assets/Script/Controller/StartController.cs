@@ -109,10 +109,10 @@ public class StartController : MonoBehaviour
     {
         int n_controlType = Enum.GetValues(typeof(ControlType)).Length;
         int nextIndex = ((int)currentType + offset + n_controlType) % n_controlType;
-        if ((ControlType)nextIndex == ControlType.GRPC && !ServiceUtils.IsGrpcOrSocketOpen())
-        {
-            return GetNextControlType((ControlType)nextIndex, offset);
-        }
+        // if ((ControlType)nextIndex == ControlType.GRPC && !ServiceUtils.IsGrpcOrSocketOpen())
+        // {
+        //     return GetNextControlType((ControlType)nextIndex, offset);
+        // }
         return (ControlType)nextIndex;
     }
 

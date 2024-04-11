@@ -13,7 +13,7 @@ public class ControlTypeUtil
         {
             ControlType.KEYBOARD => "Keyboard",
             ControlType.LOCAL_AI => "AI",
-            ControlType.GRPC => "gRPC",
+            ControlType.GRPC => FlagSetting.Instance.grpc ? "gRPC" : FlagSetting.Instance.socket ? "Socket" : "Unknown",
             _ => "Unknown",
         };
     }

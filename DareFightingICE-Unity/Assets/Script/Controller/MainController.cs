@@ -17,6 +17,9 @@ public class MainController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        string[] args = Environment.GetCommandLineArgs();
+        FlagSetting.Instance.LoadArgs(args);
+
         FlagSetting.Instance.ResetData();
         MotionManager.Instance.LoadMotion(zenMotion, garnetMotion, ludMotion);
         MotionManager.Instance.LoadMotionData();
@@ -32,9 +35,6 @@ public class MainController : MonoBehaviour
             FlagSetting.Instance.grpc = false;
             FlagSetting.Instance.socket = true;
         }
-        
-        string[] args = Environment.GetCommandLineArgs();
-        FlagSetting.Instance.LoadArgs(args);
         
         if (FlagSetting.Instance.grpcAuto && ServiceUtils.IsGrpcOrSocketOpen())
         {
