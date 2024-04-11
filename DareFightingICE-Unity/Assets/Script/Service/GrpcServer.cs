@@ -10,12 +10,9 @@ public class GrpcServer : Singleton<GrpcServer>
     private Server server;
     private GrpcPlayer[] players;
     public bool IsOpen { get; set; }
-    public bool RunFlag { get; set; }
-    public GameData GameData { get; set; }
     public GrpcServer() {
         this.players = new GrpcPlayer[] { new GrpcPlayer(true), new GrpcPlayer(false) };
         this.IsOpen = false;
-        this.RunFlag = false;
     }
     public void StartGrpcServer()
     {

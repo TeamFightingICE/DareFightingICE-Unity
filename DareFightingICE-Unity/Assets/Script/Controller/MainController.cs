@@ -36,7 +36,7 @@ public class MainController : MonoBehaviour
         string[] args = Environment.GetCommandLineArgs();
         FlagSetting.Instance.LoadArgs(args);
         
-        if (FlagSetting.Instance.grpcAuto && GrpcServer.Instance.IsOpen)
+        if (FlagSetting.Instance.grpcAuto && ServiceUtils.IsGrpcOrSocketOpen())
         {
             SceneManager.LoadScene("GrpcAuto");
         }

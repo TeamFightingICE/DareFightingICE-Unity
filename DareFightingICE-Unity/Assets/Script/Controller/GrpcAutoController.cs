@@ -10,21 +10,21 @@ public class GrpcAutoController : MonoBehaviour
     {
         FlagSetting.Instance.grpcAuto = true;
         FlagSetting.Instance.grpcAutoReady = true;
-        GrpcServer.Instance.RunFlag = false;
+        DataManager.Instance.RunFlag = false;
         GameSetting.Instance.SetGameRepeatCount(1);
     }
 
     void Update()
     {
-        if (GrpcServer.Instance.RunFlag) {
-            GrpcServer.Instance.RunFlag = false;
+        if (DataManager.Instance.RunFlag) {
+            DataManager.Instance.RunFlag = false;
             FlagSetting.Instance.grpcAutoReady = false;
 
-            var gameData = GrpcServer.Instance.GameData;
+            var gameData = DataManager.Instance.GameData;
             var p1ControlType = GetControlTypeByAIName(gameData.AiNames[0]);
             var p2ControlType = GetControlTypeByAIName(gameData.AiNames[1]);
 
-            GameDataManager.Instance.SetGameData(GrpcServer.Instance.GameData);
+            GameDataManager.Instance.SetGameData(gameData);
             GameSetting.Instance.SetAIName(gameData.AiNames[0], gameData.AiNames[1]);
             GameSetting.Instance.SetCharacterControlType(p1ControlType, p2ControlType);
             GameSetting.Instance.SetGameRepeatCount(gameData.RepeatCount);

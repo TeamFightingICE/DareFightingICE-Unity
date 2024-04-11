@@ -75,10 +75,10 @@ public class FlagSetting : Singleton<FlagSetting>
     /**
      *  Enable gRPC
      */
-    public bool grpc = false;
+    public bool grpc = true;
     public bool grpcAuto = false;
     public bool grpcAutoReady = false;
-    public bool socket = true;
+    public bool socket = false;
     public bool loadArgs = false;
     
     public void ResetData()

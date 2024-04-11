@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Text.Json;
 
 public class SocketServer : Singleton<SocketServer>
 {
@@ -70,7 +71,7 @@ public class SocketServer : Singleton<SocketServer>
         while (true)
         {
             Socket client = server.Accept();
-            byte[] data = new byte[4];
+            byte[] data = new byte[1];
             client.Receive(data);
             if (data[0] == 0)
             {
@@ -82,6 +83,65 @@ public class SocketServer : Singleton<SocketServer>
                 players[1].SetSocketClient(client);
                 Debug.Log("Player 2 connected");
             }
+            else if (data[0] == 2)
+            {
+                OnRunGame(client);
+            }
         }
+    }
+    void OnRunGame(Socket client)
+    {
+        byte[] byteData = new byte[256];
+        client.Receive(byteData);
+        Debug.Log("Incoming runGame request");
+        string requestJsonStr = Encoding.UTF8.GetString(byteData);
+        SocketRunGameRequest request = JsonSerializer.Deserialize<SocketRunGameRequest>(
+            requestJsonStr[..requestJsonStr.IndexOf('\0')],
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            }
+        );
+
+        int statusCode;
+        string responseMessage;
+
+        if (!FlagSetting.Instance.grpcAuto)
+        {
+            statusCode = 1;  // Failed
+            responseMessage = "The game is not in gRPC auto mode.";
+        }
+        else if (!FlagSetting.Instance.grpcAutoReady)
+        {
+            statusCode = 1;  // Failed
+            responseMessage = "The game is not ready for running the game.";
+        }
+        else
+        {
+            DataManager.Instance.GameData = new GameData(
+                new string[] { request.Character_1, request.Character_2 },
+                new string[] { request.Player_1, request.Player_2 },
+                request.GameNumber
+            );
+            DataManager.Instance.RunFlag = true;
+
+            statusCode = 0;  // Success
+            responseMessage = "Success";
+        }
+
+        SocketRunGameResponse response = new SocketRunGameResponse
+        {
+            StatusCode = statusCode,
+            ResponseMessage = responseMessage
+        };
+        string responseJsonStr = JsonSerializer.Serialize(response, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        });
+        byte[] responseByteData = Encoding.UTF8.GetBytes(responseJsonStr);
+        client.Send(responseByteData);
+
+        client.Shutdown(SocketShutdown.Both);
+        client.Close();
     }
 }

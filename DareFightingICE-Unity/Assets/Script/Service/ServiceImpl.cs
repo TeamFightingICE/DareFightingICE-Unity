@@ -61,12 +61,12 @@ public class ServiceImpl : Service.ServiceBase
         }
         else
         {
-            server.GameData = new GameData(
+            DataManager.Instance.GameData = new GameData(
                 new string[] { request.Character1, request.Character2 },
                 new string[] { request.Player1, request.Player2 },
                 request.GameNumber
             );
-            server.RunFlag = true;
+            DataManager.Instance.RunFlag = true;
 
             statusCode = GrpcStatusCode.Success;
             responseMessage = "Success";

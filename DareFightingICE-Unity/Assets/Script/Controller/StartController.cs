@@ -96,10 +96,6 @@ public class StartController : MonoBehaviour
         SceneManager.LoadScene("StartingGamePlay");
     }
 
-    private bool IsGrpcOrSocketOpen() {
-        return FlagSetting.Instance.grpc && GrpcServer.Instance.IsOpen || FlagSetting.Instance.socket && SocketServer.Instance.IsOpen;
-    }
-
     private bool IsCancelled(bool isPlayer1) {
         if (FlagSetting.Instance.grpc && GrpcServer.Instance.IsOpen)
             return isPlayer1 ? GrpcServer.Instance.GetPlayer(true).IsCancelled : GrpcServer.Instance.GetPlayer(false).IsCancelled;
@@ -113,7 +109,7 @@ public class StartController : MonoBehaviour
     {
         int n_controlType = Enum.GetValues(typeof(ControlType)).Length;
         int nextIndex = ((int)currentType + offset + n_controlType) % n_controlType;
-        if ((ControlType)nextIndex == ControlType.GRPC && !IsGrpcOrSocketOpen())
+        if ((ControlType)nextIndex == ControlType.GRPC && !ServiceUtils.IsGrpcOrSocketOpen())
         {
             return GetNextControlType((ControlType)nextIndex, offset);
         }
