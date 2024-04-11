@@ -12,7 +12,33 @@ using UnityEngine;
 
 public class ServiceUtils
 {
-    public static bool IsGrpcOrSocketOpen() {
-        return FlagSetting.Instance.grpc && GrpcServer.Instance.IsOpen || FlagSetting.Instance.socket && SocketServer.Instance.IsOpen;
+    public static bool IsServerOpen() {
+        if (FlagSetting.Instance.grpc)
+        {
+            return GrpcServer.Instance.IsOpen;
+        }
+        else if (FlagSetting.Instance.socket)
+        {
+            return SocketServer.Instance.IsOpen;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static IServer GetServerInstance() {
+        if (FlagSetting.Instance.grpc)
+        {
+            return GrpcServer.Instance;
+        }
+        else if (FlagSetting.Instance.socket)
+        {
+            return SocketServer.Instance;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

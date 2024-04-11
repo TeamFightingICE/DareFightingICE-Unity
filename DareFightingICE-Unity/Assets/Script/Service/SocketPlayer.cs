@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class SocketPlayer : IAIInterface
+public class SocketPlayer : IPlayer
 {
     public bool IsCancelled { get; set; }
     public bool PlayerNumber { get; set; }

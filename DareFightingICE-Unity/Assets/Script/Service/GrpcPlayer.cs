@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using UnityEngine;
 
-public class GrpcPlayer : IAIInterface
+public class GrpcPlayer : IPlayer
 {
     public UniqueId PlayerUUID {  get; set; }
     public bool IsCancelled { get; set; }

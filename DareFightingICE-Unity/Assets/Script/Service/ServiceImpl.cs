@@ -11,7 +11,7 @@ using UnityEngine.AI;
 
 public class ServiceImpl : Service.ServiceBase
 {
-    private GrpcServer server;
+    private readonly GrpcServer server;
     public ServiceImpl()
     {
         this.server = GrpcServer.Instance;
@@ -19,7 +19,7 @@ public class ServiceImpl : Service.ServiceBase
     public override Task<InitializeResponse> Initialize(InitializeRequest request, ServerCallContext context)
     {
         Debug.Log("Incoming initialize request");
-        GrpcPlayer player = server.GetPlayer(request.PlayerNumber);
+        GrpcPlayer player = (GrpcPlayer)server.GetPlayer(request.PlayerNumber);
         player.InitializeRPC(request);
         InitializeResponse response = new InitializeResponse
         {
@@ -31,13 +31,13 @@ public class ServiceImpl : Service.ServiceBase
     public override async Task Participate(ParticipateRequest request, IServerStreamWriter<PlayerGameState> responseStream, ServerCallContext context)
     {
         Debug.Log("Incoming participate request");
-        GrpcPlayer player = server.GetPlayerWithUniqueId(request.PlayerUuid);
+        GrpcPlayer player = (GrpcPlayer)server.GetPlayerWithUniqueId(request.PlayerUuid);
         await player.ParticipateRPC(responseStream, context);    
     }
 
     public override Task<Empty> Input(PlayerInput request, ServerCallContext context)
     {
-        GrpcPlayer player = server.GetPlayerWithUniqueId(request.PlayerUuid);
+        GrpcPlayer player = (GrpcPlayer)server.GetPlayerWithUniqueId(request.PlayerUuid);
         player.OnInput(request);
         return Task.FromResult(new Empty());
     }

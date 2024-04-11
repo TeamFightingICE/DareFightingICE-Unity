@@ -23,7 +23,7 @@ public class LaunchController : MonoBehaviour
         
     }
     void Update() {
-        grpcAutoBtn.interactable = GrpcServer.Instance.IsOpen;
+        grpcAutoBtn.interactable = ServiceUtils.IsServerOpen();
     }
 
     public void Launch()
@@ -32,7 +32,7 @@ public class LaunchController : MonoBehaviour
     }
 
     public void GrpcAuto() {
-        if (!GrpcServer.Instance.IsOpen) return;
+        if (!ServiceUtils.IsServerOpen()) return;
 
         SceneManager.LoadScene("GrpcAuto");
     }

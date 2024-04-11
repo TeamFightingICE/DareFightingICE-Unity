@@ -39,27 +39,13 @@ public class StartController : MonoBehaviour
 
     public bool CheckCondition()
     {
-        if (p1CurrentControl == ControlType.GRPC)
+        if (p1CurrentControl == ControlType.GRPC && ServiceUtils.GetServerInstance().GetPlayer(true).IsCancelled)
         {
-            if (FlagSetting.Instance.grpc && GrpcServer.Instance.GetPlayer(true).IsCancelled)
-            {
-                return false;
-            }
-            else if (FlagSetting.Instance.socket && SocketServer.Instance.GetPlayer(true).IsCancelled)
-            {
-                return false;
-            }
+            return false;
         }
-        else if (p2CurrentControl == ControlType.GRPC)
+        else if (p2CurrentControl == ControlType.GRPC && ServiceUtils.GetServerInstance().GetPlayer(false).IsCancelled)
         {
-            if (FlagSetting.Instance.grpc && GrpcServer.Instance.GetPlayer(false).IsCancelled)
-            {
-                return false;
-            }
-            else if (FlagSetting.Instance.socket && SocketServer.Instance.GetPlayer(false).IsCancelled)
-            {
-                return false;
-            }
+            return false;
         }
         return true;
     }
@@ -96,11 +82,11 @@ public class StartController : MonoBehaviour
         SceneManager.LoadScene("StartingGamePlay");
     }
 
-    private bool IsCancelled(bool isPlayer1) {
-        if (FlagSetting.Instance.grpc && GrpcServer.Instance.IsOpen)
-            return isPlayer1 ? GrpcServer.Instance.GetPlayer(true).IsCancelled : GrpcServer.Instance.GetPlayer(false).IsCancelled;
-        else if (FlagSetting.Instance.socket && SocketServer.Instance.IsOpen)
-            return isPlayer1 ? SocketServer.Instance.GetPlayer(true).IsCancelled : SocketServer.Instance.GetPlayer(false).IsCancelled;
+    private bool IsCancelled(bool isPlayerOne) {
+        if (ServiceUtils.IsServerOpen() && ServiceUtils.GetServerInstance().GetPlayer(isPlayerOne) != null)
+        {
+            return ServiceUtils.GetServerInstance().GetPlayer(isPlayerOne).IsCancelled;
+        }
         return true;
     }
 
@@ -109,10 +95,6 @@ public class StartController : MonoBehaviour
     {
         int n_controlType = Enum.GetValues(typeof(ControlType)).Length;
         int nextIndex = ((int)currentType + offset + n_controlType) % n_controlType;
-        // if ((ControlType)nextIndex == ControlType.GRPC && !ServiceUtils.IsGrpcOrSocketOpen())
-        // {
-        //     return GetNextControlType((ControlType)nextIndex, offset);
-        // }
         return (ControlType)nextIndex;
     }
 

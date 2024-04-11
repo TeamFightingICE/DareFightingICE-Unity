@@ -27,7 +27,7 @@ public class MainController : MonoBehaviour
         Platform runningPlatform = PlatformUtil.GetRunningPlatform();
         if (FlagSetting.Instance.grpc && (runningPlatform == Platform.Windows || runningPlatform == Platform.Linux))
         {
-            GrpcServer.Instance.StartGrpcServer();
+            GrpcServer.Instance.StartServer();
         }
         else
         {
@@ -36,7 +36,7 @@ public class MainController : MonoBehaviour
             FlagSetting.Instance.socket = true;
         }
         
-        if (FlagSetting.Instance.grpcAuto && ServiceUtils.IsGrpcOrSocketOpen())
+        if (FlagSetting.Instance.grpcAuto && ServiceUtils.IsServerOpen())
         {
             SceneManager.LoadScene("GrpcAuto");
         }

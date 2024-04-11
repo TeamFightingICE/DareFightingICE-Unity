@@ -9,16 +9,24 @@ using UnityEngine;
 using System.Linq;
 using System.Text.Json;
 using System.Data;
+using System.Runtime.Remoting.Channels;
 
-public class SocketServer : Singleton<SocketServer>
+public class SocketServer : Singleton<SocketServer>, IServer
 {
     private Socket server;
-    private SocketPlayer[] players;
+    private readonly SocketPlayer[] players;
     private Thread processingThread;
     public bool IsOpen { get; set; }
     public SocketServer() {
         this.players = new SocketPlayer[] { new(true), new(false) };
         this.IsOpen = false;
+    }
+    void OnApplicationQuit() {
+        if (this.IsOpen) {
+            StopServer();
+            this.IsOpen = false;
+            Debug.Log("Socket server stopped");
+        }
     }
     public void StartServer() {
         if (this.server == null)
@@ -41,7 +49,7 @@ public class SocketServer : Singleton<SocketServer>
             }
         }
     }
-    public void StopSocketServer()
+    public void StopServer()
     {
         if (server != null)
         {
@@ -55,14 +63,7 @@ public class SocketServer : Singleton<SocketServer>
             this.IsOpen = false;
         }
     }
-    void OnApplicationQuit() {
-        if (this.IsOpen) {
-            StopSocketServer();
-            this.IsOpen = false;
-            Debug.Log("Socket server stopped");
-        }
-    }
-    public SocketPlayer GetPlayer(bool playerNumber)
+    public IPlayer GetPlayer(bool playerNumber)
     {
         return this.players[playerNumber ? 0 : 1];
     }

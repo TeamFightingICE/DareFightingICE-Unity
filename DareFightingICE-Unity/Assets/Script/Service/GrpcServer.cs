@@ -5,16 +5,23 @@ using UnityEngine;
 using Grpc.Core;
 using DareFightingICE.Grpc.Proto;
 
-public class GrpcServer : Singleton<GrpcServer>
+public class GrpcServer : Singleton<GrpcServer>, IServer
 {
     private Server server;
-    private GrpcPlayer[] players;
+    private readonly GrpcPlayer[] players;
     public bool IsOpen { get; set; }
     public GrpcServer() {
-        this.players = new GrpcPlayer[] { new GrpcPlayer(true), new GrpcPlayer(false) };
+        this.players = new GrpcPlayer[] { new(true), new(false) };
         this.IsOpen = false;
     }
-    public void StartGrpcServer()
+    void OnApplicationQuit() {
+        if (this.IsOpen) {
+            StopServer();
+            this.IsOpen = false;
+            Debug.Log("gRPC server stopped");
+        }
+    }
+    public void StartServer()
     {
         if (this.server == null) {
             int port = FlagSetting.Instance.port;
@@ -33,23 +40,16 @@ public class GrpcServer : Singleton<GrpcServer>
             }
         }
     }
-    public void StopGrpcServer()
+    public void StopServer()
     {
         this.IsOpen = false;
         server?.ShutdownAsync().Wait();
     }
-    void OnApplicationQuit() {
-        if (this.IsOpen) {
-            StopGrpcServer();
-            this.IsOpen = false;
-            Debug.Log("gRPC server stopped");
-        }
-    }
-    public GrpcPlayer GetPlayer(bool playerNumber)
+    public IPlayer GetPlayer(bool playerNumber)
     {
         return this.players[playerNumber ? 0 : 1];
     }
-    public GrpcPlayer GetPlayerWithUniqueId(string UUID)
+    public IPlayer GetPlayerWithUniqueId(string UUID)
     {
         for (int i = 0; i < this.players.Length; i++)
         {
