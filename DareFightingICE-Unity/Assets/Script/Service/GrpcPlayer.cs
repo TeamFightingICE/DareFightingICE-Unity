@@ -36,10 +36,6 @@ public class GrpcPlayer : IPlayer
         this.notifyCompleted = false;
 
         this.isControl = false;
-        this.frameData = new FrameData();
-        this.audioData = new AudioData();
-        this.screenData = new ScreenData();
-        this.nonDelayFrameData = new FrameData();
         this.input = new Key();
     }
 
@@ -108,7 +104,7 @@ public class GrpcPlayer : IPlayer
 
     public void GetScreenData(ScreenData screenData)
     {
-        this.screenData = screenData ?? new ScreenData();
+        this.screenData = screenData;
     }
 
     public void GetAudioData(AudioData audioData)
@@ -126,9 +122,18 @@ public class GrpcPlayer : IPlayer
             IsControl = isControl,
             FrameData = frameData.ToProto(),
             AudioData = audioData.ToProto(),
-            ScreenData = screenData.ToProto(),
-            NonDelayFrameData = nonDelayFrameData.ToProto(),
         };
+
+        if (screenData != null)
+        {
+            newState.ScreenData = screenData.ToProto();
+        }
+
+        if (nonDelayFrameData != null)
+        {
+            newState.NonDelayFrameData = nonDelayFrameData.ToProto();
+        }
+
         this.responseStream.WriteAsync(newState).Wait();
     }
 
