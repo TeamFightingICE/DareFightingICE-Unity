@@ -84,13 +84,9 @@ public class SocketServer : Singleton<SocketServer>, IServer
             client.Receive(data);
             if (data[0] == 1)
             {
-                players[0].SetSocketClient(client);
-                Debug.Log("Player 1 connected");
-            }
-            else if (data[0] == 0)
-            {
-                players[1].SetSocketClient(client);
-                Debug.Log("Player 2 connected");
+                byte[] byteData = RecvData(client);
+                InitializeRequest request = InitializeRequest.Parser.ParseFrom(byteData);
+                players[request.PlayerNumber ? 0 : 1].InitializeSocket(client, request);
             }
             else if (data[0] == 2)
             {

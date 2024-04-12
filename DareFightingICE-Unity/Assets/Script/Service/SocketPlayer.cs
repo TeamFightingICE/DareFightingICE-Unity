@@ -35,14 +35,13 @@ public class SocketPlayer : IPlayer
         this.input = new Key();
     }
     
-    public void SetSocketClient(Socket socket)
+    public void InitializeSocket(Socket socket, InitializeRequest request)
     {
         this.socketClient = socket;
         this.IsCancelled = false;
 
-        byte[] blindData = new byte[1];
-        this.socketClient.Receive(blindData);
-        this.blind = blindData[0] == 1;
+        this.PlayerName = request.PlayerName;
+        this.blind = request.IsBlind;
     }
 
     public bool IsGameStarted
