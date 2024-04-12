@@ -4,7 +4,8 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using Google.Protobuf;
+using DareFightingICE.Grpc.Proto;
 using UnityEngine;
 
 public class SocketPlayer : IPlayer
@@ -22,7 +23,6 @@ public class SocketPlayer : IPlayer
     private Key input;
     private bool notifyCompleted;
     private Socket socketClient;
-    private JsonSerializerOptions serializerOptions;
 
     public SocketPlayer(bool playerNumber)
     {
@@ -33,11 +33,6 @@ public class SocketPlayer : IPlayer
 
         this.isControl = false;
         this.input = new Key();
-
-        this.serializerOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        };
     }
     
     public void SetSocketClient(Socket socket)
@@ -58,16 +53,6 @@ public class SocketPlayer : IPlayer
     public bool IsBlind()
     {
         return blind;
-    }
-
-    public void Initialize(GameData gameData, bool playerNumber)
-    {
-        if (this.IsCancelled) return;
-
-        string gameDataJsonStr = JsonSerializer.Serialize(gameData.ToProto(), serializerOptions);
-        this.socketClient.Send(new byte[] { 1 });  // 1: Initialize
-        SendDataToAI(gameDataJsonStr);  // GameData
-        this.socketClient.Send(new byte[] { playerNumber ? (byte)1 : (byte)0 });  // PlayerNumber
     }
 
     public void GetNonDelayFrameData(FrameData frameData)
@@ -91,81 +76,68 @@ public class SocketPlayer : IPlayer
         this.audioData = audioData;
     }
 
-    private void WaitingForAIInput()
+    public Key Input()
     {
-        byte[] headerData = new byte[4];
-        this.socketClient.Receive(headerData);
-        int dataLength = BitConverter.ToInt32(headerData, 0);
-        byte[] byteData = new byte[dataLength];
-        this.socketClient.Receive(byteData);
-        string keyJsonStr = Encoding.UTF8.GetString(byteData);
-        this.input = JsonSerializer.Deserialize<Key>(keyJsonStr);
+        return this.input;
+    }
+
+    public void Initialize(GameData gameData, bool playerNumber)
+    {
+        if (this.IsCancelled) return;
+
+        var newState = new PlayerGameState
+        {
+            StateFlag = GrpcFlag.Initialize,
+            GameData = gameData.ToProto()
+        };
+
+        this.socketClient.Send(new byte[] { 1 });  // 1: Processing
+        SocketServer.SendData(this.socketClient, newState.ToByteArray());
     }
 
     public void Processing()
     {
         if (!this.IsGameStarted || this.IsCancelled) return;
 
-        this.socketClient.Send(new byte[] { 2 });  // 2: Processing
-        this.socketClient.Send(new byte[] { isControl ? (byte)1 : (byte)0 });  // isControl
-        
-        if (this.nonDelayFrameData != null)
+        var newState = new PlayerGameState
         {
-            string nonDelayFrameDataJsonStr = JsonSerializer.Serialize(this.nonDelayFrameData.ToProto(), serializerOptions);
-            SendDataToAI(nonDelayFrameDataJsonStr);
-        }
-        else
+            StateFlag = GrpcFlag.Processing,
+            IsControl = isControl,
+            FrameData = frameData.ToProto(),
+            AudioData = audioData.ToProto(),
+        };
+
+        if (screenData != null)
         {
-            SendDataToAI(null);
+            newState.ScreenData = screenData.ToProto();
         }
 
-        string frameDataJsonStr = JsonSerializer.Serialize(frameData.ToProto(), serializerOptions);
-        string audioDataJsonStr = JsonSerializer.Serialize(audioData.ToSocket(), serializerOptions);
-        SendDataToAI(frameDataJsonStr);
-        SendDataToAI(audioDataJsonStr);
-    
-        if (this.screenData != null)
+        if (nonDelayFrameData != null)
         {
-            string screenDataJsonStr = JsonSerializer.Serialize(screenData.ToSocket(), serializerOptions);
-            SendDataToAI(screenDataJsonStr);
+            newState.NonDelayFrameData = nonDelayFrameData.ToProto();
         }
-        else
-        {
-            SendDataToAI(null);
-        }
+
+        this.socketClient.Send(new byte[] { 1 });  // 1: Processing
+        SocketServer.SendData(this.socketClient, newState.ToByteArray());
         
         WaitingForAIInput();
     }
-
-    public void SendDataToAI(string jsonString)
+    
+    private void WaitingForAIInput()
     {
-        try
+        byte[] byteData = SocketServer.RecvData(this.socketClient);
+        GrpcKey inputKey = GrpcKey.Parser.ParseFrom(byteData);
+        
+        this.input = new Key
         {
-            if (jsonString == null)
-            {
-                this.socketClient.Send(new byte[] { 0, 0, 0, 0 });  // Null Data
-                return;
-            }
-
-            byte[] byteData = Encoding.UTF8.GetBytes(jsonString);
-            int dataLength = byteData.Length;
-            byte[] lengthAsBytes = BitConverter.GetBytes(dataLength);
-            byte[] fixedLengthAsBytes = new byte[4];
-            Array.Copy(lengthAsBytes, fixedLengthAsBytes, lengthAsBytes.Length);
-
-            this.socketClient.Send(fixedLengthAsBytes);
-            this.socketClient.Send(byteData);
-        }
-        catch (Exception e)
-        {
-            Debug.LogException(e);
-            this.IsCancelled = true;
-        }
-    }
-
-    public Key Input()
-    {
-        return this.input;
+            A = inputKey.A,
+            B = inputKey.B,
+            C = inputKey.C,
+            U = inputKey.U,
+            D = inputKey.D,
+            L = inputKey.L,
+            R = inputKey.R,
+        };
     }
 
     public void RoundEnd(RoundResult roundResult)
@@ -173,11 +145,16 @@ public class SocketPlayer : IPlayer
         if (this.IsCancelled) return;
 
         bool isGameEnd = roundResult.CurrentRound >= GameSetting.Instance.RoundLimit;
+        var newState = new PlayerGameState
+        {
+            StateFlag = isGameEnd ? GrpcFlag.GameEnd : GrpcFlag.RoundEnd,
+            RoundResult = roundResult.ToProto(),
+        };
 
-        string roundResultJsonStr = JsonSerializer.Serialize(roundResult.ToProto(), serializerOptions);
-        this.socketClient.Send(new byte[] { isGameEnd ? (byte)4 : (byte)3 });  // 3: RoundEnd, 4: GameEnd
-        SendDataToAI(roundResultJsonStr);
+        this.socketClient.Send(new byte[] { 1 });  // 1: Processing
+        SocketServer.SendData(this.socketClient, newState.ToByteArray());
     }
+
     public void Close()
     {
         if (this.socketClient != null) {

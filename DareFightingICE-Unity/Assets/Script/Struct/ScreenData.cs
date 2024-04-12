@@ -26,12 +26,4 @@ public class ScreenData
             DisplayBytes = ByteString.CopyFrom(DisplayBytes),
         };
     }
-    
-    public SocketScreenData ToSocket()
-    {
-        return new SocketScreenData
-        {
-            DisplayBytestring = Convert.ToBase64String(DisplayBytes),
-        };
-    }
 }

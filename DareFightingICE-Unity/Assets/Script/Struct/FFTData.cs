@@ -26,12 +26,4 @@ public class FFTData
             ImaginaryDataAsBytes = ByteString.CopyFrom(ImagDataAsBytes)
         };
     }
-
-    public SocketFFTData ToSocket()
-    {
-        return new SocketFFTData {
-            RealDataBytestring = Convert.ToBase64String(RealDataAsBytes),
-            ImaginaryDataBytestring = Convert.ToBase64String(ImagDataAsBytes)
-        };
-    }
 }

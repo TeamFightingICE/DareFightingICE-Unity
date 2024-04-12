@@ -79,18 +79,6 @@ public class GrpcPlayer : IPlayer
         return blind;
     }
 
-    public void Initialize(GameData gameData, bool playerNumber)
-    {
-        if (this.IsCancelled) return;
-
-        var newState = new PlayerGameState
-        {
-            StateFlag = GrpcFlag.Initialize,
-            GameData = gameData.ToProto()
-        };
-        this.responseStream.WriteAsync(newState).Wait();
-    }
-
     public void GetNonDelayFrameData(FrameData frameData)
     {
         this.nonDelayFrameData = frameData;
@@ -110,6 +98,23 @@ public class GrpcPlayer : IPlayer
     public void GetAudioData(AudioData audioData)
     {
         this.audioData = audioData;
+    }
+
+    public Key Input()
+    {
+        return this.input;
+    }
+
+    public void Initialize(GameData gameData, bool playerNumber)
+    {
+        if (this.IsCancelled) return;
+
+        var newState = new PlayerGameState
+        {
+            StateFlag = GrpcFlag.Initialize,
+            GameData = gameData.ToProto()
+        };
+        this.responseStream.WriteAsync(newState).Wait();
     }
 
     public void Processing()
@@ -135,11 +140,6 @@ public class GrpcPlayer : IPlayer
         }
 
         this.responseStream.WriteAsync(newState).Wait();
-    }
-
-    public Key Input()
-    {
-        return this.input;
     }
 
     public void RoundEnd(RoundResult roundResult)

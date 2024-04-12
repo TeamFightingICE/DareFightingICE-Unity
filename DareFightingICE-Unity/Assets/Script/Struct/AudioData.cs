@@ -42,13 +42,4 @@ public class AudioData
             SpectrogramDataAsBytes = ByteString.CopyFrom(SpectrogramDataAsBytes)
         };
     }
-
-    public SocketAudioData ToSocket()
-    {
-        return new SocketAudioData {
-            RawDataBytestring = Convert.ToBase64String(RawDataAsBytes),
-            FftData = new List<SocketFFTData>{ FftData[0].ToSocket(), FftData[1].ToSocket() },
-            SpectrogramDataBytestring = Convert.ToBase64String(SpectrogramDataAsBytes)
-        };
-    }
 }
