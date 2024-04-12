@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,10 +11,47 @@ public class AIController : MonoBehaviour
     private bool isPlayerOne;
     private IAIInterface ai;
     private LinkedList<FrameData> frameDatas;
+    private bool triggerProcess = false;
+    private Thread processingThread;
     
     public void Awake()
     {
         this.frameDatas = new LinkedList<FrameData>();
+        this.processingThread = new Thread(MainProcess);
+        this.processingThread.Start();
+    }
+    void OnApplicationQuit() {
+        this.processingThread?.Abort();
+    }
+    void MainProcess()
+    {
+        while (true)
+        {
+            if (triggerProcess)
+            {
+                triggerProcess = false;
+
+                SetFrameData(FrameDataManager.Instance.GetFrameData());
+                SetAudioData(AudioDataManager.Instance.GetAudioData());
+                SetScreenData(ScreenDataManager.Instance.GetScreenData());
+
+                FrameData frameData;
+                if (frameDatas.Count > 0) {
+                    frameData = frameDatas.First.Value;
+                    frameDatas.RemoveFirst();
+                } else {
+                    frameData = new FrameData();
+                }
+
+                bool isControl = frameDatas.Last.Value.GetCharacter(isPlayerOne).Control;
+                if (GameSetting.Instance.IsBlind[isPlayerOne ? 0 : 1] || this.ai.IsBlind()) {
+                    frameData.RemoveVisualData();
+                }
+                this.ai.GetInformation(new FrameData(frameData), isControl);
+
+                Processing();
+            }
+        }
     }
 
     private IAIInterface GetGrpcAI(bool isPlayerOne)
@@ -101,25 +139,7 @@ public class AIController : MonoBehaviour
     
     void Update()
     {
-        SetFrameData(FrameDataManager.Instance.GetFrameData());
-        SetAudioData(AudioDataManager.Instance.GetAudioData());
-        SetScreenData(ScreenDataManager.Instance.GetScreenData());
-
-        FrameData frameData;
-        if (frameDatas.Count > 0) {
-            frameData = frameDatas.First.Value;
-            frameDatas.RemoveFirst();
-        } else {
-            frameData = new FrameData();
-        }
-
-        bool isControl = frameDatas.Last.Value.GetCharacter(isPlayerOne).Control;
-        if (GameSetting.Instance.IsBlind[isPlayerOne ? 0 : 1] || this.ai.IsBlind()) {
-            frameData.RemoveVisualData();
-        }
-        this.ai.GetInformation(new FrameData(frameData), isControl);
-
-        Processing();
+        triggerProcess = true;
     }
 
     public void Close()
