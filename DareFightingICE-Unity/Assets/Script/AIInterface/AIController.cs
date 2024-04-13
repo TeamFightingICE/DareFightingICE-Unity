@@ -11,6 +11,7 @@ public class AIController : MonoBehaviour
     private bool isPlayerOne;
     private IAIInterface ai;
     private LinkedList<FrameData> frameDatas;
+    public bool isRoundEnd = false;
     private bool triggerProcess = false;
     private Thread processingThread;
     
@@ -27,7 +28,7 @@ public class AIController : MonoBehaviour
     {
         while (true)
         {
-            if (triggerProcess)
+            if (triggerProcess && !isRoundEnd)
             {
                 triggerProcess = false;
 
@@ -80,6 +81,7 @@ public class AIController : MonoBehaviour
             _ => new Sandbox(),
         };
         this.ai.Initialize(new GameData(gameData), isPlayerOne);
+        InitRound();
     }
     public void InitRound() {
         this.Clear();
@@ -135,6 +137,7 @@ public class AIController : MonoBehaviour
     public void RoundEnd(RoundResult roundResult)
     {
         this.ai.RoundEnd(roundResult);
+        InitRound();
     }
     
     void Update()

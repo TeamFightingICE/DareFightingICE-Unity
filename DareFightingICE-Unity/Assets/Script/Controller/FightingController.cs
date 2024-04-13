@@ -44,7 +44,7 @@ public class FightingController : MonoBehaviour
     private int currentRound;
     private InputManager inputManager;
     private Texture2D ScreenDataTexture;
-    private bool[] heartBeatFlag = { false, false };
+    private readonly bool[] heartBeatFlag = { false, false };
 
     void Start()
     {
@@ -55,10 +55,6 @@ public class FightingController : MonoBehaviour
             _aiControllers[0].Initialize(GameDataManager.Instance.GameData, true);
             _aiControllers[1].Initialize(GameDataManager.Instance.GameData, false);
         }
-        _aiControllers[0].InitRound();
-        _aiControllers[1].InitRound();
-
-        Thread.Sleep(1000); // wait for 1 second to let the AI initialize
     }
 
     private void SetupScene()
@@ -118,15 +114,13 @@ public class FightingController : MonoBehaviour
         _controllers[0].IsFront = true;
         _controllers[0].Hp = GameSetting.Instance.P1HP;
         _controllers[0].Energy = 0;
-        character[0].transform.position = spawnP1.transform.position;
-        character[0].transform.rotation = spawnP1.transform.rotation;
+        character[0].transform.SetPositionAndRotation(spawnP1.transform.position, spawnP1.transform.rotation);
         heartBeatFlag[0] = false;
         
         _controllers[1].IsFront = false;
         _controllers[1].Hp = GameSetting.Instance.P2HP;
         _controllers[1].Energy = 0;
-        character[1].transform.position = spawnP2.transform.position;
-        character[1].transform.rotation = spawnP2.transform.rotation;
+        character[1].transform.SetPositionAndRotation(spawnP2.transform.position, spawnP2.transform.rotation);
         heartBeatFlag[1] = false;
 
         Vector3 scaleP1 = character[0].transform.localScale;
@@ -140,6 +134,8 @@ public class FightingController : MonoBehaviour
         currentFrameNumber = 0;
         currentRound++;
         _display.currentRound = currentRound;
+        _aiControllers[0].isRoundEnd = false;
+        _aiControllers[1].isRoundEnd = false;
         //SimFighitng.ResetRound();
     }
     // Update is called once per frame
@@ -206,7 +202,8 @@ public class FightingController : MonoBehaviour
 
         isEnd = true;
         currentFrameNumber = GameSetting.Instance.FrameLimit;
-        Thread.Sleep(20);
+        _aiControllers[0].isRoundEnd = true;
+        _aiControllers[1].isRoundEnd = true;
 
         RoundResult result = new RoundResult
         {
