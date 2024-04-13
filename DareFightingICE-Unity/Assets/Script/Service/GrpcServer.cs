@@ -27,7 +27,7 @@ public class GrpcServer : Singleton<GrpcServer>, IServer
             int port = FlagSetting.Instance.port;
             server = new Server
             {
-                Services = { Service.BindService(new ServiceImpl()) },
+                Services = { Service.BindService(new GrpcServiceImpl()) },
                 Ports = { new ServerPort("127.0.0.1", port, ServerCredentials.Insecure) }
             };
             

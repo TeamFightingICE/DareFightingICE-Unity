@@ -44,6 +44,8 @@ public class GrpcPlayer : IPlayer
         this.PlayerName = request.PlayerName;
         this.blind = request.IsBlind;
         this.IsCancelled = false;
+        
+        Debug.Log("SocketServer: " + this.PlayerName + " initialized as Player " + (this.PlayerNumber ? "1" : "2"));
     }
 
     public async Task ParticipateRPC(IServerStreamWriter<PlayerGameState> responseStream, ServerCallContext context) {
@@ -65,7 +67,7 @@ public class GrpcPlayer : IPlayer
     {
         if (this.IsGameStarted)
         {
-            this.input = GrpcUtil.FromGrpcKey(request.InputKey);
+            this.input = ProtobufUtil.FromProtoKey(request.InputKey);
         }
     }
 

@@ -9,16 +9,15 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using UnityEngine.AI;
 
-public class ServiceImpl : Service.ServiceBase
+public class GrpcServiceImpl : Service.ServiceBase
 {
     private readonly GrpcServer server;
-    public ServiceImpl()
+    public GrpcServiceImpl()
     {
         this.server = GrpcServer.Instance;
     }
     public override Task<InitializeResponse> Initialize(InitializeRequest request, ServerCallContext context)
     {
-        Debug.Log("Incoming initialize request");
         GrpcPlayer player = (GrpcPlayer)server.GetPlayer(request.PlayerNumber);
         player.InitializeRPC(request);
         InitializeResponse response = new InitializeResponse
@@ -30,7 +29,6 @@ public class ServiceImpl : Service.ServiceBase
 
     public override async Task Participate(ParticipateRequest request, IServerStreamWriter<PlayerGameState> responseStream, ServerCallContext context)
     {
-        Debug.Log("Incoming participate request");
         GrpcPlayer player = (GrpcPlayer)server.GetPlayerWithUniqueId(request.PlayerUuid);
         await player.ParticipateRPC(responseStream, context);    
     }
@@ -44,7 +42,7 @@ public class ServiceImpl : Service.ServiceBase
 
     public override Task<RunGameResponse> RunGame(RunGameRequest request, ServerCallContext context)
     {
-        Debug.Log("Incoming runGame request");
+        Debug.Log("GrpcServer: Incoming runGame request");
 
         GrpcStatusCode statusCode;
         string responseMessage;
@@ -52,7 +50,7 @@ public class ServiceImpl : Service.ServiceBase
         if (!FlagSetting.Instance.autoMode)
         {
             statusCode = GrpcStatusCode.Failed;
-            responseMessage = "The game is not in gRPC auto mode.";
+            responseMessage = "The game does not enable auto mode.";
         }
         else if (!FlagSetting.Instance.autoModeReady)
         {

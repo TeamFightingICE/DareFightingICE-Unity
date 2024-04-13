@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-public class GrpcUtil
+public class ProtobufUtil
 {
-    public static Key FromGrpcKey(GrpcKey grpcKey)
+    public static Key FromProtoKey(GrpcKey grpcKey)
     {
         return new Key
         {

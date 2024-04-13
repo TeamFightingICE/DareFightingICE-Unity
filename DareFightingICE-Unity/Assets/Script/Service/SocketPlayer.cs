@@ -43,6 +43,7 @@ public class SocketPlayer : IPlayer
 
         this.PlayerName = request.PlayerName;
         this.blind = request.IsBlind;
+        Debug.Log("SocketServer: " + this.PlayerName + " initialized as Player " + (this.PlayerNumber ? "1" : "2"));
     }
 
     public bool IsGameStarted
@@ -128,7 +129,7 @@ public class SocketPlayer : IPlayer
         byte[] byteData = SocketServer.RecvData(this.socketClient);
         GrpcKey inputKey = GrpcKey.Parser.ParseFrom(byteData);
         
-        this.input = GrpcUtil.FromGrpcKey(inputKey);
+        this.input = ProtobufUtil.FromProtoKey(inputKey);
     }
 
     public void RoundEnd(RoundResult roundResult)
