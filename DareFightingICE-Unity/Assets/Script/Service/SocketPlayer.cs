@@ -127,16 +127,7 @@ public class SocketPlayer : IPlayer
         byte[] byteData = SocketServer.RecvData(this.socketClient);
         GrpcKey inputKey = GrpcKey.Parser.ParseFrom(byteData);
         
-        this.input = new Key
-        {
-            A = inputKey.A,
-            B = inputKey.B,
-            C = inputKey.C,
-            U = inputKey.U,
-            D = inputKey.D,
-            L = inputKey.L,
-            R = inputKey.R,
-        };
+        this.input = GrpcUtil.FromGrpcKey(inputKey);
     }
 
     public void RoundEnd(RoundResult roundResult)
