@@ -778,16 +778,9 @@ public class ZenCharacterController : MonoBehaviour
             {
                 if(!isGrounded) 
                 {
-                    if(IsFront) 
-                    {
-                        Vector2 movement = new Vector2(-1 * speed, rb.velocity.y);
-                        rb.velocity = movement;
-                    }
-                    else 
-                    {
-                        Vector2 movement = new Vector2(-1 * speed, rb.velocity.y);
-                        rb.velocity = movement;
-                    }
+                    int signed = IsFront ? -1 : 1;
+                    Vector2 movement = new(signed * speed, rb.velocity.y);
+                    rb.velocity = movement;
                 }
             }
         }
