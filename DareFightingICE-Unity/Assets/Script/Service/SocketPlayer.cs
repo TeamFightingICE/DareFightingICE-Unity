@@ -7,6 +7,7 @@ using System.Text.Json;
 using Google.Protobuf;
 using DareFightingICE.Grpc.Proto;
 using UnityEngine;
+using System.Threading;
 
 public class SocketPlayer : IPlayer
 {
@@ -119,7 +120,7 @@ public class SocketPlayer : IPlayer
         this.socketClient.Send(new byte[] { 1 });  // 1: Processing
         SocketServer.SendData(this.socketClient, newState.ToByteArray());
         
-        WaitingForAIInput();
+        new Thread(WaitingForAIInput).Start();
     }
     
     private void WaitingForAIInput()
