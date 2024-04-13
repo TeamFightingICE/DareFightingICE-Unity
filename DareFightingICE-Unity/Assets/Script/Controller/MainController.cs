@@ -24,19 +24,20 @@ public class MainController : MonoBehaviour
         MotionManager.Instance.LoadMotion(zenMotion, garnetMotion, ludMotion);
         MotionManager.Instance.LoadMotionData();
         
-        Platform runningPlatform = PlatformUtil.GetRunningPlatform();
-        if (FlagSetting.Instance.grpc && (runningPlatform == Platform.Windows || runningPlatform == Platform.Linux))
+        if (FlagSetting.Instance.useSocket)
+        {
+            SocketServer.Instance.StartServer();
+        }
+        else if (FlagSetting.Instance.useGrpc)
         {
             GrpcServer.Instance.StartServer();
         }
         else
         {
-            SocketServer.Instance.StartServer();
-            FlagSetting.Instance.grpc = false;
-            FlagSetting.Instance.socket = true;
+            Debug.Log("No server started");
         }
         
-        if (FlagSetting.Instance.grpcAuto && ServiceUtils.IsServerOpen())
+        if (FlagSetting.Instance.autoMode && ServiceUtils.IsServerOpen())
         {
             SceneManager.LoadScene("GrpcAuto");
         }

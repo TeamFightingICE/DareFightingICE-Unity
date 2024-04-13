@@ -2,7 +2,7 @@ public enum ControlType
 {
     KEYBOARD,
     LOCAL_AI,
-    GRPC
+    EXTERNAL_AI
 }
 
 public class ControlTypeUtil
@@ -13,7 +13,7 @@ public class ControlTypeUtil
         {
             ControlType.KEYBOARD => "Keyboard",
             ControlType.LOCAL_AI => "AI",
-            ControlType.GRPC => FlagSetting.Instance.grpc ? "gRPC" : FlagSetting.Instance.socket ? "Socket" : "Unknown",
+            ControlType.EXTERNAL_AI => FlagSetting.Instance.useGrpc ? "gRPC" : FlagSetting.Instance.useSocket ? "Socket" : "Unknown",
             _ => "Unknown",
         };
     }

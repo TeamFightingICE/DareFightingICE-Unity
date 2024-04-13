@@ -8,8 +8,8 @@ public class GrpcAutoController : MonoBehaviour
 {
     void Start()
     {
-        FlagSetting.Instance.grpcAuto = true;
-        FlagSetting.Instance.grpcAutoReady = true;
+        FlagSetting.Instance.autoMode = true;
+        FlagSetting.Instance.autoModeReady = true;
         DataManager.Instance.RunFlag = false;
         GameSetting.Instance.SetGameRepeatCount(1);
     }
@@ -18,7 +18,7 @@ public class GrpcAutoController : MonoBehaviour
     {
         if (DataManager.Instance.RunFlag) {
             DataManager.Instance.RunFlag = false;
-            FlagSetting.Instance.grpcAutoReady = false;
+            FlagSetting.Instance.autoModeReady = false;
 
             var gameData = DataManager.Instance.GameData;
             var p1ControlType = GetControlTypeByAIName(gameData.AiNames[0]);
@@ -45,13 +45,13 @@ public class GrpcAutoController : MonoBehaviour
         }
         else
         {
-            return ControlType.GRPC;
+            return ControlType.EXTERNAL_AI;
         }
     }
 
     public void Cancel() {
-        FlagSetting.Instance.grpcAuto = false;
-        FlagSetting.Instance.grpcAutoReady = false;
+        FlagSetting.Instance.autoMode = false;
+        FlagSetting.Instance.autoModeReady = false;
 
         SceneManager.LoadScene("Launch");
     }

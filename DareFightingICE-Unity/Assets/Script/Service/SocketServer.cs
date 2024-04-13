@@ -102,12 +102,12 @@ public class SocketServer : Singleton<SocketServer>, IServer
         GrpcStatusCode statusCode;
         string responseMessage;
 
-        if (!FlagSetting.Instance.grpcAuto)
+        if (!FlagSetting.Instance.autoMode)
         {
             statusCode = GrpcStatusCode.Failed;
             responseMessage = "The game is not in gRPC auto mode.";
         }
-        else if (!FlagSetting.Instance.grpcAutoReady)
+        else if (!FlagSetting.Instance.autoModeReady)
         {
             statusCode = GrpcStatusCode.Failed;
             responseMessage = "The game is not ready for running the game.";

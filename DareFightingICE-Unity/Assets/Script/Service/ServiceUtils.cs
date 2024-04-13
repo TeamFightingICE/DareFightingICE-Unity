@@ -1,44 +1,33 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using UnityEngine;
-
-public class ServiceUtils
+﻿public class ServiceUtils
 {
-    public static bool IsServerOpen() {
-        if (FlagSetting.Instance.grpc)
-        {
-            return GrpcServer.Instance.IsOpen;
-        }
-        else if (FlagSetting.Instance.socket)
-        {
-            return SocketServer.Instance.IsOpen;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public static IServer GetServerInstance() {
-        if (FlagSetting.Instance.grpc)
-        {
-            return GrpcServer.Instance;
-        }
-        else if (FlagSetting.Instance.socket)
+        if (FlagSetting.Instance.useSocket)
         {
             return SocketServer.Instance;
         }
-        else
+        else if (FlagSetting.Instance.useGrpc)
         {
-            return null;
+            return GrpcServer.Instance;
         }
+        return null;
+    }
+
+    public static bool IsServerOpen() {
+        IServer serverInstance = GetServerInstance();
+        if (serverInstance != null)
+        {
+            return serverInstance.IsOpen;
+        }
+        return false;
+    }
+
+    public static IAIInterface GetPlayerInstance(bool isPlayerOne)
+    {
+        IServer serverInstance = GetServerInstance();
+        if (serverInstance != null)
+        {
+            return serverInstance.GetPlayer(isPlayerOne);
+        }
+        return new Sandbox();
     }
 }

@@ -61,7 +61,7 @@ public class GameEndController : MonoBehaviour
         {
             DataManager.Instance.CurrentGame = 1;
 
-            if (FlagSetting.Instance.grpcAuto)
+            if (FlagSetting.Instance.autoMode)
             {
                 SceneManager.LoadScene("GrpcAuto");
             }

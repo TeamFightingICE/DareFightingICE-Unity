@@ -72,13 +72,13 @@ public class FlagSetting : Singleton<FlagSetting>
      */
     public bool slowmotion = false;
     
+    public bool useSocket = true;
     /**
      *  Enable gRPC
      */
-    public bool grpc = true;
-    public bool grpcAuto = false;
-    public bool grpcAutoReady = false;
-    public bool socket = false;
+    public bool useGrpc = false;
+    public bool autoMode = false;
+    public bool autoModeReady = false;
     public int port = 50051;
     public bool loadArgs = false;
     
@@ -126,11 +126,11 @@ public class FlagSetting : Singleton<FlagSetting>
                     port = int.Parse(args[++i]);
                     break;
                 case "--enable-auto":
-                    grpcAuto = true;
+                    autoMode = true;
                     break;
-                case "--use-socket":
-                    grpc = false;
-                    socket = true;
+                case "--use-grpc":
+                    useGrpc = true;
+                    useSocket = false;
                     break;
                 case "--blind-player":
                     int player = int.Parse(args[++i]);

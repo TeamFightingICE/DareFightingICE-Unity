@@ -39,11 +39,11 @@ public class StartController : MonoBehaviour
 
     public bool CheckCondition()
     {
-        if (p1CurrentControl == ControlType.GRPC && ServiceUtils.GetServerInstance().GetPlayer(true).IsCancelled)
+        if (p1CurrentControl == ControlType.EXTERNAL_AI && ServiceUtils.GetServerInstance().GetPlayer(true).IsCancelled)
         {
             return false;
         }
-        else if (p2CurrentControl == ControlType.GRPC && ServiceUtils.GetServerInstance().GetPlayer(false).IsCancelled)
+        else if (p2CurrentControl == ControlType.EXTERNAL_AI && ServiceUtils.GetServerInstance().GetPlayer(false).IsCancelled)
         {
             return false;
         }
@@ -104,11 +104,11 @@ public class StartController : MonoBehaviour
         p1Control.text = $"{ControlTypeUtil.GetString(p1CurrentControl)}";
         p2Control.text = $"{ControlTypeUtil.GetString(p2CurrentControl)}";
 
-        if (p1CurrentControl == ControlType.GRPC)
+        if (p1CurrentControl == ControlType.EXTERNAL_AI)
         {
             p1Control.text += IsCancelled(true) ? " (Disconnected)" : " (Connected)";
         }
-        if (p2CurrentControl == ControlType.GRPC)
+        if (p2CurrentControl == ControlType.EXTERNAL_AI)
         {
             p2Control.text += IsCancelled(false) ? " (Disconnected)" : " (Connected)";
         }

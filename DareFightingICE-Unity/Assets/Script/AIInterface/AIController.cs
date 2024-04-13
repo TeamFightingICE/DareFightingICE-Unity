@@ -18,29 +18,13 @@ public class AIController : MonoBehaviour
         this.frameDatas = new LinkedList<FrameData>();
     }
 
-    private IAIInterface GetGrpcAI(bool isPlayerOne)
-    {
-        if (FlagSetting.Instance.grpc)
-        {
-            return GrpcServer.Instance.GetPlayer(isPlayerOne);
-        }
-        else if (FlagSetting.Instance.socket)
-        {
-            return SocketServer.Instance.GetPlayer(isPlayerOne);
-        }
-        else
-        {
-            return new Sandbox();
-        }
-    }
-
     public void Initialize(GameData gameData, bool isPlayerOne)
     {
         this.isPlayerOne = isPlayerOne;
         this.ai = GameSetting.Instance.GetControlType(isPlayerOne) switch
         {
             ControlType.LOCAL_AI => LocalAIUtil.GetAIInterface(GameSetting.Instance.GetAIName(isPlayerOne)),
-            ControlType.GRPC => GetGrpcAI(isPlayerOne),
+            ControlType.EXTERNAL_AI => ServiceUtils.GetPlayerInstance(isPlayerOne),
             _ => new Sandbox(),
         };
         this.ai.Initialize(new GameData(gameData), isPlayerOne);
