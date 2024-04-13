@@ -201,7 +201,6 @@ public class FightingController : MonoBehaviour
         if (isEnd) return;
 
         isEnd = true;
-        currentFrameNumber = GameSetting.Instance.FrameLimit;
         _aiControllers[0].isRoundEnd = true;
         _aiControllers[1].isRoundEnd = true;
 
