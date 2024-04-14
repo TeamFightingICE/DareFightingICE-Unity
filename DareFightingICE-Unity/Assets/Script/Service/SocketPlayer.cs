@@ -23,6 +23,7 @@ public class SocketPlayer : IPlayer
     private FrameData nonDelayFrameData;
     private Key input;
     private bool notifyCompleted;
+    private bool isReady;
     private Socket socketClient;
 
     public SocketPlayer(bool playerNumber)
@@ -34,6 +35,7 @@ public class SocketPlayer : IPlayer
 
         this.isControl = false;
         this.input = new Key();
+        this.isReady = true;
     }
     
     public void InitializeSocket(Socket socket, InitializeRequest request)
@@ -98,7 +100,9 @@ public class SocketPlayer : IPlayer
 
     public void Processing()
     {
-        if (!this.IsGameStarted || this.IsCancelled) return;
+        if (!this.IsGameStarted || this.IsCancelled || !this.isReady) return;
+
+        isReady = false;
 
         var newState = new PlayerGameState
         {
@@ -130,6 +134,7 @@ public class SocketPlayer : IPlayer
         GrpcKey inputKey = GrpcKey.Parser.ParseFrom(byteData);
         
         this.input = ProtobufUtil.FromProtoKey(inputKey);
+        this.isReady = true;
     }
 
     public void RoundEnd(RoundResult roundResult)
