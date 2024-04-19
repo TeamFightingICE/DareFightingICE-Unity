@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[System.Serializable]
 public class CharacterData
 {
     public bool PlayerNumber { get; set; }
@@ -70,4 +71,5 @@ public class CharacterData
             RemainingFrame = RemainingFrame,
         };
     }
+
 }

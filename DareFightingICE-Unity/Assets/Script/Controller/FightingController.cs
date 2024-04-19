@@ -43,7 +43,9 @@ public class FightingController : MonoBehaviour
     private int currentFrameNumber;
     private int currentRound;
     private InputManager inputManager;
+
     private Texture2D ScreenDataTexture;
+    [SerializeField] private ReplaySystemController replaySystemController;
     private readonly bool[] heartBeatFlag = { false, false };
 
     void Start()
@@ -185,6 +187,8 @@ public class FightingController : MonoBehaviour
             AudioDataManager.Instance.ProcessAudioData();
             ScreenDataManager.Instance.ProcessScreenData(ScreenDataRT, ScreenDataTexture);
             HandlePositionOverlap();
+            ReadReplayData();
+
         }
     }
 
@@ -198,8 +202,9 @@ public class FightingController : MonoBehaviour
     }
     void OnRoundEnd()
     {
+        
         if (isEnd) return;
-
+        SaveReplay();
         isEnd = true;
         _aiControllers[0].isRoundEnd = true;
         _aiControllers[1].isRoundEnd = true;
@@ -340,5 +345,13 @@ public class FightingController : MonoBehaviour
     public void AddAttackDeque(GameObject gameobject)
     {
         attackDeque.Add(gameobject);
+    }
+    public void ReadReplayData() 
+    {
+        replaySystemController.ReadData();
+    }
+    public void SaveReplay() 
+    {
+        replaySystemController.Save();
     }
 }
