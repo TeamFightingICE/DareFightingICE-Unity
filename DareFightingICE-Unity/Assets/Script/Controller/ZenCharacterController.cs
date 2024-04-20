@@ -59,7 +59,7 @@ public class ZenCharacterController : MonoBehaviour
     public Action Action = Action.NEUTRAL;
     [SerializeField] private Animator _animator;
     private float jumpTimer = 0f;
-    [SerializeField] private float jumpDelay = 0.1f;
+    private float jumpDelay = 0.5f;
     private float lastDirectionalInputTime = 0.5f;
     private float directionalInputDelay = 0f;
     
@@ -75,7 +75,8 @@ public class ZenCharacterController : MonoBehaviour
     private float lastBackwardDashTime = -1f;
     private float keyPressTime;
     private float tapThreshold = 0.2f;
-    
+
+
     [SerializeField] private float dashforce = 0;
     // HitBoxController
     [SerializeField] private HitBoxController leftHand;
@@ -118,6 +119,8 @@ public class ZenCharacterController : MonoBehaviour
 
     void Update()
     {
+        print(jumpTimer);
+        print(inputBuffer);
         CheckState();
         if (gameSetting.P1ControlType != ControlType.KEYBOARD || gameSetting.P2ControlType != ControlType.KEYBOARD)
         {
@@ -133,6 +136,7 @@ public class ZenCharacterController : MonoBehaviour
             HandleInputP2();
         }
 
+
         CheckCombo();
         ResetBuffer();
         UpdateComboTimer();
@@ -144,6 +148,7 @@ public class ZenCharacterController : MonoBehaviour
         inputManager.SetInput(PlayerNumber, aiInput);
         HandleAIInput();
     }
+
     private void HandleInputP1()
     {
         float currentTime = Time.time;
@@ -762,7 +767,7 @@ public class ZenCharacterController : MonoBehaviour
         {
             _animator.SetBool("CROUCH", false);
         }
-        else if (canJump && state == State.Stand)
+        else if (isGrounded && jumpTimer <= 0 && canJump && state == State.Stand)
         {
             _animator.SetTrigger("JUMP");
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
@@ -804,7 +809,7 @@ public class ZenCharacterController : MonoBehaviour
     private void PerformForwardJump(float direction)
     {
         // Apply both upward and forward force
-        if (canJump)
+        if (canJump && isGrounded && jumpTimer <= 0)
         {
             Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
             rb.velocity = forwardJumpVelocity;
@@ -817,7 +822,7 @@ public class ZenCharacterController : MonoBehaviour
     private void PerformBackwardJump(float direction)
     {
         // Apply both upward and forward force
-        if (canJump)
+        if (canJump && isGrounded && jumpTimer <= 0)
         {
             Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
             rb.velocity = forwardJumpVelocity;
