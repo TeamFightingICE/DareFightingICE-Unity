@@ -57,7 +57,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
             XVelo = rb[0].velocity.x,
             YVelo = rb[0].velocity.y,
             State = _controllers[0].state,
-            Action = action,
+            Action = _controllers[0].Action,
             IsFront = _controllers[0].IsFront,
             Control = true,
             RemainingFrame = remainingFrame
@@ -74,7 +74,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
             XVelo = rb[1].velocity.x,
             YVelo = rb[1].velocity.y,
             State = _controllers[1].state,
-            Action = action,
+            Action = _controllers[1].Action,
             IsFront = _controllers[1].IsFront,
             Control = true,
             RemainingFrame = remainingFrame

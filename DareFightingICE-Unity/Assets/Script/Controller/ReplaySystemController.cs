@@ -9,6 +9,7 @@ public class ReplaySystemController : MonoBehaviour
 
     public void ReadData() 
     {
+        //Debug.Log("Action is "+FrameDataManager.Instance.characterData[0].Action.ToString());
         replayData.Player1Data.Add(FrameDataManager.Instance.characterData[0]);
         replayData.Player2Data.Add(FrameDataManager.Instance.characterData[1]);
     }

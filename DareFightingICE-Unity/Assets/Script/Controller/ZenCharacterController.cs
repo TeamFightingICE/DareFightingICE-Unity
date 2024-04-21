@@ -119,8 +119,8 @@ public class ZenCharacterController : MonoBehaviour
 
     void Update()
     {
-        print(jumpTimer);
-        print(inputBuffer);
+        //print(jumpTimer);
+        //print(inputBuffer);
         CheckState();
         if (gameSetting.P1ControlType != ControlType.KEYBOARD || gameSetting.P2ControlType != ControlType.KEYBOARD)
         {
@@ -1214,5 +1214,9 @@ public class ZenCharacterController : MonoBehaviour
         if (inputManager.IsKeyPressed(PlayerNumber, "A") && canAttack) { AddInput("A"); }
         if (inputManager.IsKeyPressed(PlayerNumber, "B") && canAttack) { AddInput("B"); }
         if (inputManager.IsKeyPressed(PlayerNumber, "C") && canAttack) { AddInput("C"); }
+    }
+    public void SetActionName(string actionName) 
+    {
+        Action = (Action)System.Enum.Parse(typeof(Action), actionName);
     }
 }

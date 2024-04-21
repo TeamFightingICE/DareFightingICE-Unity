@@ -18,6 +18,7 @@ public class ReplayCharacterController : MonoBehaviour
     {
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 || PreAction != Action)
         {
+            //Debug.Log(Action.ToString());
             animator.Play(Action.ToString());
             PreAction = Action;
         }

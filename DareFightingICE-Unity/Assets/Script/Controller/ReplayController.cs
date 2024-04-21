@@ -188,6 +188,7 @@ public class ReplayController : MonoBehaviour
         character[0].transform.position = new Vector3(data.XPos,  data.YPos, character[0].transform.position.z) ;
         character[0].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.XVelo,data.YVelo);
         _controllers[0].Action = data.Action;
+        Debug.Log(data.Action.ToString());
         if (!data.IsFront && _controllers[0].IsFront ) 
         {
             FlipCharacter( _controllers[0].gameObject);
