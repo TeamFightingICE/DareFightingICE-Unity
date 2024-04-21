@@ -585,7 +585,7 @@ public class ZenCharacterController : MonoBehaviour
         {
             //Debug.Log("Action " + action + " already in buffer, not added again.");
         }
-        Debug.Log("Spacial Input Added: " + action + ",\n Buffer: " + string.Join(", ", sInputBuffer));
+        //Debug.Log("Spacial Input Added: " + action + ",\n Buffer: " + string.Join(", ", sInputBuffer));
         //Debug.Log("Input Added: " + action + ",\n Buffer: " + string.Join(", ", inputBuffer));
 
     }
@@ -915,7 +915,7 @@ public class ZenCharacterController : MonoBehaviour
         {
             direction = 1;
         }
-        Vector2 forwardJumpVelocity = new Vector2(direction * speed, jumpForce);
+        Vector2 forwardJumpVelocity = new Vector2(direction * 3, jumpForce);
         rb.velocity = forwardJumpVelocity;
     }
 
@@ -1008,6 +1008,7 @@ public class ZenCharacterController : MonoBehaviour
                     if (isDown)
                     {
                         _animator.SetTrigger("GETKNOCK");
+                        print("GetKnock");
                     }
                     else
                     {
@@ -1029,7 +1030,9 @@ public class ZenCharacterController : MonoBehaviour
             Hp -= damage;
             Energy += giveEnergy;
             attacker.GetReward(getEnegy);
+            GetThrow();
             _animator.SetTrigger("GET_THROW");
+            print("GetThrow");
         }
     }
     void AddEnergy(int amount)
@@ -1076,31 +1079,41 @@ public class ZenCharacterController : MonoBehaviour
     public void SpawnLargeFireball()
     {
         Vector2 fireballDirection = new Vector2(1, 0);
+        float fireballForce = 10f;
         if (IsFront)
         {
-            fireballDirection = new Vector2(1, 0);
+            //fireballDirection = new Vector2(1, 0);
+            fireballForce = 10f;
+            fightingController.AddAttackDeque(leftHand.SpawnBigProjectile(fireballDirection, fireballForce, false));
         }
         else
         {
-            fireballDirection = new Vector2(0, 1);
+            fireballForce = -10f;
+            fightingController.AddAttackDeque(leftHand.SpawnBigProjectile(fireballDirection, fireballForce, true));
+
+            //fireballDirection = new Vector2(0, 1);
         }
-        float fireballForce = 10f;
-        fightingController.AddAttackDeque(leftHand.SpawnBigProjectile(fireballDirection,fireballForce));
+        
     }
 
     public void SpawnSmallFireball()
     {
         Vector2 fireballDirection = new Vector2(1, 0);
+        float fireballForce = 10f;
         if (IsFront)
         {
-            fireballDirection = new Vector2(1, 0);
+            fireballForce = 10f;
+            fightingController.AddAttackDeque(leftHand.SpawnSmallProjectile(fireballDirection, fireballForce, false));
+            //fireballDirection = new Vector2(1, 0);
         }
         else
         {
-            fireballDirection = new Vector2(0, 1);
+            fireballForce = -10f;
+            fightingController.AddAttackDeque(leftHand.SpawnSmallProjectile(fireballDirection, fireballForce, true));
+            //fireballDirection = new Vector2(0, 1);
         }
-        float fireballForce = 10f;
-        fightingController.AddAttackDeque(leftHand.SpawnSmallProjectile(fireballDirection,fireballForce));
+        
+        
     }
 
     float uncrouchDelay = 0.1f;

@@ -103,7 +103,7 @@ public class FightingController : MonoBehaviour
         _display.SetPlayerController(_controllers[0], _controllers[1]);
         _display.currentRound = currentRound;
 
-        FrameDataManager.Instance.SetupFrameData(character[0], character[1], _display);
+        FrameDataManager.Instance.SetupFrameData(character[0], character[1], _display,this);
         AudioDataManager.Instance.Initialize();
         ScreenDataTexture = new Texture2D(ScreenDataRT.width, ScreenDataRT.height, TextureFormat.RGB24, false);
 

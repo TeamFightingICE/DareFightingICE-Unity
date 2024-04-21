@@ -10,7 +10,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
     private Rigidbody2D[] rb = new Rigidbody2D[2];
     private ZenCharacterController[] _controllers = new ZenCharacterController[2];
     private InterfaceDisplay _interfaceDisplay;
-    
+    private FightingController _fightingController;
     public CharacterData[] characterData = new CharacterData[2];
 
     public int currentFrameNumber;
@@ -30,7 +30,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
         return GameSetting.Instance.FrameLimit - currentFrameNumber;
     }
     
-    public void SetupFrameData(GameObject character1, GameObject character2, InterfaceDisplay frameInfo)
+    public void SetupFrameData(GameObject character1, GameObject character2, InterfaceDisplay frameInfo, FightingController fightingController)
     {
         character[0] = character1;
         character[1] = character2;
@@ -41,6 +41,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
         _interfaceDisplay = frameInfo;
         currentFrameNumber = 0;
         currentRound = DataManager.Instance.CurrentRound;
+        _fightingController = fightingController;
     }
     
     public void UpdateCharacterData()

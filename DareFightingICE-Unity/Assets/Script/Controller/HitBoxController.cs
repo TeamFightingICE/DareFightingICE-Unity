@@ -76,7 +76,7 @@ public class HitBoxController : MonoBehaviour
             }
             else if (isThrow)
             {
-                zenCharacterController.TakeThrow(zenCharacterController,giveEnergy,tempDamage,getEnergy);
+                other.GetComponent<ZenCharacterController>().TakeThrow(zenCharacterController,giveEnergy,tempDamage,getEnergy);
             }
         }
         else if (other.gameObject.name == "Border" && isProjectile)
@@ -139,6 +139,10 @@ public class HitBoxController : MonoBehaviour
     }
     public void SetData(MotionAttribute motionAttribute)
     {
+
+        isHit = false;
+        isThrow = false;
+
         if (motionAttribute.activeTime >= 100)
         {
             projDamage = motionAttribute.hitDamage;
@@ -155,19 +159,34 @@ public class HitBoxController : MonoBehaviour
         isDown = motionAttribute.isDown;
         impactX = motionAttribute.impactX;
         impactY = motionAttribute.impactY;
-        if (attackType != AttackType.THROW && motionAttribute.activeTime < 100)
+
+        if (motionAttribute.attackType == AttackType.THROW)
+        {
+            isThrow = true;
+        }
+        else
+        {
+            isHit = true;
+        }
+
+        /*if (attackType != AttackType.THROW && motionAttribute.activeTime < 100)
         {
             isHit = true;
         }
         else if (attackType == AttackType.THROW)
         {
             isThrow = true;
-        }
+        }*/
     }
-    public GameObject SpawnSmallProjectile(Vector2 direction, float force)
+    public GameObject SpawnSmallProjectile(Vector2 direction, float force,bool flipSprite)
     {
         // Instantiate the fireball at the position of the hitbox with the same rotation
         GameObject fireballInstance = Instantiate(smallFireball, transform.position, Quaternion.identity);
+
+        if (flipSprite)
+        {
+            fireballInstance.transform.localScale = new Vector3(-1 * Mathf.Sign(direction.x), 1, 1);
+        }
 
         // Get the Rigidbody2D component of the fireball
         Rigidbody2D rb = fireballInstance.GetComponent<Rigidbody2D>();
@@ -186,10 +205,15 @@ public class HitBoxController : MonoBehaviour
         }
     }
     
-    public GameObject SpawnBigProjectile(Vector2 direction, float force)
+    public GameObject SpawnBigProjectile(Vector2 direction, float force, bool flipSprite)
     {
         // Instantiate the fireball at the position of the hitbox with the same rotation
         GameObject fireballInstance = Instantiate(largeFireball, transform.position, Quaternion.identity);
+
+        if (flipSprite)
+        {
+            fireballInstance.transform.localScale = new Vector3(-1 * Mathf.Sign(direction.x), 1, 1);
+        }
 
         // Get the Rigidbody2D component of the fireball
         Rigidbody2D rb = fireballInstance.GetComponent<Rigidbody2D>();
