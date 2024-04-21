@@ -35,13 +35,18 @@ public class ZenCharacterController : MonoBehaviour
 
     // Combo System
     private List<string> inputBuffer = new List<string>();
+    private List<string> sInputBuffer = new List<string>();
     private Dictionary<string, List<string>> combos = new Dictionary<string, List<string>>();
+    private Dictionary<string, List<string>> Scombos = new Dictionary<string, List<string>>();
     private int MAX_BUFFER_SIZE = 15;
+    private int MAX_SBUFFER_SIZE = 3;
     private string[] allTriggers = { "JUMP", "STAND_B", "STAND_A","STAND_FA","STAND_FB","GETHIT","GETKNOCK","GET_THROW","AIR_A","AIR_B","AIR_FA","AIR_FB","BACK_STEP","DASH","FORWARD_JUMP","STAND_THROW_A","STAND_THROW_B","CROUCH_A","CROUCH_B","CROUCH_FA","CROUCH_FB","AIR_DA","AIR_DB","AIR_UA","AIR_UB" };
     private string[] comboTriggers = {"STAND_F_D_DFA","STAND_F_D_DFB","STAND_D_DB_BA","STAND_D_DB_BB","STAND_D_DF_FA","STAND_D_DF_FB","STAND_D_DF_FC","AIR_D_DF_FB","AIR_F_D_DFA","AIR_F_D_DFB","AIR_D_DB_BA","AIR_D_DB_BB","AIR_D_DF_FA"};
     private float lastInputTime;
+    private float lastSInputTime;
     private float bufferResetDelay = 0.3f;
-    
+    private float SbufferResetDelay = 1f;
+
     public int currentCombo = 0;
     private float timeSinceLastHit = 0f;
     private float comboResetTime = 0.5f;
@@ -96,14 +101,22 @@ public class ZenCharacterController : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
         
-        combos.Add("F_D_DFA", new List<string> {"F","D","D","F","A"});
-        combos.Add("F_D_DFB", new List<string> {"F","D","D","F","B"});
-        combos.Add("D_DB_BA", new List<string> {"D","D","B","B","A"});
-        combos.Add("D_DB_BB", new List<string> {"D","D","B","B","B"});
-        combos.Add("D_DF_FA", new List<string> {"D","D","F","F","A"});
-        combos.Add("D_DF_FB", new List<string> {"D","D","F","F","B"});
-        combos.Add("D_DF_FC", new List<string> {"D","D","F","F","C"});
-        
+        Scombos.Add("F_D_DFA", new List<string> {"F","D","A"});
+        Scombos.Add("F_D_DFB", new List<string> {"F","D","B"});
+        Scombos.Add("D_DB_BA", new List<string> {"D","B","A"});
+        Scombos.Add("D_DB_BB", new List<string> {"D","B","F"});
+        Scombos.Add("D_DF_FA", new List<string> {"D","F","A"});
+        Scombos.Add("D_DF_FB", new List<string> {"D","F","B"});
+        Scombos.Add("D_DF_FC", new List<string> {"D","F","C"});
+
+        combos.Add("F_D_DFA", new List<string> { "F", "D", "A" });
+        combos.Add("F_D_DFB", new List<string> { "F", "D", "B" });
+        combos.Add("D_DB_BA", new List<string> { "D", "B", "A" });
+        combos.Add("D_DB_BB", new List<string> { "D", "B", "F" });
+        combos.Add("D_DF_FA", new List<string> { "D", "F", "A" });
+        combos.Add("D_DF_FB", new List<string> { "D", "F", "B" });
+        combos.Add("D_DF_FC", new List<string> { "D", "F", "C" });
+
         combos.Add("FA", new List<string> {"F","A"});
         combos.Add("FB", new List<string> {"F","B"});
         combos.Add("DA", new List<string> {"D","A"});
@@ -537,14 +550,15 @@ public class ZenCharacterController : MonoBehaviour
         // if (Input.GetKeyDown(KeyCode.N) && canAttack) { _animator.SetTrigger("GETKNOCK"); }
         // if (Input.GetKeyDown(KeyCode.B) && canAttack) { _animator.SetTrigger("GET_THROW"); }
         // Combat input
-        if (Input.GetKeyDown(KeyCode.T) && canAttack) { AddInput("A"); }
-        if (Input.GetKeyDown(KeyCode.Y) && canAttack) { AddInput("B"); }
-        if (Input.GetKeyDown(KeyCode.U) && canAttack) { AddInput("C"); }
+        if (Input.GetKeyDown(KeyCode.T) && canAttack) { AddInput("A");}
+        if (Input.GetKeyDown(KeyCode.Y) && canAttack) { AddInput("B");}
+        if (Input.GetKeyDown(KeyCode.U) && canAttack) { AddInput("C");}
     }
     
 
     private void AddInput(string action)
     {
+        AddSpacialInput(action);
         lastInputTime = Time.time;
         if (inputBuffer.Count >= MAX_BUFFER_SIZE)
         {
@@ -554,7 +568,28 @@ public class ZenCharacterController : MonoBehaviour
         //Debug.Log("Input Added: " + action + ",\n Buffer: " + string.Join(", ", inputBuffer));
 
     }
-    
+
+    private void AddSpacialInput(string action)
+    {
+        lastSInputTime = Time.time;
+        if (!sInputBuffer.Contains(action))  // Check if the action is not already in the buffer
+        {
+            if (sInputBuffer.Count >= MAX_SBUFFER_SIZE)
+            {
+                sInputBuffer.RemoveAt(0); // Remove the first element to make space if the buffer is full
+            }
+            sInputBuffer.Add(action); // Add the new action since it's not already in the buffer
+            //Debug.Log("Special Input Added: " + action + ",\n Buffer: " + string.Join(", ", sInputBuffer));
+        }
+        else
+        {
+            //Debug.Log("Action " + action + " already in buffer, not added again.");
+        }
+        Debug.Log("Spacial Input Added: " + action + ",\n Buffer: " + string.Join(", ", sInputBuffer));
+        //Debug.Log("Input Added: " + action + ",\n Buffer: " + string.Join(", ", inputBuffer));
+
+    }
+
     private void CheckState()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
@@ -596,18 +631,34 @@ public class ZenCharacterController : MonoBehaviour
         // {
         //     return; // Not enough inputs for a combo
         // }
+        if (sInputBuffer.Count == 3)
+        {
+            var SsortedCombos = Scombos.OrderByDescending(c => c.Value.Count);
+               foreach (var combo in SsortedCombos)
+                {
+                    if (sInputBuffer.Count >= combo.Value.Count && IsComboMatch(combo.Value, sInputBuffer))
+                    {
+                        //Debug.Log("Executing Combo: " + combo.Key);
+                        ExecuteCombo(combo.Key);
+                        return; // Exit the loop after executing a combo
+                    }
+                }
+        }
+        
 
         var sortedCombos = combos.OrderByDescending(c => c.Value.Count);
 
         foreach (var combo in sortedCombos)
         {
-            if (inputBuffer.Count >= combo.Value.Count && IsComboMatch(combo.Value))
+            if (inputBuffer.Count >= combo.Value.Count && IsComboMatch(combo.Value,inputBuffer))
             {
                 //Debug.Log("Executing Combo: " + combo.Key);
                 ExecuteCombo(combo.Key);
                 return; // Exit the loop after executing a combo
             }
         }
+
+        
     }
 
     private void ResetBuffer()
@@ -615,6 +666,10 @@ public class ZenCharacterController : MonoBehaviour
         if (Time.time - lastInputTime > bufferResetDelay)
         {
             inputBuffer.Clear();
+        }
+        if (Time.time - lastSInputTime > SbufferResetDelay)
+        {
+            sInputBuffer.Clear();
         }
     }
 
@@ -625,7 +680,7 @@ public class ZenCharacterController : MonoBehaviour
             _animator.ResetTrigger(trigger);
         }
     }
-    private bool IsComboMatch(List<string> comboSequence)
+    /*private bool IsComboMatch(List<string> comboSequence)
     {
         for (int i = 0; i < comboSequence.Count; i++)
         {
@@ -633,8 +688,23 @@ public class ZenCharacterController : MonoBehaviour
                 return false;
         }
         return true;
+    }*/
+
+
+    private bool IsComboMatch(List<string> comboSequence, List<string> inputList)
+    {
+        // Check if there are enough inputs in the list to match the combo
+        if (inputList.Count < comboSequence.Count)
+            return false;
+
+        int startIndex = inputList.Count - comboSequence.Count;
+        for (int i = 0; i < comboSequence.Count; i++)
+        {
+            if (inputList[startIndex + i] != comboSequence[i])
+                return false;
+        }
+        return true;
     }
-    
     private void ExecuteGivenCombo(string comboName)
     {
         string action = "";
@@ -694,11 +764,13 @@ public class ZenCharacterController : MonoBehaviour
                 canDash = false;
                 canAttack = false;
                 inputBuffer.Clear();
+                sInputBuffer.Clear();
             }
             else
             {
                 Debug.LogWarning("Not Enough Energy");
                 inputBuffer.Clear();
+                sInputBuffer.Clear();
             }
         }
     }
