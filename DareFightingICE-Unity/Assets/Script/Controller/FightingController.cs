@@ -2,8 +2,10 @@ using Google.Protobuf.WellKnownTypes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Media;
+using System.Text;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -205,7 +207,8 @@ public class FightingController : MonoBehaviour
     {
         
         if (isEnd) return;
-        SaveReplay();
+        
+        
         isEnd = true;
         _aiControllers[0].isRoundEnd = true;
         _aiControllers[1].isRoundEnd = true;
@@ -246,7 +249,10 @@ public class FightingController : MonoBehaviour
             _aiControllers[0].Close();
             _aiControllers[1].Close();
         }
-
+        SaveReplay();
+        SaveRoundResults();
+        DataManager.Instance.RoundResults.Clear();
+        
         SceneManager.LoadScene("GameEnd");
     }
 
@@ -303,6 +309,7 @@ public class FightingController : MonoBehaviour
         Vector3 scale = character.transform.localScale;
         scale.x *= -1;
         character.transform.localScale = scale;
+        charController.PlayerNum.gameObject.transform.Rotate(0,180,0);
     }
 
     void StopAudioSources() {
@@ -356,5 +363,28 @@ public class FightingController : MonoBehaviour
     public void SaveReplay() 
     {
         replaySystemController.Save();
+    }
+
+    public void SaveRoundResults() 
+    {
+        var results = new StringBuilder("Round Number, P1 HP, P2 HP, Remaining Time");
+        foreach(var rr in DataManager.Instance.RoundResults) 
+        {
+            results.Append("\n").Append(rr.CurrentRound.ToString()).Append(",").Append(rr.RemainingHPs[0].ToString()).Append(",").Append(rr.RemainingHPs[1].ToString()).Append(",").Append(rr.ElaspedFrame.ToString());
+        }
+        var path = Application.persistentDataPath;
+        var folder = "log/point";
+        path = Path.Combine(path, folder);
+        if(! Directory.Exists(path)) Directory.CreateDirectory(path);
+        var filePath = Path.Combine(path,  DateTime.Now.ToString("hh-mm-ss") + "export.csv");
+        var content = results.ToString();
+
+        using(var writer = new StreamWriter(filePath, false))
+        {
+            writer.Write(content);
+        }
+        //Debug.Log("Round Results saved in: " + filePath.ToString()); // to know the location of the files
+
+
     }
 }
