@@ -181,7 +181,7 @@ public class ReplayController : MonoBehaviour
         controller.PlayerNumber = data.PlayerNumber;
         controller.Hp = data.Hp;
         controller.Energy = data.Energy;
-        character[idx].transform.position = new Vector3(data.X,  data.Y, character[0].transform.position.z);
+        character[idx].transform.position = new Vector3(data.X,  data.Y, character[idx].transform.position.z);
         character[idx].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.SpeedX,data.SpeedY);
         controller.Action = data.Action;
 
