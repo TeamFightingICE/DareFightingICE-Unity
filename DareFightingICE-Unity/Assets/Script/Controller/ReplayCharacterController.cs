@@ -13,7 +13,6 @@ public class ReplayCharacterController : MonoBehaviour
     public Animator animator;
     public TextAsset csvFile;
 
-
     void Update ()
     {
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 || PreAction != Action)
@@ -23,4 +22,5 @@ public class ReplayCharacterController : MonoBehaviour
             PreAction = Action;
         }
     }
+    
 }

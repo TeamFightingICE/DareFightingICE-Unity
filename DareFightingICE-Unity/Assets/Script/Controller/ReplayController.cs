@@ -27,7 +27,6 @@ public class ReplayController : MonoBehaviour
 
     private int currentFrameNumber;
     private int currentRound;
-    
 
     public ReplayCharacterController player1; // Reference to player 1's controller
     public ReplayCharacterController player2; // Reference to player 2's controller
@@ -57,8 +56,8 @@ public class ReplayController : MonoBehaviour
 
     void Update()
     {
-        UpdateCharacterDataPlayer1(replayData.Player1Data[currentFrameNumber]);
-        UpdateCharacterDataPlayer2(replayData.Player2Data[currentFrameNumber]);
+        UpdateCharacterData(true, replayData.Player1Data[currentFrameNumber]);
+        UpdateCharacterData(false, replayData.Player2Data[currentFrameNumber]);
         currentFrameNumber++;
         float msec = deltaTime * 1000.0f;
         float fps = 1.0f / deltaTime;
@@ -105,6 +104,7 @@ public class ReplayController : MonoBehaviour
             }
         }
     }
+
     private void SetupScene()
     {
         currentFrameNumber = 0;
@@ -116,18 +116,13 @@ public class ReplayController : MonoBehaviour
         zen2.tag = "Player2";
         zen2.transform.localScale = new Vector3(-3.5f, 3.5f,3.5f);
 
-
         _controllers[0] = zen1.GetComponent<ReplayCharacterController>();
         _controllers[1] = zen2.GetComponent<ReplayCharacterController>();
-
 
         _controllers[0].PlayerNumber = true;
         _controllers[0].IsFront = true;
         _controllers[0].Hp = GameSetting.Instance.P1HP;
         _controllers[0].Energy = 0;
- 
-     
-
 
         _controllers[1].PlayerNumber = false;
         _controllers[1].IsFront = false;
@@ -142,7 +137,6 @@ public class ReplayController : MonoBehaviour
         heartBeatFlag[0] = false;
         heartBeatFlag[1] = false;
         SetPlayerController(_controllers[0], _controllers[1]);
-
     }
 
     private void SetEnergyColor()
@@ -179,54 +173,42 @@ public class ReplayController : MonoBehaviour
         return GameSetting.Instance.FrameLimit - currentFrame;
     }
 
-    private void UpdateCharacterDataPlayer1(CharacterData data) 
+    private void UpdateCharacterData(bool playerNumber, CharacterData data) 
     {
-        _controllers[0].PlayerNumber = data.PlayerNumber;
-        _controllers[0].Hp = data.Hp;
-        _controllers[0].Energy = data.Energy;
-        character[0].transform.position = new Vector3(data.X,  data.Y, character[0].transform.position.z) ;
-        character[0].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.SpeedX,data.SpeedY);
-        _controllers[0].Action = data.Action;
+        int idx = playerNumber ? 0 : 1;
+        var controller = _controllers[idx];
+
+        controller.PlayerNumber = data.PlayerNumber;
+        controller.Hp = data.Hp;
+        controller.Energy = data.Energy;
+        character[idx].transform.position = new Vector3(data.X,  data.Y, character[0].transform.position.z);
+        character[idx].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.SpeedX,data.SpeedY);
+        controller.Action = data.Action;
+
         Debug.Log(data.Action.ToString());
-        if (!data.Front && _controllers[0].IsFront ) 
+
+        if (!data.Front && controller.IsFront) 
         {
-            FlipCharacter( _controllers[0].gameObject);
+            FlipCharacter(controller.gameObject);
         }
-        else if(data.Front && !_controllers[0].IsFront) 
+        else if(data.Front && !controller.IsFront) 
         {
-            FlipCharacter(_controllers[0].gameObject);
+            FlipCharacter(controller.gameObject);
         }
-        _controllers[0].IsFront = data.Front;
-     
+
+        controller.IsFront = data.Front;
     }
 
-    private void UpdateCharacterDataPlayer2(CharacterData data) 
-    {
-        _controllers[1].PlayerNumber = data.PlayerNumber;
-        _controllers[1].Hp = data.Hp;
-        _controllers[1].Energy = data.Energy;
-        character[1].transform.position = new Vector3(data.X,  data.Y, character[1].transform.position.z) ;
-        character[1].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.SpeedX,data.SpeedY);
-        _controllers[1].Action = data.Action;
-         if (!data.Front && _controllers[1].IsFront ) 
-        {
-            FlipCharacter( _controllers[1].gameObject);
-        }
-        else if(data.Front && !_controllers[1].IsFront) 
-        {
-            FlipCharacter(_controllers[1].gameObject);
-        }
-        _controllers[1].IsFront = data.Front;
-    }
     public ReplayData Load() 
     {
         string FilePath = Application.persistentDataPath + "/Replay1.dat";
-        BinaryFormatter formatter = new BinaryFormatter();
+        BinaryFormatter formatter = new();
         FileStream fileStream = File.Open(FilePath, FileMode.Open);
         ReplayData playerData = (ReplayData)formatter.Deserialize(fileStream);
         fileStream.Close();
         return playerData;
     }
+
     private void FlipCharacter(GameObject character)
     {
         ReplayCharacterController charController = character.GetComponent<ReplayCharacterController>();

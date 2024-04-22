@@ -138,7 +138,6 @@ public class FightingController : MonoBehaviour
         _display.currentRound = currentRound;
         _aiControllers[0].isRoundEnd = false;
         _aiControllers[1].isRoundEnd = false;
-        //SimFighitng.ResetRound();
     }
     // Update is called once per frame
     void Update()
@@ -188,7 +187,6 @@ public class FightingController : MonoBehaviour
             ScreenDataManager.Instance.ProcessScreenData(ScreenDataRT, ScreenDataTexture);
             HandlePositionOverlap();
             ReadReplayData();
-
         }
     }
 
@@ -346,10 +344,12 @@ public class FightingController : MonoBehaviour
     {
         attackDeque.Add(gameobject);
     }
+
     public void ReadReplayData() 
     {
         replaySystemController.ReadData();
     }
+
     public void SaveReplay() 
     {
         replaySystemController.Save();
