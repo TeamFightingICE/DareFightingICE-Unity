@@ -32,6 +32,7 @@ public class ReplayController : MonoBehaviour
     public ReplayCharacterController player1; // Reference to player 1's controller
     public ReplayCharacterController player2; // Reference to player 2's controller
     public int currentFrame;
+    public int remainingFrame;
     public int remainingSecond;
     [SerializeField] private ReplayData replayData;
 
@@ -59,11 +60,17 @@ public class ReplayController : MonoBehaviour
 
     void Update()
     {
-        if(replayData.Player1Data[currentFrameNumber] != null) 
+        if(replayData.Player1Data.Count != currentFrameNumber ) 
         {
             UpdateCharacterData(true, replayData.Player1Data[currentFrameNumber]);
             UpdateCharacterData(false, replayData.Player2Data[currentFrameNumber]);
             currentFrameNumber++;
+            if(remainingFrame<=0)
+            {
+                currentRound++;
+                BackgroundMusic.Stop();
+                BackgroundMusic.Play();
+            }
             float msec = deltaTime * 1000.0f;
             float fps = 1.0f / deltaTime;
             deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
@@ -74,7 +81,7 @@ public class ReplayController : MonoBehaviour
             energy1.fillAmount = (float)player1.Energy / 300;
             energy2.fillAmount = (float)player2.Energy / 300;
             // timerText.text = "Frame Limit: " + currentFrame;
-            timerText.text = string.Format("{0:0.000}", Math.Round(GetRemainingFrame() / 60.0, 3));
+            timerText.text = string.Format("{0:0.000}", Math.Round(remainingFrame / 60.0, 3));
             p1Status.text = $"P1 HP: {player1.Hp} Energy: {player1.Energy}";
             p2Status.text = $"P2 HP: {player2.Hp} Energy: {player2.Energy}";
             SetEnergyColor();
@@ -136,6 +143,7 @@ public class ReplayController : MonoBehaviour
         _controllers[0].Hp = GameSetting.Instance.P1HP;
         _controllers[0].Energy = 0;
         _controllers[0].PlayerNum.text = "P1";
+        _controllers[0].SetTarget("Player2");
 
         _controllers[1].PlayerNumber = false;
         _controllers[1].IsFront = false;
@@ -143,6 +151,7 @@ public class ReplayController : MonoBehaviour
         _controllers[1].Energy = 0;
         _controllers[1].PlayerNum.text = "P2";
         _controllers[1].PlayerNum.gameObject.transform.Rotate(0,180,0);
+        _controllers[0].SetTarget("Player1");
 
         character.Add(zen1);
         character.Add(zen2);  
@@ -213,11 +222,24 @@ public class ReplayController : MonoBehaviour
         }
 
         controller.IsFront = data.Front;
+        if(data.AttackData.IsProjectile) 
+        {
+            Debug.Log("Projectile called!");
+            if(data.Action == Action.STAND_D_DF_FC) 
+            {
+                SpawnLargeFireball(controller,data.Front);
+            }
+            else 
+            {
+                SpawnSmallFireball(controller,data.Front);
+            }
+        }
+        remainingFrame = data.RemainingFrame;
     }
 
     public ReplayData Load() 
     {
-        string FilePath = Application.persistentDataPath + "/Replay1.dat";
+        string FilePath = GameSetting.Instance.ReplayFilePath;
         BinaryFormatter formatter = new();
         FileStream fileStream = File.Open(FilePath, FileMode.Open);
         ReplayData playerData = (ReplayData)formatter.Deserialize(fileStream);
@@ -279,6 +301,46 @@ public class ReplayController : MonoBehaviour
         }
            
 
+    }
+
+        public void SpawnLargeFireball(ReplayCharacterController controller, bool IsFront)
+    {
+        Vector2 fireballDirection = new Vector2(1, 0);
+        float fireballForce = 10f;
+        if (IsFront)
+        {
+            //fireballDirection = new Vector2(1, 0);
+            fireballForce = 10f;
+            controller.leftHand.SpawnBigProjectile(fireballDirection, fireballForce, false);
+        }
+        else
+        {
+            fireballForce = -10f;
+            controller.leftHand.SpawnBigProjectile(fireballDirection, fireballForce, true);
+
+            //fireballDirection = new Vector2(0, 1);
+        }
+        
+    }
+
+    public void SpawnSmallFireball(ReplayCharacterController controller, bool IsFront)
+    {
+        Vector2 fireballDirection = new Vector2(1, 0);
+        float fireballForce = 10f;
+        if (IsFront)
+        {
+            fireballForce = 10f;
+            controller.leftHand.SpawnSmallProjectile(fireballDirection, fireballForce, false);
+            //fireballDirection = new Vector2(1, 0);
+        }
+        else
+        {
+            fireballForce = -10f;
+            controller.leftHand.SpawnSmallProjectile(fireballDirection, fireballForce, true);
+            //fireballDirection = new Vector2(0, 1);
+        }
+        
+        
     }
 
 }

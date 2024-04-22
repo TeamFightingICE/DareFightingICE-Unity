@@ -11,14 +11,14 @@ public class CharacterData
     public bool PlayerNumber { get; set; }
     public int Hp { get; set; }
     public int Energy { get; set; }
-    public int X { get; set; }
-    public int Y { get; set; }
+    public float X { get; set; }
+    public float Y { get; set; }
     public int Left { get; set; }
     public int Right { get; set; }
     public int Top { get; set; }
     public int Bottom { get; set; }
-    public int SpeedX { get; set; }
-    public int SpeedY { get; set; }
+    public float SpeedX { get; set; }
+    public float SpeedY { get; set; }
     public State State { get; set; }
     public Action Action { get; set; }
     public bool Front { get; set; }
@@ -93,14 +93,14 @@ public class CharacterData
             PlayerNumber = PlayerNumber,
             Hp = Hp,
             Energy = Energy,
-            X = X,
-            Y = Y,
+            //X = X, //[sea Fix needed] these values should not be integers
+           // Y = Y, //[same here]
             Left = Left,
             Right = Right,
             Top = Top,
             Bottom = Bottom,
-            SpeedX = SpeedX,
-            SpeedY = SpeedY,
+           // SpeedX = SpeedX, //[same here]
+           // SpeedY = SpeedY, //[same here]
             State = (GrpcState) State,
             Action = (GrpcAction) Action,
             Front = Front,

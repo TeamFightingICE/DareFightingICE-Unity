@@ -12,12 +12,14 @@ public class UIKeyboardControl : MonoBehaviour
     private Selectable lastButton;
     public GameObject gameController;
     private StartController startController;
+    private LaunchController launchController;
     private float nextTimeAllowedToPress = 0f; // Timer to track delay
     public float delayBetweenPresses = 0.5f; // Delay in seconds
 
     void Start()
     {
         startController = gameController.GetComponent<StartController>();
+        launchController = gameController.GetComponent<LaunchController>();
         if (firstButton != null)
         {
             EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
@@ -118,6 +120,24 @@ public class UIKeyboardControl : MonoBehaviour
              else if(EventSystem.current.currentSelectedGameObject == startController.RepeatCountText.gameObject)
             {
                 startController.SelectRepeatCount(1);
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) && lastButton.gameObject.name == "Replay" && launchController.isReplay)
+        {
+            if(launchController.ReplayFileNumber > 0) 
+            {
+                launchController.ReplayFileNumber--;
+                launchController.ReplayFileName.text = launchController.ReplayFilesNames[launchController.ReplayFileNumber];
+                GameSetting.Instance.ReplayFilePath = launchController.ReplayFilesPaths[launchController.ReplayFileNumber];
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && lastButton.gameObject.name == "Replay" && launchController.isReplay)
+        {
+            if(launchController.ReplayFileNumber < launchController.ReplayFilesNames.Count - 1) 
+            {
+                launchController.ReplayFileNumber++;
+                launchController.ReplayFileName.text = launchController.ReplayFilesNames[launchController.ReplayFileNumber];
+                GameSetting.Instance.ReplayFilePath = launchController.ReplayFilesPaths[launchController.ReplayFileNumber];
             }
         }
     }

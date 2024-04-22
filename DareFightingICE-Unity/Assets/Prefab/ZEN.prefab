@@ -4595,7 +4595,9 @@ MonoBehaviour:
   canDash: 1
   isGuard: 0
   canJump: 1
+  HitConfirm: 0
   currentCombo: 0
+  LastHitFrame: 0
   speed: 6
   jumpForce: 32
   groundCheck: {fileID: 4610859399305943773}

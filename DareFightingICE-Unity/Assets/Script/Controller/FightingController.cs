@@ -251,7 +251,6 @@ public class FightingController : MonoBehaviour
         }
         SaveReplay();
         SaveRoundResults();
-        DataManager.Instance.RoundResults.Clear();
         
         SceneManager.LoadScene("GameEnd");
     }

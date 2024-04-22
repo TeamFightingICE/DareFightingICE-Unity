@@ -26,6 +26,7 @@ public class GameSetting : Singleton<GameSetting>
     public int GameRepeatCount { get; set; } = 1;
     public string P1AIName { get; set; } = "SampleAI";
     public string P2AIName { get; set; } = "SampleAI";
+    public string ReplayFilePath { get; set; } = "";
     public ControlType P1ControlType { get; set; }
     public ControlType P2ControlType { get; set; }
     public readonly bool[] IsBlind = new bool[2] { false, false };
