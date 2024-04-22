@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
+using TMPro;
 
 public class ZenCharacterController : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class ZenCharacterController : MonoBehaviour
     public ZenCharacterController otherPlayer { get; set; }
     public FightingController fightingController;
     public TextAsset csvFile;
+    public TextMeshPro PlayerNum;
     
     // Action Flags
     public bool canWalk = true;

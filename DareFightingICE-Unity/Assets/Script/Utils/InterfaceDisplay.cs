@@ -2,6 +2,7 @@ using TMPro;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class InterfaceDisplay : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class InterfaceDisplay : MonoBehaviour
     [SerializeField] private TMP_Text roundText;
     [SerializeField] private TMP_Text p1Status;
     [SerializeField] private TMP_Text p2Status;
+    [SerializeField] private List<Image> HitCountersP1;
+    [SerializeField] private List<Image> HitCountersP2;
+    
     
     float deltaTime = 0.0f;
 
@@ -52,6 +56,7 @@ public class InterfaceDisplay : MonoBehaviour
         p1Status.text = $"P1 HP: {player1.Hp} Energy: {player1.Energy}";
         p2Status.text = $"P2 HP: {player2.Hp} Energy: {player2.Energy}";
         SetEnergyColor();
+        CheckHitCount();
     }
 
     private int GetRemainingFrame()
@@ -86,6 +91,46 @@ public class InterfaceDisplay : MonoBehaviour
         {
             energy2.color = Color.red;
         }
+    }
+    private void CheckHitCount() 
+    {   
+        // For player1
+        if(player1.currentCombo > 0 ) 
+        {
+            if(player1.currentCombo > 1) 
+            {
+                HitCountersP1[player1.currentCombo-2].gameObject.SetActive(false);
+
+            }
+            HitCountersP1[player1.currentCombo-1].gameObject.SetActive(true);
+        }
+        else 
+        {
+            foreach(Image image in HitCountersP1) 
+            {
+                image.gameObject.SetActive(false);
+            }
+        }
+
+        // For Player2
+         if(player2.currentCombo > 0 ) 
+        {
+            if(player2.currentCombo > 1) 
+            {
+                HitCountersP2[player2.currentCombo-2].gameObject.SetActive(false);
+
+            }
+            HitCountersP2[player2.currentCombo-1].gameObject.SetActive(true);
+        }
+        else 
+        {
+            foreach(Image image in HitCountersP2) 
+            {
+                image.gameObject.SetActive(false);
+            }
+        }
+           
+
     }
     // void OnGUI()
     // {

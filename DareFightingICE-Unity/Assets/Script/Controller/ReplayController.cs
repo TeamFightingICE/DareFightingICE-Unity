@@ -185,7 +185,7 @@ public class ReplayController : MonoBehaviour
         character[idx].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.SpeedX,data.SpeedY);
         controller.Action = data.Action;
 
-        Debug.Log(data.Action.ToString());
+        //Debug.Log(data.Action.ToString());
 
         if (!data.Front && controller.IsFront) 
         {

@@ -84,6 +84,7 @@ public class FightingController : MonoBehaviour
         _controllers[0].otherPlayer = _controllers[1];
         _controllers[0].SetTarget("Player2",this);
         _controllers[0].fightingController = this;
+        _controllers[1].PlayerNum.text = "P1";
 
 
         _controllers[1].PlayerNumber = false;
@@ -93,6 +94,8 @@ public class FightingController : MonoBehaviour
         _controllers[1].otherPlayer = _controllers[0];
         _controllers[1].SetTarget("Player1",this);
         _controllers[1].fightingController = this;
+        _controllers[1].PlayerNum.text = "P2";
+        _controllers[1].PlayerNum.gameObject.transform.Rotate(0,180,0);
 
         character.Add(zen1);
         character.Add(zen2);  
