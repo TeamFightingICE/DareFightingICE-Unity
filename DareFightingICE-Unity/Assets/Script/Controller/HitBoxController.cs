@@ -30,6 +30,7 @@ public class HitBoxController : MonoBehaviour
     public int guardDamage;
     public int guardEnergy;
     public int giveEnergy;
+    public int startAddEnergy;
     public GameObject hitEffect1;
     public GameObject hitEffect2;
     public GameObject hitEffect3;
@@ -159,6 +160,7 @@ public class HitBoxController : MonoBehaviour
         isDown = motionAttribute.isDown;
         impactX = motionAttribute.impactX;
         impactY = motionAttribute.impactY;
+        startAddEnergy = motionAttribute.startAddEnergy;
 
         if (motionAttribute.attackType == AttackType.THROW)
         {

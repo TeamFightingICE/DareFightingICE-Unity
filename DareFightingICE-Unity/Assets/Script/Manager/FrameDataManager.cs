@@ -53,16 +53,16 @@ public class FrameDataManager : Singleton<FrameDataManager>
             SettingSpeedY = 0,  // dont have
             CurrentHitArea = new HitArea(),  // dont have
             CurrentFrame = 0,  // dont have
-            PlayerNumber = false,  // dont have
-            SpeedX = 0,  // dont have
-            SpeedY = 0,  // dont have
+            PlayerNumber = controller.zenCharacterController.PlayerNumber,
+            SpeedX = 0, // dont have
+            SpeedY = 0, // dont have
             StartUp = 0,  // dont have
             Active = controller.isActive,
-            HitDamage = controller.damage,  // not sure
-            GuardDamage = 0,  // dont have
-            StartAddEnergy = 0,  // dont have
-            HitAddEnergy = controller.getEnergy,  // not sure
-            GuardAddEnergy = controller.guardEnergy, // not sure
+            HitDamage = controller.damage,
+            GuardDamage = controller.guardDamage, 
+            StartAddEnergy = controller.startAddEnergy,
+            HitAddEnergy = controller.getEnergy,
+            GuardAddEnergy = controller.guardEnergy,
             GiveEnergy = controller.giveEnergy,
             ImpactX = controller.impactX,
             ImpactY = controller.impactY,
@@ -102,7 +102,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
             GraphicSizeX = 0,  // dont have
             GraphicSizeY = 0,  // dont have
             GraphicAdjustX = 0,  // dont have
-            HitCount = 0,  // dont have
+            HitCount = controller.currentCombo,  // dont have
             LastHitFrame = 0,  // dont have
         };
     }
