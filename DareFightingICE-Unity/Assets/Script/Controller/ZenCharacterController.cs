@@ -34,6 +34,7 @@ public class ZenCharacterController : MonoBehaviour
     public bool canDash = true;
     public bool isGuard = false;
     public bool canJump = true;
+    public bool HitConfirm = false;
 
     // Combo System
     private List<string> inputBuffer = new List<string>();
@@ -50,6 +51,7 @@ public class ZenCharacterController : MonoBehaviour
     private float SbufferResetDelay = 1f;
 
     public int currentCombo = 0;
+    public int LastHitFrame = 0;
     private float timeSinceLastHit = 0f;
     private float comboResetTime = 0.5f;
     
@@ -1062,11 +1064,14 @@ public class ZenCharacterController : MonoBehaviour
         {
             Energy = 300;
         }
+        HitConfirm = true;
+        LastHitFrame = fightingController.currentFrameNumber;
     }
 
     private void ResetCombo()
     {
         currentCombo = 0;
+        HitConfirm = false;
     }
 
     private void UpdateComboTimer()

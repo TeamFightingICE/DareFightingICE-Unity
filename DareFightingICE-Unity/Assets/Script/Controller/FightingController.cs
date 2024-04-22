@@ -42,7 +42,7 @@ public class FightingController : MonoBehaviour
     private bool isStart = false;
     private bool isFading = false;
     private bool isEnd = false;
-    private int currentFrameNumber;
+    public int currentFrameNumber;
     private int currentRound;
     private InputManager inputManager;
 
@@ -86,7 +86,7 @@ public class FightingController : MonoBehaviour
         _controllers[0].otherPlayer = _controllers[1];
         _controllers[0].SetTarget("Player2",this);
         _controllers[0].fightingController = this;
-        _controllers[1].PlayerNum.text = "P1";
+        _controllers[0].PlayerNum.text = "P1";
 
 
         _controllers[1].PlayerNumber = false;
@@ -376,7 +376,7 @@ public class FightingController : MonoBehaviour
         var folder = "log/point";
         path = Path.Combine(path, folder);
         if(! Directory.Exists(path)) Directory.CreateDirectory(path);
-        var filePath = Path.Combine(path,  DateTime.Now.ToString("hh-mm-ss") + "export.csv");
+        var filePath = Path.Combine(path,  DateTime.Now.ToString("hh-mm-ss") + "_Result.csv");
         var content = results.ToString();
 
         using(var writer = new StreamWriter(filePath, false))

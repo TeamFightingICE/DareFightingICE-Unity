@@ -44,15 +44,73 @@ public class FrameDataManager : Singleton<FrameDataManager>
         _fightingController = fightingController;
     }
 
-    private AttackData GetAttackData(HitBoxController controller)
+    // changed to give data from the active hitboxcontroller if any are active.
+    private AttackData GetAttackData(bool player)
     {
+        HitBoxController controller;
+        if(player)
+        {
+            if(_controllers[0].leftFoot.gameObject.activeSelf) 
+            {  
+                controller = _controllers[0].leftFoot;
+
+            }
+            else if(_controllers[0].rightFoot.gameObject.activeSelf) 
+            {  
+                controller = _controllers[0].rightFoot;
+
+            }
+            else if(_controllers[0].leftHand.gameObject.activeSelf) 
+            {  
+                controller = _controllers[0].leftHand;
+
+            }
+            else if(_controllers[0].rightHand.gameObject.activeSelf) 
+            {  
+                controller = _controllers[0].rightHand;
+
+            }
+            else 
+            {
+                controller = new HitBoxController();
+            }
+            
+        }
+        else 
+        {
+            if(_controllers[1].leftFoot.gameObject.activeSelf) 
+            {  
+                controller = _controllers[1].leftFoot;
+
+            }
+            else if(_controllers[1].rightFoot.gameObject.activeSelf) 
+            {  
+                controller = _controllers[1].rightFoot;
+
+            }
+            else if(_controllers[1].leftHand.gameObject.activeSelf) 
+            {  
+                controller = _controllers[1].leftHand;
+
+            }
+            else if(_controllers[1].rightHand.gameObject.activeSelf) 
+            {  
+                controller = _controllers[1].rightHand;
+
+            }
+            else 
+            {
+                controller = new HitBoxController();
+            }
+        }
+
         return new AttackData()
         {
             SettingHitArea = new HitArea(),  // dont have
             SettingSpeedX = 0,  // dont have
             SettingSpeedY = 0,  // dont have
             CurrentHitArea = new HitArea(),  // dont have
-            CurrentFrame = 0,  // dont have
+            CurrentFrame = currentFrameNumber, 
             PlayerNumber = controller.zenCharacterController.PlayerNumber,
             SpeedX = 0, // dont have
             SpeedY = 0, // dont have
@@ -66,7 +124,7 @@ public class FrameDataManager : Singleton<FrameDataManager>
             GiveEnergy = controller.giveEnergy,
             ImpactX = controller.impactX,
             ImpactY = controller.impactY,
-            GiveGuardRecov = 0,  // dont have
+            GiveGuardRecov = 0,  // dont have 
             AttackType = controller.attackType,
             DownProp = controller.isDown,
             IsProjectile = controller.isProjectile,
@@ -96,14 +154,14 @@ public class FrameDataManager : Singleton<FrameDataManager>
             Action = controller.Action,
             Front = controller.IsFront,
             Control = true,  // dont have
-            AttackData = GetAttackData(controller.leftHand),  // not sure
-            RemainingFrame = 0,  // dont have
-            HitConfirm = false,  // dont have
+            AttackData = GetAttackData(controller.PlayerNumber),  
+            RemainingFrame = GetRemainingFrame(),
+            HitConfirm = controller.HitConfirm,
             GraphicSizeX = 0,  // dont have
             GraphicSizeY = 0,  // dont have
             GraphicAdjustX = 0,  // dont have
-            HitCount = controller.currentCombo,  // dont have
-            LastHitFrame = 0,  // dont have
+            HitCount = controller.currentCombo, 
+            LastHitFrame = controller.LastHitFrame,
         };
     }
 

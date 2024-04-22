@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ReplayCharacterController : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class ReplayCharacterController : MonoBehaviour
     public Action PreAction = Action.NEUTRAL;
     public Animator animator;
     public TextAsset csvFile;
+    public TextMeshPro PlayerNum;
+    public int currentCombo = 0;
 
     void Update ()
     {
