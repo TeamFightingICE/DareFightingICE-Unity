@@ -6,12 +6,14 @@ using UnityEngine;
 
 public class FrameDataManager : Singleton<FrameDataManager>
 {
+    private FrameData currentFrameData = new();
+    public readonly CharacterData[] characterData = new CharacterData[2];
+    private readonly bool[] front = new bool[2];
     public GameObject[] character = new GameObject[2];
-    private Rigidbody2D[] rb = new Rigidbody2D[2];
-    private ZenCharacterController[] _controllers = new ZenCharacterController[2];
+    private readonly Rigidbody2D[] rb = new Rigidbody2D[2];
+    private readonly ZenCharacterController[] _controllers = new ZenCharacterController[2];
     private InterfaceDisplay _interfaceDisplay;
     private FightingController _fightingController;
-    public CharacterData[] characterData = new CharacterData[2];
 
     public int currentFrameNumber;
 
@@ -20,8 +22,6 @@ public class FrameDataManager : Singleton<FrameDataManager>
     public GameObject[] projectileData;
 
     public bool emptyFlag;
-
-    public bool[] front = new bool[2];
 
     private Action action = new Action();
 
@@ -43,63 +43,106 @@ public class FrameDataManager : Singleton<FrameDataManager>
         currentRound = DataManager.Instance.CurrentRound;
         _fightingController = fightingController;
     }
+
+    private AttackData GetAttackData(HitBoxController controller)
+    {
+        return new AttackData()
+        {
+            SettingHitArea = new HitArea(),  // dont have
+            SettingSpeedX = 0,  // dont have
+            SettingSpeedY = 0,  // dont have
+            CurrentHitArea = new HitArea(),  // dont have
+            CurrentFrame = 0,  // dont have
+            PlayerNumber = false,  // dont have
+            SpeedX = 0,  // dont have
+            SpeedY = 0,  // dont have
+            StartUp = 0,  // dont have
+            Active = controller.isActive,
+            HitDamage = controller.damage,  // not sure
+            GuardDamage = 0,  // dont have
+            StartAddEnergy = 0,  // dont have
+            HitAddEnergy = controller.getEnergy,  // not sure
+            GuardAddEnergy = controller.guardEnergy, // not sure
+            GiveEnergy = controller.giveEnergy,
+            ImpactX = controller.impactX,
+            ImpactY = controller.impactY,
+            GiveGuardRecov = 0,  // dont have
+            AttackType = controller.attackType,
+            DownProp = controller.isDown,
+            IsProjectile = controller.isProjectile,
+        };
+    }
     
+    private CharacterData GetCharacterData(bool playerNumber)
+    {
+        int idx = playerNumber ? 0 : 1;
+        var controller = _controllers[idx];
+        var _rb = rb[idx];
+
+        return new CharacterData
+        {
+            PlayerNumber = controller.PlayerNumber,
+            Hp = controller.Hp,
+            Energy = controller.Energy,
+            X = (int)controller.transform.position.x,
+            Y = (int)controller.transform.position.y,
+            Left = 0,  // dont have
+            Right = 0,  // dont have
+            Top = 0,  // dont have
+            Bottom = 0,  // dont have
+            SpeedX = (int)_rb.velocity.x,
+            SpeedY = (int)_rb.velocity.y,
+            State = controller.state,
+            Action = controller.Action,
+            Front = controller.IsFront,
+            Control = true,  // dont have
+            AttackData = GetAttackData(controller.leftHand),  // not sure
+            RemainingFrame = 0,  // dont have
+            HitConfirm = false,  // dont have
+            GraphicSizeX = 0,  // dont have
+            GraphicSizeY = 0,  // dont have
+            GraphicAdjustX = 0,  // dont have
+            HitCount = 0,  // dont have
+            LastHitFrame = 0,  // dont have
+        };
+    }
+
     public void UpdateCharacterData()
     {
-        int remainingFrame = GetRemainingFrame();
+        int remainingFrame = GetRemainingFrame();  // this is not remaining frame of Java version
 
-        characterData[0] = new CharacterData
-        {
-            PlayerNumber = _controllers[0].PlayerNumber,
-            Hp = _controllers[0].Hp,
-            Energy = _controllers[0].Energy,
-            XPos = character[0].transform.position.x,
-            YPos = character[0].transform.position.y,
-            XVelo = rb[0].velocity.x,
-            YVelo = rb[0].velocity.y,
-            State = _controllers[0].state,
-            Action = _controllers[0].Action,
-            IsFront = _controllers[0].IsFront,
-            Control = true,
-            RemainingFrame = remainingFrame
-        };
-        front[0] = _controllers[0].IsFront;
+        characterData[0] = GetCharacterData(true);
+        front[0] = characterData[0].Front;
 
-        characterData[1] = new CharacterData
-        {
-            PlayerNumber = _controllers[1].PlayerNumber,
-            Hp = _controllers[1].Hp,
-            Energy = _controllers[1].Energy,
-            XPos = character[1].transform.position.x,
-            YPos = character[1].transform.position.y,
-            XVelo = rb[1].velocity.x,
-            YVelo = rb[1].velocity.y,
-            State = _controllers[1].state,
-            Action = _controllers[1].Action,
-            IsFront = _controllers[1].IsFront,
-            Control = true,
-            RemainingFrame = remainingFrame
-        };
-        front[1] = _controllers[1].IsFront;
+        characterData[1] = GetCharacterData(false);
+        front[1] = characterData[1].Front;
     }
     
     public void ProcessFrameData()
     {
         UpdateCharacterData();
         currentFrameNumber = _interfaceDisplay.currentFrame;
-    }
 
-    public FrameData GetFrameData()
-    {
-        FrameData data = new FrameData
+        List<AttackData> projectileList = new();
+        foreach (var attack in _fightingController.attackDeque)
+        {
+            var proj = attack.GetComponent<HitBoxController>();
+            projectileList.Add(GetAttackData(proj));
+        }
+
+        currentFrameData = new()
         {
             CharacterData = characterData,
             CurrentFrameNumber = currentFrameNumber,
             CurrentRound = currentRound,
-            ProjectileData = new List<AttackData>(),
+            ProjectileData = projectileList,
             EmptyFlag = false,
             Front = front
         };
-        return data;
+    }
+
+    public FrameData GetFrameData()
+    {
+        return new FrameData(currentFrameData);
     }
 }

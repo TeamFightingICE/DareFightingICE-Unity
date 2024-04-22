@@ -84,10 +84,10 @@ public class ZenCharacterController : MonoBehaviour
 
     [SerializeField] private float dashforce = 0;
     // HitBoxController
-    [SerializeField] private HitBoxController leftHand;
-    [SerializeField] private HitBoxController rightHand;
-    [SerializeField] private HitBoxController leftFoot;
-    [SerializeField] private HitBoxController rightFoot;
+    [SerializeField] public HitBoxController leftHand;
+    [SerializeField] public HitBoxController rightHand;
+    [SerializeField] public HitBoxController leftFoot;
+    [SerializeField] public HitBoxController rightFoot;
     
     // SoundControl
     [SerializeField] private GameObject counchSound;

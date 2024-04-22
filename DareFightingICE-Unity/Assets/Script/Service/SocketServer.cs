@@ -12,6 +12,7 @@ using System.Data;
 using System.Runtime.Remoting.Channels;
 using DareFightingICE.Grpc.Proto;
 using Google.Protobuf;
+using System.Text.Json.Serialization;
 
 public class SocketServer : Singleton<SocketServer>, IServer
 {
@@ -181,6 +182,22 @@ public class SocketServer : Singleton<SocketServer>, IServer
         catch (Exception e)
         {
             Debug.LogException(e);
+        }
+    }
+
+    public static byte[] SerializeMessage(IMessage message)
+    {
+        bool jsonMode = true;
+        if (jsonMode)
+        {
+            string jsonStr = JsonSerializer.Serialize(message, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower});
+            byte[] jsonByteData = Encoding.UTF8.GetBytes(jsonStr);
+            return jsonByteData;
+        }
+        else
+        {
+            byte[] byteData = message.ToByteArray();
+            return byteData;
         }
     }
 }

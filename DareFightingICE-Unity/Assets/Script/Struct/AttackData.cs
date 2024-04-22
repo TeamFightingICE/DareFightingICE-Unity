@@ -61,7 +61,7 @@ public class AttackData
 	 *
 	 * @see MotionData#attackActive
 	 */
-	public int Active { get; set; }
+	public bool Active { get; set; }
 
 	/**
 	 * The damage value to the unguarded opponent hit by this skill.
@@ -117,7 +117,7 @@ public class AttackData
 	/**
 	 * The value of the attack type: 1 = high, 2 = middle, 3 = low, 4 = throw.
 	 */
-	public int AttackType { get; set; }
+	public AttackType AttackType { get; set; }
 
 	/**
 	 * The flag whether this skill can push down the opponent when hit.<br>
@@ -145,7 +145,7 @@ public class AttackData
 		this.SpeedX = 0;
 		this.SpeedY = 0;
 		this.StartUp = 0;
-		this.Active = 0;
+		this.Active = false;
 		this.HitDamage = 0;
 		this.GuardDamage = 0;
 		this.StartAddEnergy = 0;
@@ -199,7 +199,7 @@ public class AttackData
 			SpeedX = SpeedX,
 			SpeedY = SpeedY,
 			StartUp = StartUp,
-			Active = Active,
+			Active = Active ? 1 : 0,
 			HitDamage = HitDamage,
 			GuardDamage = GuardDamage,
 			StartAddEnergy = StartAddEnergy,
@@ -209,7 +209,7 @@ public class AttackData
 			ImpactX = ImpactX,
 			ImpactY = ImpactY,
 			GiveGuardRecov = GiveGuardRecov,
-			AttackType = AttackType,
+			AttackType = (int)AttackType,
 			DownProp = DownProp,
 			IsProjectile = IsProjectile,
 		};

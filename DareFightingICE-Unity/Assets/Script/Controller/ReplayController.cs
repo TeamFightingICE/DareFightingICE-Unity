@@ -48,8 +48,7 @@ public class ReplayController : MonoBehaviour
     float deltaTime = 0.0f;
     private readonly bool[] heartBeatFlag = { false, false };
 
-
-   private void Awake()
+    private void Awake()
     {
         Application.targetFrameRate = 60;
         replayData = Load();
@@ -106,7 +105,7 @@ public class ReplayController : MonoBehaviour
             }
         }
     }
-     private void SetupScene()
+    private void SetupScene()
     {
         currentFrameNumber = 0;
         currentRound = DataManager.Instance.CurrentRound;
@@ -146,7 +145,7 @@ public class ReplayController : MonoBehaviour
 
     }
 
-        private void SetEnergyColor()
+    private void SetEnergyColor()
     {
         if (player1.Energy == 300)
         {
@@ -175,29 +174,29 @@ public class ReplayController : MonoBehaviour
         }
     }
 
-        private int GetRemainingFrame()
+    private int GetRemainingFrame()
     {
         return GameSetting.Instance.FrameLimit - currentFrame;
     }
 
-     private void UpdateCharacterDataPlayer1(CharacterData data) 
+    private void UpdateCharacterDataPlayer1(CharacterData data) 
     {
         _controllers[0].PlayerNumber = data.PlayerNumber;
         _controllers[0].Hp = data.Hp;
         _controllers[0].Energy = data.Energy;
-        character[0].transform.position = new Vector3(data.XPos,  data.YPos, character[0].transform.position.z) ;
-        character[0].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.XVelo,data.YVelo);
+        character[0].transform.position = new Vector3(data.X,  data.Y, character[0].transform.position.z) ;
+        character[0].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.SpeedX,data.SpeedY);
         _controllers[0].Action = data.Action;
         Debug.Log(data.Action.ToString());
-        if (!data.IsFront && _controllers[0].IsFront ) 
+        if (!data.Front && _controllers[0].IsFront ) 
         {
             FlipCharacter( _controllers[0].gameObject);
         }
-        else if(data.IsFront && !_controllers[0].IsFront) 
+        else if(data.Front && !_controllers[0].IsFront) 
         {
             FlipCharacter(_controllers[0].gameObject);
         }
-        _controllers[0].IsFront = data.IsFront;
+        _controllers[0].IsFront = data.Front;
      
     }
 
@@ -206,29 +205,29 @@ public class ReplayController : MonoBehaviour
         _controllers[1].PlayerNumber = data.PlayerNumber;
         _controllers[1].Hp = data.Hp;
         _controllers[1].Energy = data.Energy;
-        character[1].transform.position = new Vector3(data.XPos,  data.YPos, character[1].transform.position.z) ;
-        character[1].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.XVelo,data.YVelo);
+        character[1].transform.position = new Vector3(data.X,  data.Y, character[1].transform.position.z) ;
+        character[1].GetComponent<Rigidbody2D>().velocity = new Vector2 (data.SpeedX,data.SpeedY);
         _controllers[1].Action = data.Action;
-         if (!data.IsFront && _controllers[1].IsFront ) 
+         if (!data.Front && _controllers[1].IsFront ) 
         {
             FlipCharacter( _controllers[1].gameObject);
         }
-        else if(data.IsFront && !_controllers[1].IsFront) 
+        else if(data.Front && !_controllers[1].IsFront) 
         {
             FlipCharacter(_controllers[1].gameObject);
         }
-        _controllers[1].IsFront = data.IsFront;
+        _controllers[1].IsFront = data.Front;
     }
-        public ReplayData Load() 
+    public ReplayData Load() 
     {
-        string FilePath = Application.persistentDataPath +"/Replay1.dat";
+        string FilePath = Application.persistentDataPath + "/Replay1.dat";
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream fileStream = File.Open(FilePath, FileMode.Open);
         ReplayData playerData = (ReplayData)formatter.Deserialize(fileStream);
         fileStream.Close();
         return playerData;
     }
-       private void FlipCharacter(GameObject character)
+    private void FlipCharacter(GameObject character)
     {
         ReplayCharacterController charController = character.GetComponent<ReplayCharacterController>();
         charController.IsFront = !charController.IsFront;
@@ -237,7 +236,7 @@ public class ReplayController : MonoBehaviour
         character.transform.localScale = scale;
     }
 
-     public void SetPlayerController(ReplayCharacterController p1, ReplayCharacterController p2)
+    public void SetPlayerController(ReplayCharacterController p1, ReplayCharacterController p2)
     {
         player1 = p1;
         player2 = p2;
